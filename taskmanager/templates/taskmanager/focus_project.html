@@ -47,6 +47,7 @@
       <tbody>
          {% for task in tasks %}
          <tr>
+            <!-- TODO Faire un visuel stylé pour enhance les trucs importants ou les trucs outdate -->
             <td>{{ task.priority }}</td>
             <td class="d-none d-lg-table-cell">{{ task.name }}</td>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>

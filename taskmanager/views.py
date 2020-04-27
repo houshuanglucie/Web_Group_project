@@ -7,6 +7,16 @@ from .models import Project, Status, Comment, Task
 
 @login_required(login_url = 'connect')
 def home(request):
+
+    try:
+        if request.session['just_log']:
+            new_log = True
+        else:
+            new_log = False
+    except:
+        new_log = False
+    request.session['just_log'] = False
+
     return render(request, 'taskmanager/home.html', locals())
 
 @login_required(login_url = 'connect')
@@ -23,6 +33,8 @@ def connect(request):
             user = authenticate(username = username, password = password)
             if user:
                 login(request, user)
+                request.session['just_log'] = True
+                return redirect('home')
             else:
                 error = True
     else:
@@ -45,5 +57,5 @@ def projects(request):
 @login_required(login_url = 'connect')
 def focus_project(request, id):
     project = Project.objects.get(id = id)
-    tasks = Task.objects.filter(project__id = id)
+    tasks = Task.objects.filter(project__id = id).order_by('priority', '-due_date')
     return render(request, 'taskmanager/focus_project.html', locals())

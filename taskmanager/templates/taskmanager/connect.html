@@ -32,20 +32,11 @@
 	      <br /><br />
 	      {% endif %}
 
-
-	      {% if user.is_authenticated %}
-	      Bonjour {{ user.first_name }} {% filter upper %}{{ user.last_name }}{% endfilter %} !
-	      <script type="text/javascript">
-	         setTimeout(function() {window.location.href = '{% url "home" %}';}, 500);
-	      </script>
-
-	      {% else %}
 	      <form method="post" action="{% url "connect" %}">
 	         {% csrf_token %}
 	         {{ form.as_p }}
-	         <input type="submit" value="Se connecter" />
+	         <input type="submit" value="Se connecter"/>
 	      </form>
-	      {% endif %}
 	   </div>
 	</div>
 

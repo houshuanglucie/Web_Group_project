@@ -16,7 +16,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 	{% block script%} {% endblock %}
-	<titleGestionnaire de projets</title>
+	<title>Gestionnaire de projets</title>
 </head>
 
 <body>
@@ -53,8 +53,13 @@
 
 			<ul id="right_nav-bar" class="navbar-nav ml-auto">
 
+
 				<li id="disconnect-nav_item" class="nav-item">
+				{% if user.is_authenticated %}
 					<a class="nav-link" href="{% url "disconnect" %}">Se déconnecter</a>
+				{% else %}
+					<a class="nav-link" href="{% url "connect" %}">Se connecter</a>
+				{% endif %}
 				</li>
 
 			</ul>
