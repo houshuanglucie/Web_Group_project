@@ -26,6 +26,19 @@
       )
    </script>
 
+   <style>
+
+      #disconnect{
+         font-size:3em;
+         color: #353535;
+      }
+      #disconnect:hover{
+         font-size: 3.5em;
+         color: #101010;
+      }
+
+   </style>
+
 
    <title>Gestionnaire de projets</title>
 
@@ -36,7 +49,7 @@
 <body>
 
    <div class="container">
-      <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
+      <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px; z-index: 1000;" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #c9c9c9">
             <i class="fa fa-sign-in"></i>
             <strong class="mr-auto ml-2">Connexion</strong>
@@ -48,7 +61,11 @@
       </div>
    </div>
 
-
+   <div style="position: absolute; top: 1rem; right: 1rem; z-index:1000;" class="float-right">
+      <a href="{% url "disconnect" %}">
+         <i id="disconnect" class="fa fa-sign-out"></i>
+      </a>
+   </div>
 
    <div class="container-fluid px-0">
       <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -60,7 +77,7 @@
             <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
          </ol>
 
-         <div class="carousel-inner bg-secondary" role="listbox">
+         <div class="carousel-inner" role="listbox" style="background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);">
 
             <div class="carousel-item active">
                <a class="nav-link" href="{% url "home" %}">
@@ -78,14 +95,14 @@
                <a class="nav-link" href="{% url "newproject" %}">
                   <div class="d-flex align-items-center justify-content-center min-vh-100">
                      <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid align-self-center m-4"/>
+               			<img id="logo" title="Violin" src="/static/pictures/plus-solid.svg" class="img-fluid align-self-center m-4"/>
                			<h1 class="display-3 flex-grow-1 align-self-center">Nouveau projet</h1>
                		</div>
                   </div>
 
                   <div class="carousel-caption d-none d-lg-block">
                      <h5>Nouveau projet</h5>
-                     <p>Créez un tout nouveau projet</p>
+                     <p>Créez un nouveau projet</p>
                   </div>
                </a>
             </div>
@@ -95,14 +112,14 @@
                <a class="nav-link" href="{% url "projects" %}">
                   <div class="d-flex align-items-center justify-content-center min-vh-100">
                      <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid align-self-center m-4"/>
+               			<img id="logo" title="Violin" src="/static/pictures/folder-open-solid.svg" class="img-fluid align-self-center m-4"/>
                			<h1 class="display-3 flex-grow-1 align-self-center">Mes projets</h1>
                		</div>
                   </div>
 
                   <div class="carousel-caption d-none d-lg-block">
                      <h5>Mes projets</h5>
-                     <p>Ayez une vue d'ensemble de vos projets, modifiez-les<br/> créez et affectez des tâches</p>
+                     <p>Ayez une vue d'ensemble de vos projets, modifiez-les<br/>Créez et affectez des tâches</p>
                   </div>
                </a>
             </div>
@@ -114,7 +131,7 @@
                <a class="nav-link" href="calendar">
                   <div class="d-flex align-items-center justify-content-center min-vh-100">
                      <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid align-self-center m-4"/>
+               			<img id="logo" title="Violin" src="/static/pictures/calendar-alt-solid.svg" class="img-fluid align-self-center m-4"/>
                			<h1 class="display-3 flex-grow-1 align-self-center">Mon calendrier</h1>
                		</div>
                   </div>
