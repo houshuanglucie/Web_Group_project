@@ -1,0 +1,61 @@
+<!-- Vue individuelle d'une piste -->
+{% extends "base.html"%}
+{% load humanize %}
+{% block css %}{% endblock %}
+
+
+{% block script%}{%endblock%}
+
+
+
+{% block content %}
+
+<div class="m-5">
+   <h3>{{ task }}</h3>
+   <br />
+
+   <table class="table">
+      {% comment %} BODY OF TABLE {% endcomment %}
+      <tbody>
+         <tr>
+            <th class="thead-dark">Projet parent</th>
+            <td><a href="{% url "focus_project" id=task.project.id %}">{{ task.project }}</a></td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Tâche</th>
+            <td>{{ task.name }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Description</th>
+            <td>{{ task.description }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Responsable</th>
+            <td>{{ task.user.first_name }} {% filter upper %}{{ task.user.last_name }}{% endfilter %}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Date de début</th>
+            <td>{{ task.start_date }} ({{ task.start_date|naturaltime }})</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Deadline</th>
+            <td>{{ task.due_date }} ({{ task.due_date|naturaltime }}) </td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Priorité</th>
+            <td>{{ task.priority }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Statut</th>
+            <td>{{ task.status }}</td>
+         </tr>
+      </tbody>
+   </table>
+
+</div>
+
+
+
+</div>
+
+{% endblock %}

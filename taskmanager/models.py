@@ -31,7 +31,7 @@ class Task(models.Model):
     project = models.ForeignKey('Project', on_delete = models.CASCADE, verbose_name = "Projet")
     name = models.CharField(max_length = 200, verbose_name = "Tâche")
     description = models.TextField(null = True, verbose_name = "Description", blank = True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Utilisateur")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Responsable")
     start_date = models.DateTimeField(verbose_name = "Date de début")
     due_date = models.DateTimeField(verbose_name = "Deadline")
     priority = models.IntegerField()

@@ -8,4 +8,5 @@ urlpatterns = [
 	path('disconnect/', views.disconnect, name = 'disconnect'),
 	path('projects/', views.projects, name = 'projects'),
 	path('projects/<int:id>', views.focus_project, name = 'focus_project'),
+	path('task/<int:id>', views.focus_task, name = 'focus_task'),
 ]

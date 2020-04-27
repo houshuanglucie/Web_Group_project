@@ -37,7 +37,7 @@
          <tr>
             <th scope="col">Priorité</th>
             <th scope="col">Tâche</th>
-            <th class="d-none d-lg-table-cell" scope="col">Utilisateur</th>
+            <th class="d-none d-lg-table-cell" scope="col">Responsable</th>
             <th class="d-none d-lg-table-cell" scope="col">Deadline</th>
             <th class="d-none d-lg-table-cell" scope="col">Statut</th>
          </tr>
@@ -49,7 +49,7 @@
          <tr>
             <!-- TODO Faire un visuel stylé pour enhance les trucs importants ou les trucs outdate -->
             <td>{{ task.priority }}</td>
-            <td class="d-none d-lg-table-cell">{{ task.name }}</td>
+            <td class="d-none d-lg-table-cell"><a href = {% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
             <td class="d-none d-lg-table-cell">{{ task.due_date }}</td>
             <td class="d-none d-lg-table-cell">{{ task.status }}</td>
