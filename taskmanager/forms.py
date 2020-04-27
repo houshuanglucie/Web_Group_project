@@ -10,8 +10,20 @@ text_widget = forms.TextInput(
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label="Nom d'utilisateur", max_length=30)
-    password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
+    username = forms.CharField(label = "Nom d'utilisateur", max_length = 30,
+        widget = forms.TextInput(
+            attrs = {
+                'rows' : '1',
+                'placeholder' : "Nom d'utilisateur"
+            }
+        ))
+    password = forms.CharField(label="Mot de passe",
+        widget = forms.PasswordInput(
+            attrs = {
+                'rows' : '1',
+                'placeholder' : "Mot de passe"
+            }
+        ))
 
 class ProjectForm(forms.ModelForm):
     class Meta:
