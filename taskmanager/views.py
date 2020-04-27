@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import LoginForm
+from .forms import LoginForm, ProjectForm
 from .models import Project, Status, Comment, Task
 
 import datetime
@@ -55,7 +55,8 @@ def disconnect(request):
 @login_required(login_url = 'connect')
 def projects(request):
     current_user = User.objects.get(id = request.user.id)
-    projects_list = Project.objects.filter(members = current_user) # TODO A remplacer par ou contains
+    projects_list = Project.objects.filter(members = current_user)
+    projects_list = Project.objects.all()
     return render(request, 'taskmanager/projects.html', locals())
 
 
@@ -71,3 +72,18 @@ def focus_task(request, id):
     task = Task.objects.get(id = id)
     print(task.due_date.date() - datetime.datetime.now().date(), flush = True)
     return render(request, 'taskmanager/focus_task.html', locals())
+
+
+@login_required(login_url = 'connect')
+def newproject(request):
+    added = False
+    form = ProjectForm(request.POST or None)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        members = form.cleaned_data['members']
+        new_project = Project(name = name)
+        new_project.save()
+        new_project.members.set(members)
+        new_project.save()
+        added = True
+    return render(request, 'taskmanager/newproject.html', locals())

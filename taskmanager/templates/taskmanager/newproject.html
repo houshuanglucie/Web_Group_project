@@ -1,0 +1,79 @@
+<!-- Vue du contributeur -->
+{% extends "base.html"%}
+{% load static %}
+
+{% block script%}
+<script>
+   $(document).ready(
+      function() {
+         document.getElementById("newproject-nav_item").classList.add("active");
+         {% if added %}
+            $('.toast').toast('show');
+         {% endif %}
+      }
+   )
+</script>
+{%endblock%}
+
+{% block css %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+   <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header" style="background-color: #c9c9c9">
+         <i class="fa fa-sign-in"></i>
+         <strong class="mr-auto ml-2">Nouveau projet</strong>
+         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="toast-body" >
+         {{ new_project.name }} a bien été crée.
+      </div>
+   </div>
+</div>
+
+
+<div class="m-5">
+
+   <div class="m-5">
+      <h2>Nouveau projet</h2>
+      <br />
+
+   </div>
+
+   {% for error in form.errors %}
+   <p>
+      {{ error }}
+   </p>
+   {% endfor %}
+
+   <form action="{% url "newproject" %}" method="post">
+      {% csrf_token %}
+
+
+      <div class="form-group row">
+         <div class="col-md-2 col-form-label">
+            {{ form.name.label_tag }}
+         </div>
+         <div class="col-md-10">
+            {{ form.name }}
+         </div>
+      </div>
+
+		<!-- TODO Faire un truc plus style ici -->
+		<div class="form-group row">
+         <div class="col-md-2 col-form-label">
+            {{ form.members.label_tag }}
+         </div>
+         <div class="col-md-10">
+            {{ form.members }}
+         </div>
+      </div>
+
+		<br/>
+
+      <input type="submit" value="Créer le projet" />
+   </form>
+</div>
+
+{% endblock %}
