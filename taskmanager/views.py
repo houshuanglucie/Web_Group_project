@@ -8,12 +8,12 @@ from .models import Project, Status, Comment, Task
 
 import datetime
 
+# TODO Gerer la responsibite, ca va pas du tout la...
 
 @login_required(login_url = 'connect')
 def home(request):
-
     try:
-        if request.session['just_log']:
+        if request.session['just_log']: # To show a popup window
             new_log = True
         else:
             new_log = False
@@ -23,6 +23,10 @@ def home(request):
 
     return render(request, 'taskmanager/home.html', locals())
 
+
+# ===========================================================================
+#  USER AUTHENTIFICATION
+# ===========================================================================
 @login_required(login_url = 'connect')
 def redirect_home(request):
     return redirect('home')
@@ -52,6 +56,11 @@ def disconnect(request):
     return redirect('connect')
 
 
+
+# ===========================================================================
+#  PROJECTS MANAGER
+# ===========================================================================
+
 @login_required(login_url = 'connect')
 def projects(request):
     current_user = User.objects.get(id = request.user.id)
@@ -68,13 +77,6 @@ def focus_project(request, id):
 
 
 @login_required(login_url = 'connect')
-def focus_task(request, id):
-    task = Task.objects.get(id = id)
-    print(task.due_date.date() - datetime.datetime.now().date(), flush = True)
-    return render(request, 'taskmanager/focus_task.html', locals())
-
-
-@login_required(login_url = 'connect')
 def newproject(request):
     added = False
     form = ProjectForm(request.POST or None)
@@ -87,3 +89,30 @@ def newproject(request):
         new_project.save()
         added = True
     return render(request, 'taskmanager/newproject.html', locals())
+
+
+# ===========================================================================
+#  TASKS MANAGER
+# ===========================================================================
+
+@login_required(login_url = 'connect')
+def manageproject(request):
+    added = False
+    form = ProjectForm(request.POST or None)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        members = form.cleaned_data['members']
+        new_project = Project(name = name)
+        new_project.save()
+        new_project.members.set(members)
+        new_project.save()
+        added = True
+    return render(request, 'taskmanager/newproject.html', locals())
+
+
+
+@login_required(login_url = 'connect')
+def focus_task(request, id):
+    task = Task.objects.get(id = id)
+    print(task.due_date.date() - datetime.datetime.now().date(), flush = True)
+    return render(request, 'taskmanager/focus_task.html', locals())

@@ -51,7 +51,7 @@
 	transform: rotate(0deg) ;
 }
 
-td a:link, td a:visited, ul li a:link, ul li a:visited{
+td a:link, td a:visited, ul li a:link, ul li a:visited {
 	text-decoration: none;
 	color : #4d4d4d;
 }
@@ -59,6 +59,17 @@ td a:hover, ul li a:hover{
 	text-decoration: none;
 	color : black;
 }
+
+.carousel-item a:link, .carousel-item a:visited{
+	text-decoration: none;
+	color : #303030;
+}
+
+.carousel-item a:hover{
+	text-decoration: none;
+	color : #252525;
+}
+
 
 .fa {
 	color : #4d4d4d;

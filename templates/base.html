@@ -7,7 +7,7 @@
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href={%static 'style.css'%} />
+	<link rel="stylesheet" href={% static 'style.css'%} />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 	{% block css %} {% endblock %}
@@ -52,6 +52,10 @@
 
 				<li id="newproject-nav_item" class="nav-item">
 					<a class="nav-link" href="{% url "newproject" %}">Nouveau projet</a>
+				</li>
+
+				<li id="calendar-nav_item" class="nav-item">
+					<a class="nav-link" href="calendar">Mon calendrier</a>
 				</li>
 			</ul>
 
