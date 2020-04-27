@@ -7,4 +7,5 @@ urlpatterns = [
 	path('connect/', views.connect, name = 'connect'),
 	path('disconnect/', views.disconnect, name = 'disconnect'),
 	path('projects/', views.projects, name = 'projects'),
+	path('projects/<int:id>', views.focus_project, name = 'focus_project'),
 ]

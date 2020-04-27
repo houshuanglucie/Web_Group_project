@@ -38,5 +38,12 @@ def disconnect(request):
 
 @login_required(login_url = 'connect')
 def projects(request):
-    projects_list = Project.objects.all() # A remplacer par ou contains
+    projects_list = Project.objects.all() # TODO A remplacer par ou contains
     return render(request, 'taskmanager/projects.html', locals())
+
+
+@login_required(login_url = 'connect')
+def focus_project(request, id):
+    project = Project.objects.get(id = id)
+    tasks = Task.objects.filter(project__id = id)
+    return render(request, 'taskmanager/focus_project.html', locals())

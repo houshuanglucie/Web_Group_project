@@ -29,7 +29,7 @@
 			<tbody>
 				{% for project in projects_list %}
 					<tr>
-						<td>{{ project.name }}</a></td>
+						<td><a href="{% url "focus_project" id=project.id %}">{{ project.name }}</a></td>
 						<td class="d-none d-lg-table-cell">
 							{% for member in project.members.all %}
 								<span class="badge badge-secondary">{{ member.first_name }} {{ member.last_name }}</span>

@@ -36,7 +36,7 @@ class Task(models.Model):
     due_date = models.DateTimeField(verbose_name = "Deadline")
     priority = models.IntegerField()
     status = models.ForeignKey('Status', on_delete = models.CASCADE, verbose_name = "Statut")
-    comments = models.ManyToManyField(Comment, related_name = "Commentaires")
+    comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
 
     def __str__(self):
         return self.name
