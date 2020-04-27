@@ -1,0 +1,38 @@
+{% extends "base.html"%}
+
+{% block script%}
+<script>
+   $(document).ready(
+      function() {
+         document.getElementById("home-nav_item").classList.add("active");
+         $('[data-toggle="tooltip"]').tooltip();
+      }
+   )
+</script>
+{%endblock%}
+
+{% block css %}
+{% endblock %}
+
+
+
+
+{% block content %}
+<div class="m-5">
+
+   <div class="m-5">
+      <h2>Bienvenue !</h2>
+      <i class="fas fa-calendar-check"></i>
+   </div>
+
+   <div>
+      {% if user.is_authenticated %}
+         Bonjour {{ user.first_name }} {% filter upper %}{{ user.last_name }}{% endfilter %} !
+      {% else %}
+         Non identifié
+      {% endif %}
+   </div>
+
+</div>
+
+{% endblock %}

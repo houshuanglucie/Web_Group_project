@@ -1,0 +1,50 @@
+<!-- Vue globale des projects -->
+{% extends "base.html"%}
+
+{% block script%}
+	<script>
+		$(document).ready(
+			function() {
+				document.getElementById("projects-nav_item").classList.add("active");
+			}
+		)
+	</script>
+{%endblock%}
+
+
+{% block content %}
+
+		<div class=article>
+
+			<table class="table table-hover">
+			{% comment %} HEAD OF TABLE {% endcomment %}
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">Projet</th>
+					<th class="d-none d-lg-table-cell" scope="col">Membres</th>
+				</tr>
+			</thead>
+
+			{% comment %} BODY OF TABLE {% endcomment %}
+			<tbody>
+				{% for project in projects_list %}
+					<tr>
+						<td>{{ project.name }}</a></td>
+						<td class="d-none d-lg-table-cell">
+							{% for member in project.members.all %}
+								<span class="badge badge-secondary">{{ member.first_name }} {{ member.last_name }}</span>
+							{% endfor %}
+						</td>
+					</tr>
+				{% empty %}
+					<tr>
+						<td colspan=2>Pas de projet</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+
+		</table>
+
+		</div>
+
+{% endblock %}

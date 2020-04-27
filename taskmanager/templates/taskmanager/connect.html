@@ -1,0 +1,55 @@
+<!-- Pour se connecter -->
+<!-- TODO Changer le fait que ca ne depende pas de base.html -->
+{% extends "base.html" %}
+
+{% block script%}
+{% if not user.is_authenticated %}
+	<script>
+	   $(document).ready(
+	      function() {
+	         document.getElementById('id_username').onpaste = function(e) {
+	            e.preventDefault();
+	         }
+	         document.getElementById('id_password').onpaste = function(e) {
+	            e.preventDefault();
+	         }
+	      }
+	   )
+	</script>
+{% endif %}
+{%endblock%}
+
+
+{% block content %}
+
+	<div class="m-5">
+	   <h4>S'authentifier</h4>
+
+	   <div class="m-5">
+
+	      {% if error %}
+	      <strong>Echec de l'authentification. Vérifiez votre nom d'utilisateur et votre mot de passe.</strong>
+	      <br /><br />
+	      {% endif %}
+
+
+	      {% if user.is_authenticated %}
+	      Bonjour {{ user.first_name }} {% filter upper %}{{ user.last_name }}{% endfilter %} !
+	      <script type="text/javascript">
+	         setTimeout(function() {window.location.href = '{% url "home" %}';}, 500);
+	      </script>
+
+	      {% else %}
+	      <form method="post" action="{% url "connect" %}">
+	         {% csrf_token %}
+	         {{ form.as_p }}
+	         <input type="submit" value="Se connecter" />
+	      </form>
+	      {% endif %}
+	   </div>
+	</div>
+
+
+
+
+{% endblock %}

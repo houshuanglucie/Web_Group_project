@@ -1,0 +1,73 @@
+@font-face {
+	font-family: LMSans-regular;
+	src: url("fonts/lmsans10-regular.otf") format("opentype");
+}
+
+@font-face {
+	font-family: LMMono-regular;
+	src: url("fonts/lmmono10-regular.otf") format("opentype");
+}
+
+
+
+* {
+	font-family: 'LMSans-regular';
+}
+
+.code {
+	font-family: 'LMMono-regular';
+}
+
+#logo{
+	max-width: 3em;
+	max-height: auto;
+}
+
+.nav-item{
+	margin-left: 1em;
+}
+
+.img-fluid {
+	max-width: 5%;
+	height: auto;
+}
+
+
+#search_bar:after {
+	display: inline-block;
+	display: inline-block;
+	font: normal normal normal 14px/1 FontAwesome;
+	font-size: inherit;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	content: "\f054";
+	transform: rotate(90deg) ;
+	transition: all linear 0.25s;
+	float: right;
+}
+
+#search_bar.collapsed:after {
+	transform: rotate(0deg) ;
+}
+
+td a:link, td a:visited, ul li a:link, ul li a:visited{
+	text-decoration: none;
+	color : #4d4d4d;
+}
+td a:hover, ul li a:hover{
+	text-decoration: none;
+	color : black;
+}
+
+.fa {
+	color : #4d4d4d;
+}
+
+.fa-check{
+	color : #146618;
+}
+
+.fa-times{
+	color : #850d01;
+}
