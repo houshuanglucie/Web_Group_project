@@ -11,4 +11,5 @@ urlpatterns = [
 	path('task/<int:id>', views.focus_task, name = 'focus_task'),
 	path('newproject', views.newproject, name = 'newproject'),
 	path('manageproject/<int:id>', views.manageproject, name = 'manageproject'),
+	path('newtask/<int:id_project>', views.newtask, name='newtask'),
 ]

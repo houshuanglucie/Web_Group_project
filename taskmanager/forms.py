@@ -1,6 +1,6 @@
 from django import forms
 from .models import Project, Status, Comment, Task
-
+import datetime
 text_widget = forms.TextInput(
     attrs = {
         'class' : 'form-control',
@@ -12,6 +12,13 @@ large_txt_widget = forms.Textarea(
         'class' : 'form-control',
         'rows' : 4
     })
+
+select_no_modify_widget = forms.Select(
+    attrs = {
+        'inactive' : True,
+    })
+
+
 
 
 
@@ -31,6 +38,8 @@ class LoginForm(forms.Form):
             }
         ))
 
+# TODO Mettre le champ user required
+
 class NewProjectForm(forms.ModelForm):
     class Meta:
         model = Project
@@ -38,7 +47,7 @@ class NewProjectForm(forms.ModelForm):
         widgets = {
             'name' : text_widget
         }
-# TODO Mettre le champ user required
+
 
 class ManageProjectForm(forms.ModelForm):
     class Meta:
@@ -58,3 +67,19 @@ class CommentForm(forms.Form):
                 'placeholder' : "Ajouter un commentaire"
             }
         ))
+
+class NewTaskForm(forms.ModelForm):
+
+    class Meta:
+        model = Task
+        exclude = ('project', 'comments',)
+        widgets = {
+            'name' : text_widget,
+            'description' : large_txt_widget,
+            'status' : forms.RadioSelect(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(NewTaskForm, self).__init__(*args, **kwargs)
+        self.fields['user'].empty_label = None
+        self.fields['status'].empty_label = None

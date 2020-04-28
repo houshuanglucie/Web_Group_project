@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import LoginForm, NewProjectForm, CommentForm, ManageProjectForm
+from .forms import LoginForm, NewProjectForm, CommentForm, ManageProjectForm, NewTaskForm
 from .models import Project, Status, Comment, Task
 
 import datetime
@@ -111,6 +111,7 @@ def manageproject(request, id):
     defaults = {'name' : project.name}
     defaults['members'] = [m for m in project.members.all()]
     form = ManageProjectForm(request.POST or None, initial=defaults)
+
     if form.is_valid():
         if('delete' in request.POST):
             request.session['new_delete'] = project.name
@@ -130,6 +131,7 @@ def focus_task(request, id):
     task = Task.objects.get(id = id)
     comments = task.comments.all().order_by('-submit_time')
     form_comment = CommentForm(request.POST or None)
+
     if form_comment.is_valid():
         new_comment = Comment(user = request.user, content = form_comment.cleaned_data['content'])
         new_comment.save()
@@ -137,6 +139,28 @@ def focus_task(request, id):
         task.save()
     return render(request, 'taskmanager/focus_task.html', locals())
 
+
+
+@login_required(login_url = 'connect')
+def newtask(request, id_project):
+    added = False
+    project = Project.objects.get(id = id_project)
+    defaults = {'status' : Status.objects.all()[0]}
+    form = NewTaskForm(request.POST or None, initial=defaults)
+
+    if form.is_valid():
+        added = True
+        new_task = Task()
+        new_task.project = project
+        new_task.name = form.cleaned_data['name']
+        new_task.description = form.cleaned_data['description']
+        new_task.user = form.cleaned_data['user']
+        new_task.start_date = form.cleaned_data['start_date']
+        new_task.due_date = form.cleaned_data['due_date']
+        new_task.priority = form.cleaned_data['priority']
+        new_task.status = form.cleaned_data['status']
+        new_task.save()
+    return render(request, 'taskmanager/newtask.html', locals())
 
 
 
