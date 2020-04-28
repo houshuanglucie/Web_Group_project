@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import LoginForm, NewProjectForm, CommentForm, ManageProjectForm, NewTaskForm
+from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task
+from datetime import datetime
 
 import datetime
 
@@ -87,7 +88,7 @@ def focus_project(request, id):
 @login_required(login_url = 'connect')
 def newproject(request):
     added = False
-    form = NewProjectForm(request.POST or None)
+    form = ProjectForm(request.POST or None)
     if form.is_valid():
         name = form.cleaned_data['name']
         members = form.cleaned_data['members']
@@ -110,7 +111,7 @@ def manageproject(request, id):
 
     defaults = {'name' : project.name}
     defaults['members'] = [m for m in project.members.all()]
-    form = ManageProjectForm(request.POST or None, initial=defaults)
+    form = ProjectForm(request.POST or None, initial=defaults)
 
     if form.is_valid():
         if('delete' in request.POST):
@@ -146,7 +147,7 @@ def newtask(request, id_project):
     added = False
     project = Project.objects.get(id = id_project)
     defaults = {'status' : Status.objects.all()[0]}
-    form = NewTaskForm(request.POST or None, initial=defaults)
+    form = TaskForm(request.POST or None, initial=defaults)
 
     if form.is_valid():
         added = True
@@ -162,6 +163,33 @@ def newtask(request, id_project):
         new_task.save()
     return render(request, 'taskmanager/newtask.html', locals())
 
+
+
+def managetask(request, id):
+    added = False
+    task = Task.objects.get(id = id)
+
+    start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
+    due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
+
+    defaults = {'name' : task.name, 'description' : task.description, 'user' : task.user, 'priority' : task.priority, 'status' : task.status}
+    form = TaskForm(request.POST or None, initial=defaults)
+    if form.is_valid():
+        added = True
+        task.name = form.cleaned_data['name']
+        task.description = form.cleaned_data['description']
+        task.user = form.cleaned_data['user']
+        task.start_date = form.cleaned_data['start_date']
+        task.due_date = form.cleaned_data['due_date']
+        task.priority = form.cleaned_data['priority']
+        task.status = form.cleaned_data['status']
+        task.save()
+        start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
+        due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
+        defaults = {'name' : task.name, 'description' : task.description, 'user' : task.user, 'priority' : task.priority, 'status' : task.status}
+        added = True
+
+    return render(request, 'taskmanager/managetask.html', locals())
 
 
 # TODO Calendrier https://alexpnt.github.io/2017/07/15/django-calendar/

@@ -40,7 +40,7 @@ class LoginForm(forms.Form):
 
 # TODO Mettre le champ user required
 
-class NewProjectForm(forms.ModelForm):
+class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ('name', 'members')
@@ -48,14 +48,6 @@ class NewProjectForm(forms.ModelForm):
             'name' : text_widget
         }
 
-
-class ManageProjectForm(forms.ModelForm):
-    class Meta:
-        model = Project
-        fields = ('name', 'members')
-        widgets = {
-            'name' : text_widget
-        }
 
 
 class CommentForm(forms.Form):
@@ -68,7 +60,7 @@ class CommentForm(forms.Form):
             }
         ))
 
-class NewTaskForm(forms.ModelForm):
+class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
@@ -80,6 +72,6 @@ class NewTaskForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(NewTaskForm, self).__init__(*args, **kwargs)
+        super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['user'].empty_label = None
         self.fields['status'].empty_label = None
