@@ -36,24 +36,32 @@ a:hover,{
 <div class="m-5">
    <a href="{% url "projects" %}"><i class="fa fa-angle-double-left"></i> Mes projets</a>
    <br/><br/>
-
+	<!-- HEADER Presentation du Projet -->
    <div class="mx-5">
-      <h3>{{ project }}</h3>
+		<div class="row">
+			<div class="col-11">
+				<h3>{{ project }}</h3>
+			</div>
+			<div class="col-1 text-right">
+					<h3><a href="{% url "manageproject" id=project.id %}"><i class="fa fa-wrench"></i></a></h3>
+			</div>
+		</div>
+
 
       <table class="table">
-         {% comment %} BODY OF TABLE {% endcomment %}
          <tbody>
             <tr>
                <th class="thead-dark">Membres</th>
                <td>
                   {% for member in project.members.all %}
-                  <span class="badge badge-secondary">{{ member.first_name }} {{ member.last_name }}</span>
+                  	<span class="badge badge-secondary">{{ member.first_name }} {{ member.last_name }}</span>
                   {% endfor %}
                </td>
             </tr>
          </tbody>
       </table>
    </div>
+
 
    <h4 class="mb-3">Tâches</h4>
 

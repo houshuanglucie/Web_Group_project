@@ -31,7 +31,7 @@ class LoginForm(forms.Form):
             }
         ))
 
-class ProjectForm(forms.ModelForm):
+class NewProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ('name', 'members')
@@ -39,6 +39,14 @@ class ProjectForm(forms.ModelForm):
             'name' : text_widget
         }
 # TODO Mettre le champ user required
+
+class ManageProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ('name', 'members')
+        widgets = {
+            'name' : text_widget
+        }
 
 
 class CommentForm(forms.Form):

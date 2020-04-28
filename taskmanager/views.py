@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import LoginForm, ProjectForm, CommentForm
+from .forms import LoginForm, NewProjectForm, CommentForm, ManageProjectForm
 from .models import Project, Status, Comment, Task
 
 import datetime
@@ -66,6 +66,14 @@ def projects(request):
     current_user = User.objects.get(id = request.user.id)
     projects_list = Project.objects.filter(members = current_user)
     projects_list = Project.objects.all()
+
+    if(request.session.get('new_delete') != None):
+        deleted_project = request.session.get('new_delete')
+        request.session['new_delete'] = None
+        show_toast = True
+    else:
+        deleted_project = None
+        show_toast = False
     return render(request, 'taskmanager/projects.html', locals())
 
 
@@ -79,7 +87,7 @@ def focus_project(request, id):
 @login_required(login_url = 'connect')
 def newproject(request):
     added = False
-    form = ProjectForm(request.POST or None)
+    form = NewProjectForm(request.POST or None)
     if form.is_valid():
         name = form.cleaned_data['name']
         members = form.cleaned_data['members']
@@ -96,18 +104,24 @@ def newproject(request):
 # ===========================================================================
 
 @login_required(login_url = 'connect')
-def manageproject(request):
+def manageproject(request, id):
     added = False
-    form = ProjectForm(request.POST or None)
+    project = Project.objects.get(id = id)
+
+    defaults = {'name' : project.name}
+    defaults['members'] = [m for m in project.members.all()]
+    form = ManageProjectForm(request.POST or None, initial=defaults)
     if form.is_valid():
-        name = form.cleaned_data['name']
-        members = form.cleaned_data['members']
-        new_project = Project(name = name)
-        new_project.save()
-        new_project.members.set(members)
-        new_project.save()
-        added = True
-    return render(request, 'taskmanager/newproject.html', locals())
+        if('delete' in request.POST):
+            request.session['new_delete'] = project.name
+            project.delete()
+            return redirect('projects')
+        elif('save' in request.POST):
+            project.name = form.cleaned_data['name']
+            project.members.set(form.cleaned_data['members'])
+            project.save()
+            added = True
+    return render(request, 'taskmanager/manageproject.html', locals())
 
 
 
