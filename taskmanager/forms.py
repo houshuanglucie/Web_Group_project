@@ -7,6 +7,12 @@ text_widget = forms.TextInput(
         'required' : "True"
     })
 
+large_txt_widget = forms.Textarea(
+    attrs = {
+        'class' : 'form-control',
+        'rows' : 4
+    })
+
 
 
 class LoginForm(forms.Form):
@@ -32,3 +38,15 @@ class ProjectForm(forms.ModelForm):
         widgets = {
             'name' : text_widget
         }
+# TODO Mettre le champ user required
+
+
+class CommentForm(forms.Form):
+    content = forms.CharField(label="Commentaire",
+        widget = forms.Textarea(
+            attrs = {
+                'rows' : '1',
+                'class' : 'form-control',
+                'placeholder' : "Ajouter un commentaire"
+            }
+        ))

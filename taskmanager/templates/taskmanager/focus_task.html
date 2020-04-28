@@ -69,10 +69,31 @@ a:hover,{
       </tbody>
    </table>
 
-</div>
+
+
+		<br/>
+		<h5 class="mb-3">Commentaires</h5>
+
+	<form action="{% url "focus_task" id=task.id %}" method="post">
+		{% csrf_token %}
+		<div class="d-flex">
+			{{ form_comment.content }}
+			<button class="btn btn-secondary ml-1">Ajouter</button>
+		</div>
+	</form>
+
+	{% for comment in comments %}
+		<div class="row w-100 mt-3 pb-3 border-bottom">
+			<div class="col-2">{{ comment.submit_time }}</div>
+			<div class="col-2"><span class="badge badge-secondary">{{ comment.user.first_name }} {{ comment.user.last_name }}</span></div>
+			<div class="col-8">{{ comment.content }}</div>
+		</div>
+		{% empty %}
+			<br/>Aucun commentaire
+		{% endfor %}
 
 
 
-</div>
+
 
 {% endblock %}

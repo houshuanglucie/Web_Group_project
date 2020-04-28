@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import LoginForm, ProjectForm
+from .forms import LoginForm, ProjectForm, CommentForm
 from .models import Project, Status, Comment, Task
 
 import datetime
@@ -114,5 +114,18 @@ def manageproject(request):
 @login_required(login_url = 'connect')
 def focus_task(request, id):
     task = Task.objects.get(id = id)
-    print(task.due_date.date() - datetime.datetime.now().date(), flush = True)
+    comments = task.comments.all().order_by('-submit_time')
+    form_comment = CommentForm(request.POST or None)
+    if form_comment.is_valid():
+        new_comment = Comment(user = request.user, content = form_comment.cleaned_data['content'])
+        new_comment.save()
+        task.comments.add(new_comment)
+        task.save()
     return render(request, 'taskmanager/focus_task.html', locals())
+
+
+
+
+# TODO Calendrier https://alexpnt.github.io/2017/07/15/django-calendar/
+# https://medium.com/@unionproject88/django-and-python-calendar-e647a8eccff6
+# https://www.geeksforgeeks.org/python-calendar-module/
