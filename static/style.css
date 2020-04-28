@@ -51,11 +51,12 @@
 	transform: rotate(0deg) ;
 }
 
-td a:link, td a:visited, ul li a:link, ul li a:visited {
+a:link, a:visited {
 	text-decoration: none;
 	color : #4d4d4d;
 }
-td a:hover, ul li a:hover{
+
+td a:hover {
 	text-decoration: none;
 	color : black;
 }
