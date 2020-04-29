@@ -32,6 +32,7 @@ class Task(models.Model):
     name = models.CharField(max_length = 200, verbose_name = "Tâche")
     description = models.TextField(null = True, verbose_name = "Description", blank = True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Responsable")
+    attachment = models.FileField(upload_to = "file/")
     start_date = models.DateTimeField(verbose_name = "Date de début")
     due_date = models.DateTimeField(verbose_name = "Deadline")
     priority = models.IntegerField()
