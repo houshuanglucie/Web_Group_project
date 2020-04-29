@@ -126,7 +126,7 @@ def manageproject(request, id):
     return render(request, 'taskmanager/manageproject.html', locals())
 
 
-
+# TODO Gerer l'affichage du attachment
 @login_required(login_url = 'connect')
 def focus_task(request, id):
     task = Task.objects.get(id = id)
@@ -141,26 +141,32 @@ def focus_task(request, id):
     return render(request, 'taskmanager/focus_task.html', locals())
 
 
-
+# TODO Gerer les subtasks et les categories
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
     added = False
     project = Project.objects.get(id = id_project)
     defaults = {'status' : Status.objects.all()[0]}
-    form = TaskForm(request.POST or None, initial=defaults)
 
-    if form.is_valid():
-        added = True
-        new_task = Task()
-        new_task.project = project
-        new_task.name = form.cleaned_data['name']
-        new_task.description = form.cleaned_data['description']
-        new_task.user = form.cleaned_data['user']
-        new_task.start_date = form.cleaned_data['start_date']
-        new_task.due_date = form.cleaned_data['due_date']
-        new_task.priority = form.cleaned_data['priority']
-        new_task.status = form.cleaned_data['status']
-        new_task.save()
+    if request.method == 'POST':
+        form = TaskForm(request.POST or None, request.FILES, initial = defaults)
+        if form.is_valid():
+            added = True
+            new_task = Task()
+            new_task.project = project
+            new_task.name = form.cleaned_data['name']
+            new_task.description = form.cleaned_data['description']
+            new_task.category = form.cleaned_data['category']
+            new_task.user = form.cleaned_data['user']
+            new_task.attachment = form.cleaned_data['attachment']
+            new_task.start_date = form.cleaned_data['start_date']
+            new_task.due_date = form.cleaned_data['due_date']
+            new_task.priority = form.cleaned_data['priority']
+            new_task.status = form.cleaned_data['status']
+            new_task.save()
+    else:
+        form = TaskForm(initial = defaults)
+
     return render(request, 'taskmanager/newtask.html', locals())
 
 

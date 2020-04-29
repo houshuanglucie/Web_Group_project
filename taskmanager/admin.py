@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Task, Status, Comment
+from .models import Project, Task, Status, Comment, Subtask, Category
 
 # Register your models here.
 # Users :
@@ -8,6 +8,7 @@ from .models import Project, Task, Status, Comment
 # tchaikovsky - concertoinDMajor
 # paganini - caprice24
 # bach - aironGString
+# massenet - thaisMeditation
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', )
@@ -24,7 +25,18 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = ('name', 'project', )
     list_filter = ('project', 'status', )
 
+class SubtaskAdmin(admin.ModelAdmin):
+    list_display = ('task', 'name', )
+    list_filter = ('task', )
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', )
+    list_filter = ('name', )
+
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Status, StatusAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Task, TaskAdmin)
+admin.site.register(Subtask, SubtaskAdmin)
+admin.site.register(Category, CategoryAdmin)

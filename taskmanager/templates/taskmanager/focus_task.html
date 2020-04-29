@@ -48,10 +48,18 @@ a:hover {
             <th class="thead-dark">Description</th>
             <td>{{ task.description }}</td>
          </tr>
+			<tr>
+            <th class="thead-dark">Catégorie</th>
+            <td>{{ task.category }}</td>
+         </tr>
          <tr>
             <th class="thead-dark">Responsable</th>
             <td>{{ task.user.first_name }} {% filter upper %}{{ task.user.last_name }}{% endfilter %}</td>
          </tr>
+			<tr>
+				<th class="thead-dark">Pièce jointe</th>
+				<td>{{ task.attachment }}</td>
+			</tr>
          <tr>
             <th class="thead-dark">Date de début</th>
             <td>{{ task.start_date }} ({{ task.start_date|naturaltime }})</td>
