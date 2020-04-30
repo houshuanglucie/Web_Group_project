@@ -26,6 +26,18 @@
          e.style.display = 'block';
    }
 
+   function create_subtask() {
+      var input = document.createElement("input");
+      input.type = "text";
+      input.name = "new_subtask";
+      input.className = "form-control mb-2";
+      input.maxlength = "200";
+      input.placeholder = "Nouvelle sous-tâche";
+      document.getElementById("subtasks").prepend(input);
+
+   }
+
+
 </script>
 
 
@@ -50,7 +62,9 @@ a:hover {
 
 {% block content %}
 
+
 {% if added %}
+<!-- TOAST Tache crée -->
    <div class="container">
       <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index:1000" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #c9c9c9">
@@ -66,6 +80,7 @@ a:hover {
 {% endif %}
 
 {% if error_category %}
+<!-- TOAST Erreur -->
    <div class="container">
       <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index:1000" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #fc9d9d">
@@ -98,7 +113,9 @@ a:hover {
    </p>
    {% endfor %}
 
-
+   <!-- =================================================================
+      =========================== FORM ==================================
+      =================================================================== -->
    <form action="{% url "newtask" id_project=project.id %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
@@ -113,7 +130,7 @@ a:hover {
 
       {% for field in form %}
 
-
+         <!-- ======= CHAMP DATES ========= -->
          {% if field.name == "start_date"%}
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
@@ -121,7 +138,7 @@ a:hover {
             </div>
             <div class="col-md-10">
                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" required/>
+                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" id="from" required/>
                   <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                   </div>
@@ -137,7 +154,7 @@ a:hover {
             </div>
             <div class="col-md-10">
                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2"  required/>
+                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" id="to" required/>
                   <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                   </div>
@@ -146,6 +163,7 @@ a:hover {
          </div>
 
 
+         <!-- ======= CHAMP RADIO BUTTON ========= -->
          {% elif field.name == "status" %}
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
@@ -158,6 +176,8 @@ a:hover {
             {% endfor %}
          </div>
 
+
+         <!-- ======= CHAMP CATEGORY ========= -->
          {% elif field.name == "category" %}
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
@@ -168,12 +188,14 @@ a:hover {
                    <a href="JavaScript:Void(0);" onclick="toggle_visibility('input_field_cat');" id="toggle_plus"><i class="fa fa-plus"></i></a>
                </div>
 
+               <!-- Si le user veut créer une nouvelle catégorie -->
                <div class="col-md-8" id="input_field_cat" style="display:none">
-                      <input type="text" name="new_category" class="form-control" maxlength="200" id="id_new_category">
+                      <input type="text" name="new_category" class="form-control" maxlength="200" id="id_new_category" placeholder="Nouvelle Catégorie">
                </div>
          </div>
 
 
+         <!-- ======= AUTRE CHAMPS ========= -->
          {% else %}
             <div class="form-group row">
                <div class="col-md-2 col-form-label">
@@ -184,15 +206,26 @@ a:hover {
                </div>
             </div>
 
+
+
          {% endif %}
       {% endfor %}
 
+      <!-- ========== SOUS TACHES ============== -->
+      <div class="form-group row">
+         <div class="col-md-2 col-form-label">
+            Checklist :
+         </div>
+         <div class="col-md-5 pt-2" id="subtasks">
+            <a href="JavaScript:Void(0);" onclick="create_subtask();" id="toggle_plus"><i class="fa fa-plus-square"></i></a>
+
+         </div>
+      </div>
 
 		<br/>
 
       <input type="submit" value="Ajouter la tâche" />
    </form>
 </div>
-
 
 {% endblock %}

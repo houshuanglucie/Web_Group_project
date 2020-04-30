@@ -46,7 +46,7 @@ class Task(models.Model):
     attachment = models.FileField(upload_to = "file/", null = True, blank = True, verbose_name = "Pièce jointe")
     start_date = models.DateTimeField(verbose_name = "Date de début")
     due_date = models.DateTimeField(verbose_name = "Deadline")
-    priority = models.IntegerField()
+    priority = models.IntegerField(verbose_name = "Priorité")
     status = models.ForeignKey('Status', on_delete = models.CASCADE, verbose_name = "Statut")
     comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
 

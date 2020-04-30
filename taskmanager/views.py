@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
-from .models import Project, Status, Comment, Task, Category
+from .models import Project, Status, Comment, Task, Category, Subtask
 from datetime import datetime
 
 import datetime
@@ -82,6 +82,15 @@ def projects(request):
 def focus_project(request, id):
     project = Project.objects.get(id = id)
     tasks = Task.objects.filter(project__id = id).order_by('priority', '-due_date')
+
+    if(request.session.get('new_delete') != None):
+        deleted_task = request.session.get('new_delete')
+        request.session['new_delete'] = None
+        show_toast = True
+    else:
+        deleted_project = None
+        show_toast = False
+
     return render(request, 'taskmanager/focus_project.html', locals())
 
 
@@ -133,6 +142,8 @@ def focus_task(request, id):
     comments = task.comments.all().order_by('-submit_time')
     form_comment = CommentForm(request.POST or None)
 
+    subtasks = Subtask.objects.filter(task = task).order_by("-id")
+
     if form_comment.is_valid():
         new_comment = Comment(user = request.user, content = form_comment.cleaned_data['content'])
         new_comment.save()
@@ -142,8 +153,9 @@ def focus_task(request, id):
 
 
 
-# Pas possible de le faire comme un clean parce que y a du javascript qui vient tout chambouler
-def validate_task_data(task, request_post, form, project):
+# Pas possible de le faire comme un clean parce que y a du javascript qui vient tout chambouler.
+# Du moins, je n'en ai pas l'impression
+def validate_task_data(task, request, form, project, action):
     error_category = False
     added = True
 
@@ -152,14 +164,14 @@ def validate_task_data(task, request_post, form, project):
     task.name = form.cleaned_data['name']
     task.description = form.cleaned_data['description']
 
-    if('new_category' in request_post and request_post['new_category'] != '' and request_post['category'] != ''):
+    if('new_category' in request.POST and request.POST['new_category'] != '' and request.POST['category'] != ''):
         added = False
         error_category = True
         return added, error_category, None
-    elif('new_category' in request_post and request_post['new_category'] != '' and request_post['category'] == ''):
-        new_category = Category(name = request_post['new_category'])
+    elif('new_category' in request.POST and request.POST['new_category'] != '' and request.POST['category'] == ''):
+        new_category = Category(name = request.POST['new_category'])
         new_category.save()
-        new_task.category = new_category
+        task.category = new_category
     else:
         task.category = form.cleaned_data['category']
 
@@ -170,13 +182,23 @@ def validate_task_data(task, request_post, form, project):
     task.priority = form.cleaned_data['priority']
     task.status = form.cleaned_data['status']
     task.save()
+
+    if(action == "ADD"):
+        if('new_subtask' in request.POST):
+            for subtask in request.POST.getlist('new_subtask'):
+                if(subtask != ''):
+                    new_subtask = Subtask(task = task, name = subtask)
+                    new_subtask.save()
+
+
+
     return added, error_category, task
 
 
 
 
 
-# TODO Gerer les subtasks et les categories
+# TODO Gerer les subtasks
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
     added = False
@@ -189,7 +211,7 @@ def newtask(request, id_project):
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
         if form.is_valid():
             new_task = Task()
-            added, error_category, new_task = validate_task_data(new_task, request.POST, form, project)
+            added, error_category, new_task = validate_task_data(new_task, request, form, project, "ADD")
     else:
         form = TaskForm(initial = defaults)
 
@@ -207,14 +229,25 @@ def managetask(request, id):
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
 
 
-    defaults = {'name' : task.name, 'description' : task.description, 'user' : task.user, 'priority' : task.priority, 'status' : task.status, 'category' : task.category, 'attachment' : task.attachment}
+    defaults = {'name' : task.name,
+                'description' : task.description,
+                'user' : task.user,
+                'priority' : task.priority,
+                'status' : task.status,
+                'category' : task.category,
+                'attachment' : task.attachment}
 
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial=defaults)
         if form.is_valid():
-            added, error_category, task = validate_task_data(task, request.POST, form, task.project)
-            if(not error_category):
-                return redirect('focus_task', id=task.id)
+            if('delete' in request.POST):
+                request.session['new_delete'] = task.name
+                task.delete()
+                return redirect('focus_project', id = task.project.id)
+            elif('save' in request.POST):
+                added, error_category, task = validate_task_data(task, request.POST, form, task.project, "MODIFY")
+                if(not error_category):
+                    return redirect('focus_task', id=task.id)
 
     else:
         form = TaskForm(initial = defaults)

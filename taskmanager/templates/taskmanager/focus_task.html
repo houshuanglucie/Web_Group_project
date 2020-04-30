@@ -79,6 +79,14 @@ a:hover {
             <th class="thead-dark">Statut</th>
             <td>{{ task.status }}</td>
          </tr>
+			<tr>
+            <th class="thead-dark">Sous-tâches</th>
+            <td>
+					{% for subtask in subtasks %}
+						{{ subtask }}<br/>
+					{% endfor %}
+				</td>
+         </tr>
       </tbody>
    </table>
 
