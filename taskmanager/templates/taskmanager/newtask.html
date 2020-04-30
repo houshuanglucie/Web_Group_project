@@ -64,7 +64,7 @@ a:hover {
 
 
 {% if added %}
-<!-- TOAST Tache crée -->
+<!-- ================ TOAST Tache crée ================ -->
    <div class="container">
       <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index:1000" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #c9c9c9">
@@ -80,7 +80,7 @@ a:hover {
 {% endif %}
 
 {% if error_category %}
-<!-- TOAST Erreur -->
+<!-- ================ TOAST Erreur ================ -->
    <div class="container">
       <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index:1000" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #fc9d9d">
@@ -98,25 +98,38 @@ a:hover {
 
 
 <div class="m-5">
-   <a href="{% url "focus_project" id=project.id %}"><i class="fa fa-angle-double-left"></i> {{ project }}</a>
 
-   <div class="mx-5 my-3">
-      <h2 class="border-bottom p-1">Créer une nouvelle tâche</h2>
-      <br />
 
-   </div>
+   <!-- **************************** HEADER ********************************* -->
+
+   {% if particular.type == "ADD" %}
+      <a href="{% url "focus_project" id=project.id %}"><i class="fa fa-angle-double-left"></i> {{ project }}</a>
+      <div class="mx-5 my-3"><h2 class="border-bottom p-1">Créer une nouvelle tâche</h2><br/></div>
+
+   {% else %}
+      <a href="{% url "focus_task" id=task.id %}"><i class="fa fa-angle-double-left"></i> {{ task }}</a>
+      <div class="mx-5 my-3"><h2 class="border-bottom p-1">Modifier une tâche</h2><br/></div>
+
+   {% endif %}
+
+
+
 
 
    {% for error in form.errors %}
-   <p>
-      {{ error }}
-   </p>
+      <p>{{ error }}</p>
    {% endfor %}
 
-   <!-- =================================================================
-      =========================== FORM ==================================
-      =================================================================== -->
-   <form action="{% url "newtask" id_project=project.id %}" method="post" enctype="multipart/form-data">
+
+   <!-- **************************** FORM ********************************* -->
+
+
+   {% if particular.type == "ADD" %}
+      <form action="{% url "newtask" id_project=project.id %}" method="post" enctype="multipart/form-data">
+   {% else %}
+      <form action="{% url "managetask" id=task.id %}" method="post" enctype="multipart/form-data">
+   {% endif %}
+
       {% csrf_token %}
 
       <div class="form-group row">
@@ -124,21 +137,22 @@ a:hover {
             Projet :
          </div>
          <div class="col-md-10">
-            <input type="text" class="form-control" value='{{ project.name }}' readonly>
+               <input type="text" class="form-control" value='{{ project.name }}' readonly>
          </div>
       </div>
 
       {% for field in form %}
 
-         <!-- ======= CHAMP DATES ========= -->
+
          {% if field.name == "start_date"%}
+         <!-- ======= CHAMP DATE DEBUT ========= -->
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
                {{ field.label_tag }}
             </div>
             <div class="col-md-10">
                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" id="from" required/>
+                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" id="from" value='{{ start_date_format }}' required/>
                   <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                   </div>
@@ -147,14 +161,16 @@ a:hover {
          </div>
 
 
+
          {% elif field.name == "due_date"%}
+         <!-- ======= CHAMP DATE FIN ========= -->
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
                {{ field.label_tag }}
             </div>
             <div class="col-md-10">
                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" id="to" required/>
+                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" id="to" value='{{ due_date_format }}' required/>
                   <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                   </div>
@@ -163,8 +179,9 @@ a:hover {
          </div>
 
 
-         <!-- ======= CHAMP RADIO BUTTON ========= -->
+
          {% elif field.name == "status" %}
+         <!-- ======= CHAMP RADIO BUTTON ========= -->
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
                {{ field.label_tag }}
@@ -177,8 +194,9 @@ a:hover {
          </div>
 
 
-         <!-- ======= CHAMP CATEGORY ========= -->
+
          {% elif field.name == "category" %}
+         <!-- ======= CHAMP CATEGORY ========= -->
          <div class="form-group row">
             <div class="col-md-2 col-form-label">
                {{ field.label_tag }}
@@ -195,16 +213,17 @@ a:hover {
          </div>
 
 
-         <!-- ======= AUTRE CHAMPS ========= -->
+
          {% else %}
-            <div class="form-group row">
-               <div class="col-md-2 col-form-label">
-                  {{ field.label_tag }}
-               </div>
-               <div class="col-md-10">
-                  {{ field }}
-               </div>
+         <!-- ======= AUTRE CHAMPS ========= -->
+         <div class="form-group row">
+            <div class="col-md-2 col-form-label">
+               {{ field.label_tag }}
             </div>
+            <div class="col-md-10">
+               {{ field }}
+            </div>
+         </div>
 
 
 
@@ -224,7 +243,24 @@ a:hover {
 
 		<br/>
 
-      <input type="submit" value="Ajouter la tâche" />
+
+
+      <!-- ======================== BUTTONS ============================ -->
+      {% if particular.type == "MODIFY" %}
+         <div class="row">
+            <div class="col-6">
+               <input type="submit" name="save" value="Enregistrer les modifications"/>
+            </div>
+            <div class="col-6 text-right">
+               <input type="submit" name="delete" value="Supprimer la tâche" class="btn btn-danger"/>
+            </div>
+         </div>
+
+      {% else %}
+         <input type="submit" value="Ajouter la tâche" />
+
+      {% endif %}
+
    </form>
 </div>
 

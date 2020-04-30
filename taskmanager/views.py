@@ -215,6 +215,9 @@ def newtask(request, id_project):
     else:
         form = TaskForm(initial = defaults)
 
+    particular = dict(type = "ADD")
+    start_date_format = due_date_format = ""
+    
     return render(request, 'taskmanager/newtask.html', locals())
 
 
@@ -224,6 +227,7 @@ def managetask(request, id):
     error_category = False
 
     task = Task.objects.get(id = id)
+    project = task.project
 
     start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
@@ -252,7 +256,8 @@ def managetask(request, id):
     else:
         form = TaskForm(initial = defaults)
 
-    return render(request, 'taskmanager/managetask.html', locals())
+    particular = dict(type = "MODIFY")
+    return render(request, 'taskmanager/newtask.html', locals())
 
 
 # TODO Calendrier https://alexpnt.github.io/2017/07/15/django-calendar/
