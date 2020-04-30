@@ -54,7 +54,7 @@ a:hover {
    <div class="container">
       <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index:1000" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #c9c9c9">
-            <i class="fa fa-sign-in"></i>
+            <i class="fa fa-plus"></i>
             <strong class="mr-auto ml-2">Nouvelle tâche</strong>
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
          </div>
@@ -91,11 +91,13 @@ a:hover {
 
    </div>
 
+
    {% for error in form.errors %}
    <p>
       {{ error }}
    </p>
    {% endfor %}
+
 
    <form action="{% url "newtask" id_project=project.id %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
@@ -169,7 +171,6 @@ a:hover {
                <div class="col-md-8" id="input_field_cat" style="display:none">
                       <input type="text" name="new_category" class="form-control" maxlength="200" id="id_new_category">
                </div>
-
          </div>
 
 

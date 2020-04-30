@@ -143,14 +143,14 @@ def focus_task(request, id):
 
 
 # Pas possible de le faire comme un clean parce que y a du javascript qui vient tout chambouler
-def validate_task_data(request_post, form, project):
+def validate_task_data(task, request_post, form, project):
     error_category = False
     added = True
 
-    new_task = Task()
-    new_task.project = project
-    new_task.name = form.cleaned_data['name']
-    new_task.description = form.cleaned_data['description']
+
+    task.project = project
+    task.name = form.cleaned_data['name']
+    task.description = form.cleaned_data['description']
 
     if('new_category' in request_post and request_post['new_category'] != '' and request_post['category'] != ''):
         added = False
@@ -161,16 +161,16 @@ def validate_task_data(request_post, form, project):
         new_category.save()
         new_task.category = new_category
     else:
-        new_task.category = form.cleaned_data['category']
+        task.category = form.cleaned_data['category']
 
-    new_task.user = form.cleaned_data['user']
-    new_task.attachment = form.cleaned_data['attachment']
-    new_task.start_date = form.cleaned_data['start_date']
-    new_task.due_date = form.cleaned_data['due_date']
-    new_task.priority = form.cleaned_data['priority']
-    new_task.status = form.cleaned_data['status']
-    new_task.save()
-    return added, error_category, new_task
+    task.user = form.cleaned_data['user']
+    task.attachment = form.cleaned_data['attachment']
+    task.start_date = form.cleaned_data['start_date']
+    task.due_date = form.cleaned_data['due_date']
+    task.priority = form.cleaned_data['priority']
+    task.status = form.cleaned_data['status']
+    task.save()
+    return added, error_category, task
 
 
 
@@ -188,7 +188,8 @@ def newtask(request, id_project):
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
         if form.is_valid():
-            added, error_category, new_task = validate_task_data(request.POST, form, project)
+            new_task = Task()
+            added, error_category, new_task = validate_task_data(new_task, request.POST, form, project)
     else:
         form = TaskForm(initial = defaults)
 
@@ -198,6 +199,8 @@ def newtask(request, id_project):
 
 def managetask(request, id):
     added = False
+    error_category = False
+
     task = Task.objects.get(id = id)
 
     start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
@@ -209,19 +212,10 @@ def managetask(request, id):
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial=defaults)
         if form.is_valid():
-            added = True
-            task.name = form.cleaned_data['name']
-            task.description = form.cleaned_data['description']
-            task.category = form.cleaned_data['category']
-            task.user = form.cleaned_data['user']
-            task.attachment = form.cleaned_data['attachment']
-            task.start_date = form.cleaned_data['start_date']
-            task.due_date = form.cleaned_data['due_date']
-            task.priority = form.cleaned_data['priority']
-            task.status = form.cleaned_data['status']
-            task.save()
-            added = True
-            return redirect('focus_task', id=task.id)
+            added, error_category, task = validate_task_data(task, request.POST, form, task.project)
+            if(not error_category):
+                return redirect('focus_task', id=task.id)
+
     else:
         form = TaskForm(initial = defaults)
 
