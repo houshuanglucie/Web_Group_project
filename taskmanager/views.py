@@ -5,9 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
-from datetime import datetime
 
 import datetime
+import json
 
 # TODO Gerer la responsibite, ca va pas du tout la...
 
@@ -169,7 +169,7 @@ def focus_task(request, id):
     comments = task.comments.all().order_by('-submit_time')
     form_comment = CommentForm(request.POST or None)
 
-    subtasks = Subtask.objects.filter(task = task).order_by("-id")
+    subtasks = Subtask.objects.filter(task = task).order_by("id")
 
     # Si on vient de modifier une tache, pour qu'on ait un toast qui apparaisse
     if(request.session.get('new_modify') != None):
@@ -242,6 +242,26 @@ def validate_task_data(task, request, form, project, action):
                     new_subtask = Subtask(task = task, name = subtask)
                     new_subtask.save()
 
+    elif(action == "MODIFY"):
+        former_subtasks = Subtask.objects.filter(task = task)
+
+        if('new_subtask' in request.POST):
+            for subtask in request.POST.getlist('new_subtask'):
+                if(subtask != ''):
+                    if (former_subtasks.filter(name = subtask).count() == 1):
+                        continue # La subtask dans le formulaire était deja dans les anciennes subtask
+                    else: # Sinon, a priori, le count = 0, alors on cree la nouvelle subtask
+                        new_subtask = Subtask(task = task, name = subtask)
+                        new_subtask.save()
+            for subtask in former_subtasks:
+                if subtask.name not in request.POST.getlist('new_subtask'):
+                    subtask.delete()
+        else:
+            for subtask in former_subtasks:
+                subtask.delete()
+
+
+
     return added, error_category, task
 
 
@@ -283,6 +303,10 @@ def managetask(request, id):
 
     start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
+
+    subtasks = Subtask.objects.filter(task = task).order_by("id")
+    subtask_list = [subtask.name for subtask in subtasks]
+    subtask_list = json.dumps(subtask_list)
 
 
     defaults = {'name' : task.name,

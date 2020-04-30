@@ -1,13 +1,25 @@
 <!-- Vue du contributeur -->
 {% extends "base.html"%}
+{% load static %}
 
 {% block script%}
+
+{% if particular.type == "MODIFY" %}
+   <script src="{% static "javascript/handle_subtasks_fields.js" %}"></script>
+{% endif %}
+
+
 <script>
    // ===== Fonction lancée dès le démarrage de la page =========
    $(document).ready(
       function() {
          {% if added or error_category %}
             $('.toast').toast('show');
+         {% endif %}
+
+         {% if particular.type == "MODIFY" %}
+            var subtask_list = {{ subtask_list|safe }};
+            create_fields_subtasks(subtask_list);
          {% endif %}
       }
    )
@@ -25,7 +37,7 @@
    // ===== Affiche le champ pour ajouter une categorie =========
    function toggle_visibility(id) {
       var e = document.getElementById(id);
-         e.style.display = 'block';
+      e.style.display = 'block';
    }
 
    // ===== Ajoute un champ de subtask =========
@@ -41,6 +53,7 @@
 
 
 </script>
+
 
 
 <!-- Datepicker -->
@@ -205,7 +218,7 @@ a:hover {
             </div>
                <div class="col-md-2">
                   {{ field }}
-                   <a href="JavaScript:Void(0);" onclick="toggle_visibility('input_field_cat');" id="toggle_plus"><i class="fa fa-plus"></i></a>
+                   <a href="javascript:void(0);" onclick="toggle_visibility('input_field_cat');" id="toggle_plus"><i class="fa fa-plus"></i></a>
                </div>
 
                <!-- Si le user veut créer une nouvelle catégorie -->
@@ -241,6 +254,7 @@ a:hover {
             <a href="JavaScript:Void(0);" onclick="create_subtask();" id="toggle_plus"><i class="fa fa-plus-square"></i></a>
 
          </div>
+
       </div>
 
 		<br/>
