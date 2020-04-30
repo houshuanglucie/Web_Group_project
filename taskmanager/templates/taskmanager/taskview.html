@@ -1,9 +1,9 @@
 <!-- Vue du contributeur -->
 {% extends "base.html"%}
-{% load static %}
 
 {% block script%}
 <script>
+   // ===== Fonction lancée dès le démarrage de la page =========
    $(document).ready(
       function() {
          {% if added or error_category %}
@@ -12,6 +12,7 @@
       }
    )
 
+   // ===== Pour que les timepickers s'affichent en francais =========
    $(function () {
       $('#datetimepicker1').datetimepicker({
          locale: 'fr'
@@ -21,11 +22,13 @@
       });
    });
 
+   // ===== Affiche le champ pour ajouter une categorie =========
    function toggle_visibility(id) {
       var e = document.getElementById(id);
          e.style.display = 'block';
    }
 
+   // ===== Ajoute un champ de subtask =========
    function create_subtask() {
       var input = document.createElement("input");
       input.type = "text";
@@ -34,7 +37,6 @@
       input.maxlength = "200";
       input.placeholder = "Nouvelle sous-tâche";
       document.getElementById("subtasks").prepend(input);
-
    }
 
 
