@@ -9,6 +9,10 @@
             {% endif %}
          }
       )
+
+      $('.carousel').carousel({
+    interval: false
+});
    </script>
 {% endblock %}
 
@@ -25,13 +29,18 @@
          color: #101010;
       }
 
+      .title{
+         font-size: 5vw;
+      }
+
+
    </style>
 {% endblock %}
 
 
 
 {% block content %}
-
+   <!-- ================ TOAST User connecté ================ -->
    <div class="container">
       <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px; z-index: 1000;" aria-live="assertive" aria-atomic="true">
          <div class="toast-header" style="background-color: #c9c9c9">
@@ -45,12 +54,17 @@
       </div>
    </div>
 
+
+   <!-- ================ Bouton de déconnexion ================ -->
    <div style="position: absolute; top: 1rem; right: 1rem; z-index:1000;" class="float-right">
       <a href="{% url "disconnect" %}">
          <i id="disconnect" class="fa fa-sign-out"></i>
       </a>
    </div>
 
+
+
+   <!-- ================ Mega carroussel  ================ -->
    <div class="container-fluid px-0">
       <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 
@@ -63,25 +77,23 @@
 
          <div class="carousel-inner" role="listbox" style="background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);">
 
+
+            <!-- ================ Page d'accueil ================ -->
             <div class="carousel-item active">
                <a class="nav-link" href="{% url "home" %}">
-                  <div class="d-flex align-items-center justify-content-center min-vh-100">
-                     <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid align-self-center m-4"/>
-               			<h1 class="display-3 flex-grow-1 align-self-center">Gestionnaire de projets</h1>
-               		</div>
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+                        <img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid align-self-center m-4"/>
+                     	<h1 class="d-none d-sm-block title align-self-center">Gestionnaire de projets</h1>
                   </div>
                </a>
             </div>
 
-
+            <!-- ================ Page de vue globale des projets ================ -->
             <div class="carousel-item">
                <a class="nav-link" href="{% url "projects" %}">
-                  <div class="d-flex align-items-center justify-content-center min-vh-100">
-                     <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/folder-open-solid.svg" class="img-fluid align-self-center m-4"/>
-               			<h1 class="display-3 flex-grow-1 align-self-center">Mes projets</h1>
-               		</div>
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+            			<img id="logo" title="Violin" src="/static/pictures/folder-open-solid.svg" class="img-fluid align-self-center m-4"/>
+            			<h1 class="d-none d-sm-block title align-self-center">Mes projets</h1>
                   </div>
 
                   <div class="carousel-caption d-none d-lg-block">
@@ -91,13 +103,12 @@
                </a>
             </div>
 
+            <!-- ================ Page de création d'un projet ================ -->
             <div class="carousel-item">
                <a class="nav-link" href="{% url "newproject" %}">
-                  <div class="d-flex align-items-center justify-content-center min-vh-100">
-                     <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/plus-solid.svg" class="img-fluid align-self-center m-4"/>
-               			<h1 class="display-3 flex-grow-1 align-self-center">Nouveau projet</h1>
-               		</div>
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+               		<img id="logo" title="Violin" src="/static/pictures/plus-solid.svg" class="img-fluid align-self-center m-4"/>
+               		<h1 class="d-none d-sm-block title align-self-center">Nouveau projet</h1>
                   </div>
 
                   <div class="carousel-caption d-none d-lg-block">
@@ -108,13 +119,12 @@
             </div>
 
 
+            <!-- ================ Page de mon calendrier ================ -->
             <div class="carousel-item">
                <a class="nav-link" href="calendar">
-                  <div class="d-flex align-items-center justify-content-center min-vh-100">
-                     <div class="d-flex flex-column" style="margin-bottom:0">
-               			<img id="logo" title="Violin" src="/static/pictures/calendar-alt-solid.svg" class="img-fluid align-self-center m-4"/>
-               			<h1 class="display-3 flex-grow-1 align-self-center">Mon calendrier</h1>
-               		</div>
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+            			<img id="logo" title="Violin" src="/static/pictures/calendar-alt-solid.svg" class="img-fluid align-self-center m-4"/>
+            			<h1 class="d-none d-sm-block title align-self-center">Mon calendrier</h1>
                   </div>
 
                   <div class="carousel-caption d-none d-lg-block">
@@ -124,6 +134,7 @@
                </a>
             </div>
 
+         <!-- ================ FLECHES DE NAVIGATION ================ -->
          </div>
          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>

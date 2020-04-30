@@ -48,6 +48,7 @@
 		<div class="d-flex justify-content-center align-items-center" style="height:100%;">
 			<div id="authbox" class="py-4 px-5 border rounded border-dark">
 				<div class="row">
+
 					<div class="col-7">
 						<h5 class="mb-4">Authentification</h5>
 				      <form method="post" action="{% url "connect" %}">
@@ -57,12 +58,12 @@
 				         <input type="submit" value="Se connecter"/>
 				      </form>
 					</div>
-					<div class="col-5 container-fluid">
+
+					<div class="d-none d-md-block col-5 container-fluid">
 						<div class="text-center">
 							<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid m-4" />
 							<h3>Gestionnaire de projets</h3>
 						</div>
-
 					</div>
 				</div>
 

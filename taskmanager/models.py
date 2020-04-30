@@ -37,6 +37,8 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
+# Pour gerer que start_date < due_date, je fais confiance a javascript...
 class Task(models.Model):
     project = models.ForeignKey('Project', on_delete = models.CASCADE, verbose_name = "Projet")
     name = models.CharField(max_length = 200, verbose_name = "Tâche")
@@ -52,4 +54,3 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
-# TODO Checker que start_date < due_date

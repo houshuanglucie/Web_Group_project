@@ -24,15 +24,23 @@
       }
    )
 
-   // ===== Pour que les timepickers s'affichent en francais =========
+   // ===== Gestion des timepickers =========
    $(function () {
       $('#datetimepicker1').datetimepicker({
          locale: 'fr'
       });
       $('#datetimepicker2').datetimepicker({
-         locale: 'fr'
+           useCurrent: false,
+           locale: 'fr'
+      });
+      $("#datetimepicker1").on("change.datetimepicker", function (e) {
+           $('#datetimepicker2').datetimepicker('minDate', e.date);
+      });
+      $("#datetimepicker2").on("change.datetimepicker", function (e) {
+           $('#datetimepicker1').datetimepicker('maxDate', e.date);
       });
    });
+
 
    // ===== Affiche le champ pour ajouter une categorie =========
    function toggle_visibility(id) {
@@ -167,7 +175,7 @@ a:hover {
             </div>
             <div class="col-md-10">
                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" id="from" value='{{ start_date_format }}' required/>
+                  <input name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" value='{{ start_date_format }}' required/>
                   <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                   </div>
@@ -279,5 +287,7 @@ a:hover {
 
    </form>
 </div>
+
+
 
 {% endblock %}

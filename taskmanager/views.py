@@ -9,8 +9,6 @@ from .models import Project, Status, Comment, Task, Category, Subtask
 import datetime
 import json
 
-# TODO Gerer la responsibite, ca va pas du tout la...
-
 # =============== Page d'accueil =================
 @login_required(login_url = 'connect')
 def home(request):
@@ -268,7 +266,6 @@ def validate_task_data(task, request, form, project, action):
 
 
 # =============== Page de création de tâche =================
-# TODO Gerer les subtasks
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
     added = False
