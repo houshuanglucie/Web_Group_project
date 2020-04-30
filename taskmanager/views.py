@@ -171,6 +171,15 @@ def focus_task(request, id):
 
     subtasks = Subtask.objects.filter(task = task).order_by("-id")
 
+    # Si on vient de modifier une tache, pour qu'on ait un toast qui apparaisse
+    if(request.session.get('new_modify') != None):
+        modified_task = request.session.get('new_modify')
+        request.session['new_modify'] = None
+        show_toast = True
+    else:
+        modified_task = None
+        show_toast = False
+
     if form_comment.is_valid():
         new_comment = Comment(user = request.user, content = form_comment.cleaned_data['content'])
         new_comment.save()
@@ -292,8 +301,9 @@ def managetask(request, id):
                 task.delete()
                 return redirect('focus_project', id = task.project.id)
             elif('save' in request.POST):
-                added, error_category, task = validate_task_data(task, request.POST, form, task.project, "MODIFY")
+                added, error_category, task = validate_task_data(task, request, form, task.project, "MODIFY")
                 if(not error_category):
+                    request.session['new_modify'] = task.name
                     return redirect('focus_task', id = task.id)
 
     else:
