@@ -116,13 +116,16 @@ def newproject(request):
     if form.is_valid():
         name = form.cleaned_data['name']
         members = form.cleaned_data['members']
-        new_project = Project(name = name)
-        new_project.save()
-        new_project.members.set(members)
-        new_project.save()
+        project = Project(name = name)
+        project.save()
+        project.members.set(members)
+        project.save()
         added = True
 
-    return render(request, 'taskmanager/newproject.html', locals())
+    # parce qu'on utilise le meme template, a 2/3 choses differentes...
+    particular = dict(type = "ADD")
+
+    return render(request, 'taskmanager/formproject.html', locals())
 
 
 # ***************************************************************************
@@ -150,7 +153,10 @@ def manageproject(request, id):
             project.save()
             added = True
 
-    return render(request, 'taskmanager/manageproject.html', locals())
+    # parce qu'on utilise le meme template, a 2/3 choses differentes...
+    particular = dict(type = "MODIFY")
+
+    return render(request, 'taskmanager/formproject.html', locals())
 
 
 
@@ -254,7 +260,7 @@ def newtask(request, id_project):
     particular = dict(type = "ADD")
     start_date_format = due_date_format = ""
 
-    return render(request, 'taskmanager/taskview.html', locals())
+    return render(request, 'taskmanager/formtask.html', locals())
 
 
 
@@ -295,7 +301,7 @@ def managetask(request, id):
 
     # parce qu'on utilise le meme template, a 2/3 choses differentes...
     particular = dict(type = "MODIFY")
-    return render(request, 'taskmanager/taskview.html', locals())
+    return render(request, 'taskmanager/formtask.html', locals())
 
 
 # TODO Calendrier https://alexpnt.github.io/2017/07/15/django-calendar/
