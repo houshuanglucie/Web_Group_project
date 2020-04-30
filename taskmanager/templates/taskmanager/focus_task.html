@@ -46,11 +46,11 @@ a:hover {
          </tr>
          <tr>
             <th class="thead-dark">Description</th>
-            <td>{{ task.description }}</td>
+            <td>{{ task.description|default:"-" }}</td>
          </tr>
 			<tr>
             <th class="thead-dark">Catégorie</th>
-            <td>{{ task.category }}</td>
+            <td>{{ task.category|default_if_none:"-" }}</td>
          </tr>
          <tr>
             <th class="thead-dark">Responsable</th>
@@ -58,7 +58,10 @@ a:hover {
          </tr>
 			<tr>
 				<th class="thead-dark">Pièce jointe</th>
-				<td>{{ task.attachment }}</td>
+				<td>{% if task.attachment %}
+						{{ task.attachment }}
+					{% else %} -
+					{% endif %}</td>
 			</tr>
          <tr>
             <th class="thead-dark">Date de début</th>

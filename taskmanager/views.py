@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
-from .models import Project, Status, Comment, Task
+from .models import Project, Status, Comment, Task, Category
 from datetime import datetime
 
 import datetime
@@ -141,29 +141,54 @@ def focus_task(request, id):
     return render(request, 'taskmanager/focus_task.html', locals())
 
 
+
+# Pas possible de le faire comme un clean parce que y a du javascript qui vient tout chambouler
+def validate_task_data(request_post, form, project):
+    error_category = False
+    added = True
+
+    new_task = Task()
+    new_task.project = project
+    new_task.name = form.cleaned_data['name']
+    new_task.description = form.cleaned_data['description']
+
+    if('new_category' in request_post and request_post['new_category'] != '' and request_post['category'] != ''):
+        added = False
+        error_category = True
+        return added, error_category, None
+    elif('new_category' in request_post and request_post['new_category'] != '' and request_post['category'] == ''):
+        new_category = Category(name = request_post['new_category'])
+        new_category.save()
+        new_task.category = new_category
+    else:
+        new_task.category = form.cleaned_data['category']
+
+    new_task.user = form.cleaned_data['user']
+    new_task.attachment = form.cleaned_data['attachment']
+    new_task.start_date = form.cleaned_data['start_date']
+    new_task.due_date = form.cleaned_data['due_date']
+    new_task.priority = form.cleaned_data['priority']
+    new_task.status = form.cleaned_data['status']
+    new_task.save()
+    return added, error_category, new_task
+
+
+
+
+
 # TODO Gerer les subtasks et les categories
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
     added = False
+    error_category = False
+
     project = Project.objects.get(id = id_project)
     defaults = {'status' : Status.objects.all()[0]}
 
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
         if form.is_valid():
-            added = True
-            new_task = Task()
-            new_task.project = project
-            new_task.name = form.cleaned_data['name']
-            new_task.description = form.cleaned_data['description']
-            new_task.category = form.cleaned_data['category']
-            new_task.user = form.cleaned_data['user']
-            new_task.attachment = form.cleaned_data['attachment']
-            new_task.start_date = form.cleaned_data['start_date']
-            new_task.due_date = form.cleaned_data['due_date']
-            new_task.priority = form.cleaned_data['priority']
-            new_task.status = form.cleaned_data['status']
-            new_task.save()
+            added, error_category, new_task = validate_task_data(request.POST, form, project)
     else:
         form = TaskForm(initial = defaults)
 
@@ -178,22 +203,27 @@ def managetask(request, id):
     start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
 
-    defaults = {'name' : task.name, 'description' : task.description, 'user' : task.user, 'priority' : task.priority, 'status' : task.status}
-    form = TaskForm(request.POST or None, initial=defaults)
-    if form.is_valid():
-        added = True
-        task.name = form.cleaned_data['name']
-        task.description = form.cleaned_data['description']
-        task.user = form.cleaned_data['user']
-        task.start_date = form.cleaned_data['start_date']
-        task.due_date = form.cleaned_data['due_date']
-        task.priority = form.cleaned_data['priority']
-        task.status = form.cleaned_data['status']
-        task.save()
-        start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
-        due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
-        defaults = {'name' : task.name, 'description' : task.description, 'user' : task.user, 'priority' : task.priority, 'status' : task.status}
-        added = True
+
+    defaults = {'name' : task.name, 'description' : task.description, 'user' : task.user, 'priority' : task.priority, 'status' : task.status, 'category' : task.category, 'attachment' : task.attachment}
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST or None, request.FILES, initial=defaults)
+        if form.is_valid():
+            added = True
+            task.name = form.cleaned_data['name']
+            task.description = form.cleaned_data['description']
+            task.category = form.cleaned_data['category']
+            task.user = form.cleaned_data['user']
+            task.attachment = form.cleaned_data['attachment']
+            task.start_date = form.cleaned_data['start_date']
+            task.due_date = form.cleaned_data['due_date']
+            task.priority = form.cleaned_data['priority']
+            task.status = form.cleaned_data['status']
+            task.save()
+            added = True
+            return redirect('focus_task', id=task.id)
+    else:
+        form = TaskForm(initial = defaults)
 
     return render(request, 'taskmanager/managetask.html', locals())
 

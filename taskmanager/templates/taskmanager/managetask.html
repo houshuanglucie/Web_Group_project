@@ -63,7 +63,7 @@ a:hover {
    <a href="{% url "focus_task" id=task.id %}"><i class="fa fa-angle-double-left"></i> {{ task }}</a>
 
    <div class="mx-5 my-3">
-      <h2 class="border-bottom p-1">Créer une nouvelle tâche</h2>
+      <h2 class="border-bottom p-1">Modifier une tâche</h2>
       <br />
 
    </div>
@@ -76,7 +76,7 @@ a:hover {
 
    {{ task.start_date }}
 
-   <form action="{% url "managetask" id=task.id %}" method="post">
+   <form action="{% url "managetask" id=task.id %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="form-group row">
