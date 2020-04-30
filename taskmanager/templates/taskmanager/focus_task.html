@@ -88,7 +88,16 @@ a:hover {
 			<tr>
 				<th class="thead-dark">Pièce jointe</th>
 				<td>{% if task.attachment %}
-						{{ task.attachment }}
+					<a target="_blank" href="{{ task.attachment.url }}">{{ att_name }}</a><br/>
+						<!-- On peut utiliser les deux en embed, mais sinon, on conserve pas les proportions en cas d'images -->
+						<span class="d-none d-lg-block">
+						{% if show_as_picture %}
+							<img class="mt-2 border border-secondary" src="{{ task.attachment.url }}" style="width:30vw"/>
+						{% elif show_as_doc %}
+							<embed class="mt-2 border border-secondary" src="{{ task.attachment.url }}" width="500" height="375">
+						{% endif %}
+						</span>
+
 					{% else %} -
 					{% endif %}</td>
 			</tr>

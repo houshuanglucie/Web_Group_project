@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
+import os
 
 
 # Create your models here.
@@ -51,6 +52,12 @@ class Task(models.Model):
     priority = models.IntegerField(verbose_name = "Priorité")
     status = models.ForeignKey('Status', on_delete = models.CASCADE, verbose_name = "Statut")
     comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
+
+    def attachment_info(self):
+        _, extension = os.path.splitext(self.attachment.name)
+        name = os.path.basename(self.attachment.name)
+        return name, extension
+
 
     def __str__(self):
         return self.name

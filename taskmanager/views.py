@@ -159,13 +159,13 @@ def manageproject(request, id):
 
 
 
-# TODO Gerer l'affichage du attachment
+
 # =============== Page de vue d'une tache =================
 @login_required(login_url = 'connect')
 def focus_task(request, id):
     task = Task.objects.get(id = id)
     comments = task.comments.all().order_by('-submit_time')
-    form_comment = CommentForm(request.POST or None)
+
 
     subtasks = Subtask.objects.filter(task = task).order_by("id")
 
@@ -177,6 +177,15 @@ def focus_task(request, id):
     else:
         modified_task = None
         show_toast = False
+
+
+    att_name, att_extension = task.attachment_info()
+
+    show_as_picture = att_extension in [".jpg", ".png"]
+    show_as_doc = att_extension in [".pdf", ".txt"]
+
+    # Gestion des commentaires
+    form_comment = CommentForm(request.POST or None)
 
     if form_comment.is_valid():
         new_comment = Comment(user = request.user, content = form_comment.cleaned_data['content'])
