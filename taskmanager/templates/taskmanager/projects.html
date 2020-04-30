@@ -18,26 +18,32 @@
 {% block content %}
 
 {% if show_toast %}
-	<div class="container">
-	   <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
-	      <div class="toast-header" style="background-color: #c9c9c9">
-	         <i class="fa fa-times"></i>
-	         <strong class="mr-auto ml-2">Suppression du projet</strong>
-	         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-	      </div>
-	      <div class="toast-body" >
-	         {{ deleted_project }} a été supprimé
-	      </div>
-	   </div>
-	</div>
+
+<!-- ================ TOAST de projet supprimé (on vient de formproject en mode MODIFY ) ================ -->
+<div class="container">
+   <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header" style="background-color: #c9c9c9">
+         <i class="fa fa-times"></i>
+         <strong class="mr-auto ml-2">Suppression du projet</strong>
+         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="toast-body" >
+         {{ deleted_project }} a été supprimé
+      </div>
+   </div>
+</div>
+
 {% endif %}
+
+
 
 
 <div class=article>
 	<h3 class="mx-5">Mes projets</h3>
 	<br/>
 	<table class="table table-hover">
-	{% comment %} HEAD OF TABLE {% endcomment %}
+
+
 	<thead class="thead-dark">
 		<tr>
 			<th scope="col">Projet</th>
@@ -45,7 +51,7 @@
 		</tr>
 	</thead>
 
-	{% comment %} BODY OF TABLE {% endcomment %}
+
 	<tbody>
 		{% for project in projects_list %}
 			<tr>
@@ -56,10 +62,10 @@
 					{% endfor %}
 				</td>
 			</tr>
+			
 		{% empty %}
-			<tr>
-				<td colspan=2>Pas de projet</td>
-			</tr>
+			<tr><td colspan=2>Pas de projet</td></tr>
+
 		{% endfor %}
 	</tbody>
 

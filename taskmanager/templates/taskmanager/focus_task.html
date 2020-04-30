@@ -30,7 +30,7 @@ a:hover {
 
 {% block content %}
 
-
+<!-- ================ TOAST Tache modifiee (on vient de la page formtask en mode MODIFY) ================ -->
 {% if show_toast %}
 	<div class="container">
 	   <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
@@ -88,17 +88,26 @@ a:hover {
 			<tr>
 				<th class="thead-dark">Pièce jointe</th>
 				<td>{% if task.attachment %}
-						{{ task.attachment }}
+					<a target="_blank" href="{{ task.attachment.url }}">{{ att_name }}</a><br/>
+						<!-- On peut utiliser les deux en embed, mais sinon, on conserve pas les proportions en cas d'images -->
+						<span class="d-none d-lg-block">
+						{% if show_as_picture %}
+							<img class="mt-2 border border-secondary" src="{{ task.attachment.url }}" style="width:30vw"/>
+						{% elif show_as_doc %}
+							<embed class="mt-2 border border-secondary" src="{{ task.attachment.url }}" width="500" height="375">
+						{% endif %}
+						</span>
+
 					{% else %} -
 					{% endif %}</td>
 			</tr>
          <tr>
             <th class="thead-dark">Date de début</th>
-            <td>{{ task.start_date }} ({{ task.start_date|naturaltime }})</td>
+            <td>{{ task.start_date }} <span class="d-none d-md-inline">({{ task.start_date|naturaltime }})</span></td>
          </tr>
          <tr>
             <th class="thead-dark">Deadline</th>
-            <td>{{ task.due_date }} ({{ task.due_date|naturaltime }}) </td>
+            <td>{{ task.due_date }} <span class="d-none d-md-inline">({{ task.due_date|naturaltime }})</span></td>
          </tr>
          <tr>
             <th class="thead-dark">Priorité</th>

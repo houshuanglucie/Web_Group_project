@@ -28,6 +28,7 @@ a:hover {
 
 {% block content %}
 
+<!-- ================ TOAST Tache supprimee (on revient de la page formtask, en mode MODIFY ) ================ -->
 {% if show_toast %}
 	<div class="container">
 	   <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
@@ -45,7 +46,7 @@ a:hover {
 
 
 
-<div class="m-5">
+<div class="m-sm-5">
    <a href="{% url "projects" %}"><i class="fa fa-angle-double-left"></i> Mes projets</a>
 
 	<!-- HEADER Presentation du Projet -->
@@ -86,7 +87,7 @@ a:hover {
 
 
    <table class="table table-hover">
-      {% comment %} HEAD OF TABLE {% endcomment %}
+
       <thead class="thead-dark">
          <tr>
             <th scope="col">Priorité</th>
@@ -98,22 +99,24 @@ a:hover {
          </tr>
       </thead>
 
-      {% comment %} BODY OF TABLE {% endcomment %}
+
+
+
       <tbody>
          {% for task in tasks %}
          <tr>
             <!-- TODO Faire un visuel stylé pour enhance les trucs importants ou les trucs outdate -->
             <td>{{ task.priority }}</td>
-            <td class="d-none d-lg-table-cell"><a href = {% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
+            <td><a href = {% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
             <td class="d-none d-lg-table-cell">{{ task.due_date }}</td>
             <td class="d-none d-lg-table-cell">{{ task.status }}</td>
             <td class="d-none d-lg-table-cell"><a href="{% url "managetask" id=task.id %}"<i class="fa fa-edit"></i></td>
          </tr>
+
          {% empty %}
-         <tr>
-            <td colspan=6>Pas de tâches</td>
-         </tr>
+         	<tr><td colspan=6>Pas de tâches</td></tr>
+
          {% endfor %}
       </tbody>
 

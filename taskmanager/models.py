@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
+import os
 
 
 # Create your models here.
@@ -37,6 +38,8 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
+# Pour gerer que start_date < due_date, je fais confiance a javascript...
 class Task(models.Model):
     project = models.ForeignKey('Project', on_delete = models.CASCADE, verbose_name = "Projet")
     name = models.CharField(max_length = 200, verbose_name = "Tâche")
@@ -50,6 +53,11 @@ class Task(models.Model):
     status = models.ForeignKey('Status', on_delete = models.CASCADE, verbose_name = "Statut")
     comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
 
+    def attachment_info(self):
+        _, extension = os.path.splitext(self.attachment.name)
+        name = os.path.basename(self.attachment.name)
+        return name, extension
+
+
     def __str__(self):
         return self.name
-# TODO Checker que start_date < due_date

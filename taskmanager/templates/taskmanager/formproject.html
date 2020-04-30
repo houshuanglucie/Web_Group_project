@@ -58,10 +58,13 @@ a:hover {
 
 <div class="m-5">
 
+   <!-- ================ Retour page précédente ================ -->
    {% if particular.type == "MODIFY" %}
       <a href="{% url "focus_project" id=project.id %}"><i class="fa fa-angle-double-left"></i> {{ project }}</a>
    {% endif %}
 
+
+   <!-- ================ HEADER ================ -->
    <div class="mx-5 my-3">
       {% if particular.type == "MODIFY" %}
          <h2>Modification du projet <em>{{ project }}</em></h2>
@@ -77,6 +80,7 @@ a:hover {
    {% endfor %}
 
 
+   <!-- ================ FORM ================ -->
    {% if particular.type == "MODIFY" %}
       <form action="{% url "manageproject" id=project.id %}" method="post">
    {% else %}
@@ -85,21 +89,24 @@ a:hover {
 
       {% csrf_token %}
 
+      <!-- ================ Champ nom ================ -->
       <div class="form-group row">
          <div class="col-md-2 col-form-label">
-            {{ form.name.label_tag }}
+            Titre :
          </div>
          <div class="col-md-10">
             {{ form.name }}
          </div>
       </div>
 
+
+      <!-- ================ Page membres ================ -->
 		<!-- TODO Faire un truc plus style ici https://openclassrooms.com/fr/courses/1916641-dynamisez-vos-sites-web-avec-javascript/1922434-le-drag-drop -->
       <!-- https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_draganddrop2 -->
       <!-- https://stackoverflow.com/questions/52797484/how-to-drag-dom-element-inside-canvas-without-going-out-of-canvas-with-p5js -->
 		<div class="form-group row">
          <div class="col-md-2 col-form-label">
-            {{ form.members.label_tag }}
+            Membres :
          </div>
          <div class="col-md-10">
             {{ form.members }}
@@ -109,6 +116,7 @@ a:hover {
 		<br/>
 
 
+      <!-- ================ BUTTONS ================ -->
       {% if particular.type == "MODIFY" %}
          <div class="row">
             <div class="col-6">
