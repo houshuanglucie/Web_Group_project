@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 
@@ -71,8 +72,9 @@ def disconnect(request):
 @login_required(login_url = 'connect')
 def projects(request):
     current_user = User.objects.get(id = request.user.id)
-    projects_list = Project.objects.filter(members = current_user)
-    projects_list = Project.objects.all() # TODO : A enlever
+    projects_list = Project.objects.filter(Q(members = current_user) | Q(public = "PU")).distinct()
+
+    print(str(projects_list.query), flush = True)
 
     if(request.session.get('new_delete') != None):
         deleted_project = request.session.get('new_delete')
@@ -115,6 +117,10 @@ def newproject(request):
         name = form.cleaned_data['name']
         members = form.cleaned_data['members']
         project = Project(name = name)
+        if("publicCheck" in request.POST):
+            project.public = "PU"
+        else:
+            project.public = "PR"
         project.save()
         project.members.set(members)
         project.save()
@@ -146,6 +152,10 @@ def manageproject(request, id):
             project.delete()
             return redirect('projects')
         elif('save' in request.POST):
+            if("publicCheck" in request.POST):
+                project.public = "PU"
+            else:
+                project.public = "PR"
             project.name = form.cleaned_data['name']
             project.members.set(form.cleaned_data['members'])
             project.save()
@@ -178,9 +188,8 @@ def focus_task(request, id):
         modified_task = None
         show_toast = False
 
-
+    # Affichage de la pièce jointe
     att_name, att_extension = task.attachment_info()
-
     show_as_picture = att_extension in [".jpg", ".png"]
     show_as_doc = att_extension in [".pdf", ".txt"]
 

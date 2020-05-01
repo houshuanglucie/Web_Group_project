@@ -147,9 +147,9 @@ a:hover {
 			<div class="col-2"><span class="badge badge-secondary">{{ comment.user.first_name }} {{ comment.user.last_name }}</span></div>
 			<div class="col-8">{{ comment.content }}</div>
 		</div>
-		{% empty %}
-			<br/>Aucun commentaire
-		{% endfor %}
+	{% empty %}
+		<br/>Aucun commentaire
+	{% endfor %}
 
 
 

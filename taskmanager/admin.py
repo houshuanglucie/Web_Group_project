@@ -11,7 +11,8 @@ from .models import Project, Task, Status, Comment, Subtask, Category
 # massenet - thaisMeditation
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', )
+    list_display = ('name', 'public')
+    list_filter = ('public',)
 
 class StatusAdmin(admin.ModelAdmin):
     list_display = ('how', )

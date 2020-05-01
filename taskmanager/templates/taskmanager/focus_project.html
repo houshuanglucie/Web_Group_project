@@ -53,7 +53,7 @@ a:hover {
    <div class="mx-5  my-3">
 		<div class="row">
 			<div class="col-11">
-				<h3>{{ project }}</h3>
+				<h3 style="display:inline" class="mr-4">{{ project }}</h3><em>Projet {{ project.get_public_display }}</em>
 			</div>
 			<div class="col-1 text-right">
 					<h3><a href="{% url "manageproject" id=project.id %}"><i class="fa fa-wrench"></i></a></h3>

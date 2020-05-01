@@ -9,6 +9,7 @@ import os
 class Project(models.Model):
     name = models.CharField(max_length = 160, verbose_name = "Titre")
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name = "Membres")
+    public = models.CharField(max_length = 2, choices = [("PU", "public"), ("PR", "privé")], default = "PR", verbose_name = "Partage")
 
     def __str__(self):
         return self.name
