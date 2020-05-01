@@ -43,7 +43,7 @@ class LoginForm(forms.Form):
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ('name', 'members')
+        fields = ('name',)
         widgets = {
             'name' : text_widget
         }

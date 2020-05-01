@@ -26,7 +26,7 @@ class Comment(models.Model):
     content = models.TextField(null = True, verbose_name = "Contenu", blank = True)
 
     def __str__(self):
-        return self.user + " : " + self.content
+        return self.user.username + " : " + self.content
 
 class Subtask(models.Model):
     task = models.ForeignKey('Task', on_delete = models.CASCADE, verbose_name = "Parent", default = None )

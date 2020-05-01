@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.http import JsonResponse
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 
@@ -74,8 +75,6 @@ def projects(request):
     current_user = User.objects.get(id = request.user.id)
     projects_list = Project.objects.filter(Q(members = current_user) | Q(public = "PU")).distinct()
 
-    print(str(projects_list.query), flush = True)
-
     if(request.session.get('new_delete') != None):
         deleted_project = request.session.get('new_delete')
         request.session['new_delete'] = None
@@ -107,24 +106,45 @@ def focus_project(request, id):
 
 
 
+
+
 # =============== Page de création d'un nouveau projet =================
 @login_required(login_url = 'connect')
 def newproject(request):
-    added = False
-    form = ProjectForm(request.POST or None)
 
-    if form.is_valid():
-        name = form.cleaned_data['name']
-        members = form.cleaned_data['members']
-        project = Project(name = name)
-        if("publicCheck" in request.POST):
-            project.public = "PU"
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST or None)
+        members = User.objects.all()
+
+        if form.is_valid():
+            list_members = request.POST.getlist('members[]')
+            if list_members == []:
+                return JsonResponse({"error": "No members"}, status=400)
+
+            name = form.cleaned_data['name']
+            project = Project(name = name)
+
+            # Verification de l'aspect public ou privé
+            if(request.POST.get("publicCheck") and request.POST.get("publicCheck")=='on'):
+                project.public = "PU"
+            else:
+                project.public = "PR"
+            project.save()
+
+            # Ajout des membres
+            for member in list_members:
+                project.members.add(User.objects.get(username = member))
+            project.save()
+
+            # On répond à Ajax qui va se charger d'afficher le toast
+            return JsonResponse({"state": "ok", "name" : name}, status=200)
         else:
-            project.public = "PR"
-        project.save()
-        project.members.set(members)
-        project.save()
-        added = True
+            return JsonResponse({"error": form.errors}, status=400)
+
+    else:
+        form = ProjectForm()
+        members = User.objects.all()
 
     # parce qu'on utilise le meme template, a 2/3 choses differentes...
     particular = dict(type = "ADD")
