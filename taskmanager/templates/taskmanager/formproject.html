@@ -21,15 +21,20 @@
          {% endif %}
 
          initiate_drag();
-
-         $("#form").submit(function(e){
-            e.preventDefault();
-            post_form("{% url "newproject" %}");
-         });
       }
    )
 
-
+$(function() {
+   $("input[type=submit]").click(function(e){
+      var action = $(this).attr("name");
+      e.preventDefault(); // On lui empeche d'envoyer sa requete normalement
+      {% if particular.type == "ADD" %}
+         post_form("{% url "newproject" %}", action);
+      {% else %}
+         post_form("{% url "manageproject" id=project.id %}", action);
+      {% endif %}
+   });
+});
 
 </script>
 
@@ -54,11 +59,8 @@
       background-color: rgba(0, 0, 0, 0.05);
    }
 
-
-
 </style>
 {% endblock %}
-
 
 
 
@@ -69,7 +71,7 @@
 
 
 <div class="container">
-   <div class="toast" id="toast_member" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index: 1000;" aria-live="assertive" aria-atomic="true">
+   <div class="toast" id="toast_member" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index: 0;" aria-live="assertive" aria-atomic="true">
       <div class="toast-header" style="background-color: #fc9d9d">
          <i class="fa fa-warning"></i>
          <strong class="mr-auto ml-2" style="color: #555555">Membres</strong>
@@ -84,7 +86,7 @@
 
 <!-- ================ TOAST Tache crée ================ -->
 <div class="container">
-   <div class="toast" id="toast_valid" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
+   <div class="toast" id="toast_valid" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index: 0;" aria-live="assertive" aria-atomic="true">
       <div class="toast-header" style="background-color: #c9c9c9">
          <i class="fa fa-edit"></i>
          {% if particular.type == "MODIFY" %}
@@ -146,9 +148,6 @@
 
 
       <!-- ================ Page membres ================ -->
-		<!-- TODO Faire un truc plus style ici https://openclassrooms.com/fr/courses/1916641-dynamisez-vos-sites-web-avec-javascript/1922434-le-drag-drop -->
-      <!-- https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_draganddrop2 -->
-      <!-- https://stackoverflow.com/questions/52797484/how-to-drag-dom-element-inside-canvas-without-going-out-of-canvas-with-p5js -->
 		<div class="form-group row">
          <div class="col-md-2 col-form-label">
             Membres :
@@ -162,6 +161,9 @@
 
          <div class="ml-3 col-md-2 border rounded place_member">
             <strong>Membres du projet</strong><br/>
+            {% for member in members_of_project %}
+               <div class="my-2 p-2 border member_box rounded" draggable="True">{{ member }}</div>
+            {% endfor %}
          </div>
 
       </div>
@@ -187,11 +189,11 @@
                <input type="submit" name="save" value="Enregistrer les modifications"/>
             </div>
             <div class="col-6 text-right">
-               <input type="submit" name="delete" value="Supprimer le projet" class="btn btn-danger"/>
+               <input type="submit" name="delete" value="Supprimer le projet" class="btn btn-danger" style="z-index:-1"/>
             </div>
          </div>
       {% else %}
-         <input type="submit" value="Créer le projet" />
+         <input type="submit" name="add" value="Créer le projet" />
       {% endif %}
 
    </form>

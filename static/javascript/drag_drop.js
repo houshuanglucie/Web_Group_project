@@ -10,6 +10,8 @@ function initiate_drag(){
    for (let i = 0; i < draggables.length; i++) {
       const item = draggables[i];
 
+      // Si on detecte un drag, on va se focaliser sur cet item
+      // et on arrete de l'afficher dans son endroit d'origine
       item.addEventListener('dragstart', function () {
          draggedItem = item;
          setTimeout(function () {
@@ -17,6 +19,7 @@ function initiate_drag(){
          }, 0)
       });
 
+      // Si on  l'a lache, c'est bon, on peut le ré-afficher et arreter de se focus dessus
       item.addEventListener('dragend', function () {
          setTimeout(function () {
             draggedItem.style.display = 'block';
@@ -25,7 +28,7 @@ function initiate_drag(){
       })
 
 
-
+      // Si on passe sur le champ des users non membres, on mets le fond en rouge, et quelques autres trucs
       place_user.addEventListener('dragover', function (e) {
          e.preventDefault();
          this.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
@@ -41,13 +44,13 @@ function initiate_drag(){
       });
 
       place_user.addEventListener('drop', function (e) {
-         this.append(draggedItem);
+         this.append(draggedItem); // On ajoute a sa progeniture ce qu'on vient de drag
          this.style.backgroundColor = 'rgba(0, 0, 0, 0)';
       });
 
 
 
-
+      // Si on passe sur le champ des users membres du projet, on mets le fond en vert, et quelques autres trucs
       place_member.addEventListener('dragover', function (e) {
          e.preventDefault();
          this.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
@@ -63,7 +66,7 @@ function initiate_drag(){
       });
 
       place_member.addEventListener('drop', function (e) {
-         this.append(draggedItem);
+         this.append(draggedItem); // On ajoute a sa progeniture ce qu'on vient de drag
          this.style.backgroundColor = 'rgba(0, 0, 0, 0)';
       });
 

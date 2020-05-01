@@ -74,7 +74,7 @@ def disconnect(request):
 def projects(request):
     current_user = User.objects.get(id = request.user.id)
     projects_list = Project.objects.filter(Q(members = current_user) | Q(public = "PU")).distinct()
-
+    print(request.session.get('new_delete'), flush = True)
     if(request.session.get('new_delete') != None):
         deleted_project = request.session.get('new_delete')
         request.session['new_delete'] = None
@@ -112,10 +112,11 @@ def focus_project(request, id):
 @login_required(login_url = 'connect')
 def newproject(request):
 
+    members = User.objects.all()
+    members_of_project = []
 
     if request.method == 'POST':
-        form = ProjectForm(request.POST or None)
-        members = User.objects.all()
+        form = ProjectForm(request.POST)
 
         if form.is_valid():
             list_members = request.POST.getlist('members[]')
@@ -144,7 +145,6 @@ def newproject(request):
 
     else:
         form = ProjectForm()
-        members = User.objects.all()
 
     # parce qu'on utilise le meme template, a 2/3 choses differentes...
     particular = dict(type = "ADD")
@@ -159,27 +159,58 @@ def newproject(request):
 # =============== Page de modification/suppression d'un projet =================
 @login_required(login_url = 'connect')
 def manageproject(request, id):
-    added = False
     project = Project.objects.get(id = id)
 
     defaults = {'name' : project.name} # prepopulationner les champs
-    defaults['members'] = [m for m in project.members.all()]
-    form = ProjectForm(request.POST or None, initial = defaults)
+    members = []
+    members_of_project = []
 
-    if form.is_valid():
-        if('delete' in request.POST):
-            request.session['new_delete'] = project.name
-            project.delete()
-            return redirect('projects')
-        elif('save' in request.POST):
-            if("publicCheck" in request.POST):
-                project.public = "PU"
+    for m in User.objects.all():
+        if m in project.members.all():
+            members_of_project.append(m)
+        else:
+            members.append(m)
+
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, initial = defaults)
+
+        if form.is_valid():
+            # Si on a appuye sur le bouton delete, on lui repond que tout va bien, javascript va bien nous rediriger
+            if(request.POST.get('action') and request.POST.get('action') == 'delete'):
+                request.session['new_delete'] = project.name
+                project.delete()
+                return JsonResponse({"state": "ok"}, status=200)
+
+            # Sinon, on modifie le projet
+            elif(request.POST.get('action') and request.POST.get('action') == 'save'):
+                list_members = request.POST.getlist('members[]')
+
+                if list_members == []:
+                    return JsonResponse({"error": "No members"}, status=400)
+
+                project.name = form.cleaned_data['name']
+
+                # Verification de l'aspect public ou privé
+                if(request.POST.get("publicCheck") and request.POST.get("publicCheck")=='on'):
+                    project.public = "PU"
+                else:
+                    project.public = "PR"
+                project.save()
+
+                # MaJ des membres
+                project.members.clear()
+                for member in list_members:
+                    project.members.add(User.objects.get(username = member))
+
+                project.save()
+                # On répond à Ajax qui va se charger d'afficher le toast
+                return JsonResponse({"state": "ok", "name" : project.name}, status=200)
             else:
-                project.public = "PR"
-            project.name = form.cleaned_data['name']
-            project.members.set(form.cleaned_data['members'])
-            project.save()
-            added = True
+                return JsonResponse({"error": form.errors}, status=400)
+    else:
+        form = ProjectForm(initial = defaults)
+
 
     # parce qu'on utilise le meme template, a 2/3 choses differentes...
     particular = dict(type = "MODIFY")
