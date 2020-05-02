@@ -38,7 +38,6 @@ class LoginForm(forms.Form):
             }
         ))
 
-# TODO Mettre le champ user required
 
 class ProjectForm(forms.ModelForm):
     class Meta:

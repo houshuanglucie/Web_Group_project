@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import JsonResponse
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
@@ -259,6 +259,7 @@ def focus_task(request, id):
 # =============== Validation de la création/modification d'une tache =================
 # Pas possible de le faire comme un clean parce que y a du javascript qui vient tout chambouler.
 # Du moins, je n'en ai pas l'impression
+@login_required(login_url = 'connect')
 def validate_task_data(task, request, form, project, action):
     #   args :
     #       task            Tache a valider
@@ -333,7 +334,7 @@ def validate_task_data(task, request, form, project, action):
 
 
 
-
+# TODO Mettre en membres que les membres du projet
 # =============== Page de création de tâche =================
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
@@ -360,6 +361,7 @@ def newtask(request, id_project):
 
 
 # =============== Page de modification/suppression d'une tache =================
+@login_required(login_url = 'connect')
 def managetask(request, id):
     added = False
     error_category = False
@@ -402,6 +404,36 @@ def managetask(request, id):
     # parce qu'on utilise le meme template, a 2/3 choses differentes...
     particular = dict(type = "MODIFY")
     return render(request, 'taskmanager/formtask.html', locals())
+
+
+@login_required(login_url = 'connect')
+def dashboard(request):
+    current_user = User.objects.get(id = request.user.id)
+    involved_projects = Project.objects.filter(members = current_user)
+    tasks_by_project = []
+    for project in involved_projects:
+        tasks_by_proj_data = dict(project = project, tasks = Task.objects.filter(user = current_user, project = project))
+        tasks_by_project.append(tasks_by_proj_data)
+
+    print(tasks_by_project, flush = True)
+    return render(request, 'taskmanager/dashboard.html', locals())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # TODO Calendrier https://alexpnt.github.io/2017/07/15/django-calendar/

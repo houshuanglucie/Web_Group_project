@@ -73,6 +73,7 @@
             <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
          </ol>
 
          <div class="carousel-inner" role="listbox" style="background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);">
@@ -121,6 +122,22 @@
 
             <!-- ================ Page de mon calendrier ================ -->
             <div class="carousel-item">
+               <a class="nav-link" href={% url 'dashboard' %}>
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+            			<img id="logo" title="Violin" src="/static/pictures/columns-solid.svg" class="img-fluid align-self-center m-4"/>
+            			<h1 class="d-none d-sm-block title align-self-center">Mon tableau de bord</h1>
+                  </div>
+
+                  <div class="carousel-caption d-none d-lg-block">
+                     <h5>Mon tableau de bord</h5>
+                     <p>Ayez une vue d'ensemble des tâches que vous devez réaliser</p>
+                  </div>
+               </a>
+            </div>
+
+
+            <!-- ================ Page de mon calendrier ================ -->
+            <div class="carousel-item">
                <a class="nav-link" href="calendar">
                   <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
             			<img id="logo" title="Violin" src="/static/pictures/calendar-alt-solid.svg" class="img-fluid align-self-center m-4"/>
@@ -129,7 +146,7 @@
 
                   <div class="carousel-caption d-none d-lg-block">
                      <h5>Mon calendrier</h5>
-                     <p>Ayez une vue d'ensemble des tâches que vous devez réaliser</p>
+                     <p>C'est ... un calendrier de vos tâches...</p>
                   </div>
                </a>
             </div>
