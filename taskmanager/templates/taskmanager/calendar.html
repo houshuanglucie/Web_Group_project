@@ -1,0 +1,33 @@
+<!-- Vue du contributeur -->
+{% extends "base.html"%}
+{% load static %}
+
+{% block script%}
+<!-- <script type="text/javascript" src="https://visjs.github.io/vis-timeline/styles/vis-timeline-graph2d.min.css"></script> -->
+<script type="text/javascript" src="https://visjs.github.io/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js"></script>
+
+{%endblock%}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/gantt.css" %}">
+{% endblock %}
+
+
+
+
+{% block content %}
+
+
+
+   <div class="m-5 p-3 maindiv">
+      Hello world
+
+   <div id="visualization"></div>
+      <script src={% static "javascript/gantt.js" %}></script>
+   <br />
+
+</div>
+
+
+
+{% endblock %}

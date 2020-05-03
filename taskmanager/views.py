@@ -421,8 +421,12 @@ def dashboard(request):
 
 
 
+# ***************************************************************************
+#  CALENDAR
+# ***************************************************************************
 
-
+def calendar(request):
+    return render(request, 'taskmanager/calendar.html', locals())
 
 
 

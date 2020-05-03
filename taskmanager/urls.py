@@ -14,4 +14,5 @@ urlpatterns = [
 	path('newtask/<int:id_project>', views.newtask, name='newtask'),
 	path('managetask/<int:id>', views.managetask, name='managetask'),
 	path('dashboard', views.dashboard, name='dashboard'),
+	path('calendar', views.calendar, name='calendar'),
 ]
