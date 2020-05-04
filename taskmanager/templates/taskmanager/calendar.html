@@ -1,4 +1,4 @@
-<!-- Vue du contributeur -->
+<!-- Vue du calendrier -->
 {% extends "base.html"%}
 {% load static %}
 
@@ -9,6 +9,7 @@
 <script>
    $(document).ready(function() {
       document.getElementById("calendar-nav_item").classList.add("active");
+
       var tasks_by_project = {{ tasks_by_project|safe }};
       initialize_gantt(tasks_by_project);
       plot_gantt();
@@ -17,15 +18,12 @@
 {%endblock%}
 
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{% static "css/gantt.css" %}">
 {% endblock %}
 
 
 
 
 {% block content %}
-
-
 
    <div class="m-5 p-3">
       <h3>Calendrier</h3>

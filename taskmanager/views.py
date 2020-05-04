@@ -445,6 +445,8 @@ def managetask(request, id):
     start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
 
+    print(start_date_format)
+
     subtasks = Subtask.objects.filter(task = task).order_by("id")
     subtask_list = [subtask.name for subtask in subtasks]
     subtask_list = json.dumps(subtask_list)
@@ -479,6 +481,8 @@ def managetask(request, id):
     # parce qu'on utilise le meme template, a 2/3 choses differentes...
     particular = dict(type = "MODIFY")
     return render(request, 'taskmanager/formtask.html', locals())
+
+
 
 
 @login_required(login_url = 'connect')

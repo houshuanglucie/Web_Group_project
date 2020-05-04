@@ -1,4 +1,4 @@
-<!-- Vue du contributeur -->
+<!-- Form pour ajouter ou modifier des taches -->
 {% extends "base.html"%}
 {% load static %}
 
@@ -136,12 +136,15 @@ a:hover {
    {% endif %}
 
 
-
-
-
-   {% for error in form.errors %}
-      <p>{{ error }}</p>
-   {% endfor %}
+   {% if form.errors %}
+      <div class="alert alert-danger">
+      {% for field in form %}
+         {% for error in field.errors %}
+            <strong>{{ error }}</strong>
+         {% endfor %}
+      {% endfor %}
+      </div>
+   {% endif %}
 
 
    <!-- **************************** FORM ********************************* -->

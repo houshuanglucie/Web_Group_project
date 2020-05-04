@@ -18,7 +18,7 @@ large_txt_widget = forms.Textarea(
 
 
 
-
+# Form pour se connecter
 class LoginForm(forms.Form):
     username = forms.CharField(label = "Nom d'utilisateur", max_length = 30,
         widget = forms.TextInput(
@@ -36,7 +36,9 @@ class LoginForm(forms.Form):
         ))
 
 
+# Form de création ou modification de projet
 class ProjectForm(forms.ModelForm):
+    # On ne met pas le field members, je le crée moi meme avec un drag & drop en js
     class Meta:
         model = Project
         fields = ('name',)
@@ -46,6 +48,7 @@ class ProjectForm(forms.ModelForm):
 
 
 
+# Form pour ajouter un commentaire a une tache
 class CommentForm(forms.Form):
     content = forms.CharField(label="Commentaire",
         widget = forms.Textarea(
@@ -57,7 +60,8 @@ class CommentForm(forms.Form):
         ))
 
 
-# TODO Vérifier niveau serveur que start_date < due_date et que les membres soient bien du projet
+
+# Form pour ajouter ou modifier une tache
 class TaskForm(forms.ModelForm):
 
     class Meta:
@@ -80,3 +84,15 @@ class TaskForm(forms.ModelForm):
         # Pour que les membres selectionnables ne soient que ceux du projet
         project = kwargs['initial']['project']
         self.fields['user'].queryset = project.members
+
+    def clean(self):
+        # A priori inutile si mon cote client est bien fait, mais toujours bien d'avoir une autre verification niveau serveur...
+        cleaned_data = super(TaskForm, self).clean()
+
+        start_date = cleaned_data.get('start_date')
+        due_date = cleaned_data.get('due_date')
+
+        if(start_date > due_date):
+            self.add_error("start_date", "Vérifiez vos dates : la date de début doit être avant la date de fin (Logique non ?)")
+
+        return cleaned_data
