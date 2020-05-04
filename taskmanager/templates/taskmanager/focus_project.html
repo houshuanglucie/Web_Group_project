@@ -90,12 +90,13 @@ a:hover {
 
       <thead class="thead-dark">
          <tr>
-            <th scope="col">Priorité</th>
-            <th scope="col">Tâche</th>
+            <th scope="col" class="col-1">Priorité</th>
+            <th scope="col" class="col-3">Tâche</th>
             <th class="d-none d-lg-table-cell" scope="col">Responsable</th>
-            <th class="d-none d-lg-table-cell" scope="col">Deadline</th>
+            <th class="d-none d-xl-table-cell" scope="col">Deadline</th>
             <th class="d-none d-lg-table-cell" scope="col">Statut</th>
-            <th class="d-none d-lg-table-cell" scope="col">Éditer</th>
+				<th scope="col" class="d-none d-md-table-cell col-1">Détails</th>
+            <th scope="col" class="d-none d-sm-table-cell col-1">Éditer</th>
          </tr>
       </thead>
 
@@ -105,17 +106,17 @@ a:hover {
       <tbody>
          {% for task in tasks %}
          <tr>
-            <!-- TODO Faire un visuel stylé pour enhance les trucs importants ou les trucs outdate -->
             <td>{{ task.priority }}</td>
-            <td><a href = {% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
+				<td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
-            <td class="d-none d-lg-table-cell">{{ task.due_date }}</td>
+            <td class="d-none d-xl-table-cell">{{ task.due_date }}</td>
             <td class="d-none d-lg-table-cell">{{ task.status }}</td>
-            <td class="d-none d-lg-table-cell"><a href="{% url "managetask" id=task.id %}"<i class="fa fa-edit"></i></td>
+				<td class="d-none d-md-table-cell"><a href="{% url "focus_task" id=task.id %}"<i class="fa fa-search"></i></td>
+            <td class="d-none d-sm-table-cell"><a href="{% url "managetask" id=task.id %}"<i class="fa fa-edit"></i></td>
          </tr>
 
          {% empty %}
-         	<tr><td colspan=6>Pas de tâches</td></tr>
+         	<tr><td colspan=7>Pas de tâches</td></tr>
 
          {% endfor %}
       </tbody>
