@@ -1,74 +1,66 @@
 // https://visjs.github.io/vis-timeline/examples/timeline/
 // https://www.rgraph.net/canvas/docs/gantt.html
 
-
-var now = Date.now();
-
-var options = {
-  stack: true,
-  maxHeight: 640,
-  horizontalScroll: false,
-  verticalScroll: true,
-  zoomKey: "ctrlKey",
-  start: Date.now() - 1000 * 60 * 60 * 24 * 3, // minus 3 days
-  end: Date.now() + 1000 * 60 * 60 * 24 * 21, // plus 1 months aprox.
-  orientation: {
-    axis: "both",
-    item: "top",
-  },
-};
+// ===== Initialisation et tracage du diagramme de Gantt pour le calendrier ======
 var groups = new vis.DataSet();
 var items = new vis.DataSet();
 
-var count = 300;
+function initialize_gantt(tasks_by_project){
+   var n = 0;
 
-for (var i = 0; i < count; i++) {
-  var start = now + 1000 * 60 * 60 * 24 * (i + Math.floor(Math.random() * 7));
-  var end = start + 1000 * 60 * 60 * 24 * (1 + Math.floor(Math.random() * 5));
+   for (var i = 0; i < tasks_by_project.length; i++) {
+      project = tasks_by_project[i];
 
-  groups.add({
-    id: i,
-    content: "Task " + i,
-    order: i,
-  });
+      groups.add({
+         id: i,
+         content: project.project,
+         order: i,
+      });
 
-  items.add({
-    id: i,
-    group: i,
-    start: start,
-    end: end,
-    type: "range",
-    content: "Item " + i + "<br> Hello",
-  });
+      // 1588576194
+      // 1588576156060
+
+      for(var j = 0 ; j < project.tasks.length ; j++){
+         task = project.tasks[j];
+         items.add({
+            id: n,
+            group: i,
+            start: parseInt(task.start),
+            end: parseInt(task.end),
+            type: "range",
+            content: task.name,
+         });
+
+         n++;
+      }
+   }
 }
 
-// create a Timeline
-var container = document.getElementById("visualization");
-timeline = new vis.Timeline(container, null, options);
-timeline.setGroups(groups);
-timeline.setItems(items);
 
-function debounce(func, wait = 100) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      func.apply(this, args);
-    }, wait);
-  };
+
+function plot_gantt(){
+
+   var now = Date.now();
+
+   var options = {
+     stack: true,
+     maxHeight: 640,
+     horizontalScroll: false,
+     verticalScroll: true,
+     zoomKey: "ctrlKey",
+     start: Date.now() - 1000 * 60 * 60 * 24 * 3, // minus 3 days
+     end: Date.now() + 1000 * 60 * 60 * 24 * 31, // plus 1 months aprox.
+     orientation: {
+       axis: "both",
+       item: "top",
+     },
+   };
+
+   // create a Timeline
+   var container = document.getElementById("gantt");
+   timeline = new vis.Timeline(container, null, options);
+   timeline.setGroups(groups);
+   timeline.setItems(items);
+
+
 }
-
-let groupFocus = (e) => {
-  let vGroups = timeline.getVisibleGroups();
-  let vItems = vGroups.reduce((res, groupId) => {
-    let group = timeline.itemSet.groups[groupId];
-    if (group.items) {
-      res = res.concat(Object.keys(group.items));
-    }
-    return res;
-  }, []);
-  timeline.focus(vItems);
-};
-this.timeline.on("scroll", debounce(groupFocus, 200));
-// Enabling the next line leads to a continuous since calling focus might scroll vertically even if it shouldn't
-// this.timeline.on("scrollSide", debounce(groupFocus, 200))

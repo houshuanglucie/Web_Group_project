@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.utils.dateformat import format
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
@@ -260,7 +261,7 @@ def focus_task(request, id):
 # Pas possible de le faire comme un clean parce que y a du javascript qui vient tout chambouler.
 # Du moins, je n'en ai pas l'impression
 @login_required(login_url = 'connect')
-def validate_task_data(task, request, form, project, action):
+def validate_task_data(request, form, project, action, task = None):
     #   args :
     #       task            Tache a valider
     #       request         Le request... dont on va exploiter le POST pour recuperer les champs crées par js
@@ -271,6 +272,10 @@ def validate_task_data(task, request, form, project, action):
     #       added           Boolean pour afficher le toast par la suite
     #       error_category  Si l'user fait n'importe quoi avec le champ category
     #       task            Tache validee ou None (en soi, j'ai juste besoin du nom pour l'afficher sur le toast)
+
+    if(action == "ADD"):
+        task = Task()
+
 
     error_category = False
     added = True
@@ -347,8 +352,7 @@ def newtask(request, id_project):
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
         if form.is_valid():
-            new_task = Task()
-            added, error_category, new_task = validate_task_data(new_task, request, form, project, "ADD")
+            added, error_category, new_task = validate_task_data(request, form, project, "ADD")
     else:
         form = TaskForm(initial = defaults)
 
@@ -393,7 +397,7 @@ def managetask(request, id):
                 task.delete()
                 return redirect('focus_project', id = task.project.id)
             elif('save' in request.POST):
-                added, error_category, task = validate_task_data(task, request, form, task.project, "MODIFY")
+                added, error_category, task = validate_task_data(request, form, task.project, "MODIFY", task)
                 if(not error_category):
                     request.session['new_modify'] = task.name
                     return redirect('focus_task', id = task.id)
@@ -426,6 +430,22 @@ def dashboard(request):
 # ***************************************************************************
 
 def calendar(request):
+    current_user = User.objects.get(id = request.user.id)
+    involved_projects = Project.objects.filter(members = current_user)
+    tasks_by_project = []
+    for project in involved_projects:
+        tasks = Task.objects.filter(user = current_user, project = project).order_by('start_date')
+        tasks_list = [dict(
+            project_id = task.project.id,
+            name = task.name,
+            start = int(format(task.start_date, 'U'))*1000,
+            end = int(format(task.due_date, 'U'))*1000
+            ) for task in tasks]
+
+        tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
+        tasks_by_project.append(tasks_by_project_data)
+
+    tasks_by_project = json.dumps(tasks_by_project);
     return render(request, 'taskmanager/calendar.html', locals())
 
 
