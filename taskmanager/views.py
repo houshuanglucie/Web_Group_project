@@ -18,14 +18,14 @@ import json
 # =============== Page d'accueil =================
 @login_required(login_url = 'connect')
 def home(request):
-    try:
+    try: # Si c'est la premiere fois qu'on lance la page et donc que ce champ n'existe pas
         if request.session['just_log']: # Pour afficher un toast
             new_log = True
         else:
             new_log = False
     except:
         new_log = False
-    request.session['just_log'] = False
+    request.session['just_log'] = False # Pour ne pas reafficher le toast si on refresh la page
 
     return render(request, 'taskmanager/home.html', locals())
 
@@ -64,9 +64,9 @@ def connect(request):
 
 
 # =============== Page de connexion vue générique =================
-# En utilisant une vue generique, mais je suis pas convaincu de l'utilité des vues génériques...
+# Mais je suis pas convaincu de l'utilité des vues génériques...
 # Ca prend plus de lignes de codes, et je ne trouve pas d'autre moyen que d'utiliser les request.session
-# mais vu que c'est demandé....
+# pour ce que je souhaite faire, mais vu que c'est demandé....
 class LoginPage(FormView):
     template_name = "taskmanager/connect_gen.html"
     form_class = LoginForm
@@ -93,6 +93,8 @@ class LoginPage(FormView):
             self.request.session['just_log'] = True
             return redirect('home')
         else:
+            # Si on a echec de la connexion, on revient sur la meme page en precisant qu'on vient d'échouer
+            # pour ajouter un toast a la page
             self.request.session['error'] = True
             return redirect('connect')
 
