@@ -1,0 +1,76 @@
+{% extends 'header.html' %}
+
+{% block css %}
+	<style>
+		html, body {
+		  height: 100%;
+		}
+		.background {
+			background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);
+			height: 100%;
+		}
+		#authbox {
+			background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);
+			box-shadow: 5px 5px 5px black;
+		}
+	</style>
+{% endblock %}
+
+{% block script %}
+	<script>
+		$(document).ready(function() {
+				{% if error %}
+					$('.toast').toast('show');
+				{% endif %}
+			})
+	</script>
+{% endblock %}
+
+
+
+{% block content %}
+
+	<div class="container">
+		<div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px; z-index: 1000;" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header" style="background-color: #fc9d9d">
+				<i class="fa fa-warning"></i>
+				<strong class="mr-auto ml-2" style="color: #555555">Connexion</strong>
+				<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<div class="toast-body">
+				Échec de la connexion !
+			</div>
+		</div>
+	</div>
+
+
+   <div class="background">
+		<div class="d-flex justify-content-center align-items-center" style="height:100%;">
+			<div id="authbox" class="py-4 px-5 border rounded border-dark">
+				<div class="row">
+
+					<div class="col-7">
+						<h5 class="mb-4">Authentification</h5>
+				      <form method="post" action=".">
+				         {% csrf_token %}
+				         <p>{{ form.username }}</p>
+							<p>{{ form.password }}</p>
+				         <input type="submit" value="Se connecter"/>
+				      </form>
+					</div>
+
+					<div class="d-none d-md-block col-5 container-fluid">
+						<div class="text-center">
+							<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid.svg" class="img-fluid m-4" />
+							<h3>Gestionnaire de projets</h3>
+						</div>
+					</div>
+				</div>
+
+		   </div>
+
+
+		</div>
+
+	</div>
+{% endblock %}

@@ -9,6 +9,9 @@ from django.http import JsonResponse
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+
 import datetime
 import json
 
@@ -37,7 +40,8 @@ def redirect_home(request):
     return redirect('home')
 
 
-# =============== Page de connexion =================
+# =============== Page de connexion vue manuelle =================
+'''
 def connect(request):
     if request.method == "POST":
         form = LoginForm(request.POST or None)
@@ -55,6 +59,44 @@ def connect(request):
         form = LoginForm()
 
     return render(request, 'taskmanager/connect.html', locals())
+'''
+
+
+
+# =============== Page de connexion vue générique =================
+# En utilisant une vue generique, mais je suis pas convaincu de l'utilité des vues génériques...
+# Ca prend plus de lignes de codes, et je ne trouve pas d'autre moyen que d'utiliser les request.session
+# mais vu que c'est demandé....
+class LoginPage(FormView):
+    template_name = "taskmanager/connect_gen.html"
+    form_class = LoginForm
+    success_url = reverse_lazy('home')
+
+
+    def get_context_data(self, **kwargs):
+        context = super(LoginPage, self).get_context_data(**kwargs)
+        try:
+            context['error'] = self.request.session['error']
+        except KeyError:
+            context['error'] = False
+
+        self.request.session['error'] = False
+        return context
+
+
+    def form_valid(self, form):
+        username = form.cleaned_data["username"]
+        password = form.cleaned_data["password"]
+        user = authenticate(username = username, password = password)
+        if user:
+            login(self.request, user)
+            self.request.session['just_log'] = True
+            return redirect('home')
+        else:
+            self.request.session['error'] = True
+            return redirect('connect')
+
+
 
 
 # =============== "Page" de deconnextion =================
@@ -334,12 +376,10 @@ def validate_task_data(request, form, project, action, task = None):
                 subtask.delete()
 
 
-
     return added, error_category, task
 
 
 
-# TODO Mettre en membres que les membres du projet
 # =============== Page de création de tâche =================
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
