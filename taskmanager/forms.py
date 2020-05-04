@@ -16,12 +16,6 @@ large_txt_widget = forms.Textarea(
         'rows' : 4
     })
 
-select_no_modify_widget = forms.Select(
-    attrs = {
-        'inactive' : True,
-    })
-
-
 
 
 
@@ -62,6 +56,8 @@ class CommentForm(forms.Form):
             }
         ))
 
+
+# TODO Vérifier niveau serveur que start_date < due_date et que les membres soient bien du projet
 class TaskForm(forms.ModelForm):
 
     class Meta:
@@ -73,9 +69,14 @@ class TaskForm(forms.ModelForm):
             'status' : forms.RadioSelect(),
         }
 
+
     def __init__(self, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
+
+        # Pour que y ait pas le champ "------"
         self.fields['user'].empty_label = None
         self.fields['status'].empty_label = None
+
+        # Pour que les membres selectionnables ne soient que ceux du projet
         project = kwargs['initial']['project']
         self.fields['user'].queryset = project.members

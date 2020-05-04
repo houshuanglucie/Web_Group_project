@@ -11,17 +11,16 @@ function initialize_gantt(tasks_by_project){
    for (var i = 0; i < tasks_by_project.length; i++) {
       project = tasks_by_project[i];
 
+      // Ajout d'un groupe de taches (ie un projet)
       groups.add({
          id: i,
          content: project.project,
          order: i,
       });
 
-      // 1588576194
-      // 1588576156060
-
       for(var j = 0 ; j < project.tasks.length ; j++){
          task = project.tasks[j];
+         // Ajout de taches dans un projet
          items.add({
             id: n,
             group: i,
@@ -56,7 +55,7 @@ function plot_gantt(){
      },
    };
 
-   // create a Timeline
+
    var container = document.getElementById("gantt");
    timeline = new vis.Timeline(container, null, options);
    timeline.setGroups(groups);

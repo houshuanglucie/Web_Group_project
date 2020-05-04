@@ -11,6 +11,7 @@ function post_form(url_endpoint, action){
    */
    // Liste qu'on va envoyer
    var members_chosen = [];
+
    // Tous les enfants du div contenant les membres du projet, ie les boites avec les noms des membres du projet
    const members = $(".place_member").children();
 
@@ -46,17 +47,20 @@ function post_form(url_endpoint, action){
       success : function(json) { // Si on recoit une erreur 200
          // console.log("SUCCESS");
          // console.log(json);
+         
          if(action == 'save'){
+            // On affiche le toast "Modification"
             $("#toast_body")[0].firstChild.data = json.name + " a été modifié.";
             $('#toast_valid').css("z-index", "10");
             $('#toast_valid').toast('show');
          }
          else if(action == 'delete'){
-            window.location.href = "/taskmanager/projects";
             // On redirige vers la page des projets
             // Et on fuit l'erreur aussi, vu que la page n'existe a priori plus (python a supprimé le projet)
+            window.location.href = "/taskmanager/projects";
          }
          else {
+            // On affiche le toast "Ajout"
             $("#toast_body")[0].firstChild.data = json.name + " a été crée.";
             $('#toast_valid').toast('show');
          }

@@ -6,11 +6,13 @@ from django.contrib.auth.models import User
 from django.utils.dateformat import format
 from django.db.models import Q, Count
 from django.http import JsonResponse
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 
-from django.views.generic.edit import FormView
-from django.urls import reverse_lazy
+
 
 import datetime
 import json
@@ -76,7 +78,7 @@ class LoginPage(FormView):
     def get_context_data(self, **kwargs):
         context = super(LoginPage, self).get_context_data(**kwargs)
         try:
-            context['error'] = self.request.session['error']
+            context['error'] = self.request.session['error'] # Pour afficher le toast d'échec sur la page de connexion
         except KeyError:
             context['error'] = False
 
@@ -90,11 +92,11 @@ class LoginPage(FormView):
         user = authenticate(username = username, password = password)
         if user:
             login(self.request, user)
-            self.request.session['just_log'] = True
+            self.request.session['just_log'] = True # Pour afficher le toast sur la page d'accueil
             return redirect('home')
         else:
             # Si on a echec de la connexion, on revient sur la meme page en precisant qu'on vient d'échouer
-            # pour ajouter un toast a la page
+            # pour ajouter un toast a la page (cf le try dans get_context_data)
             self.request.session['error'] = True
             return redirect('connect')
 
@@ -118,9 +120,10 @@ def disconnect(request):
 @login_required(login_url = 'connect')
 def projects(request):
     current_user = User.objects.get(id = request.user.id)
-    projects_list = Project.objects.filter(Q(members = current_user) | Q(public = "PU")).distinct()
-    print(request.session.get('new_delete'), flush = True)
+    projects_list = Project.objects.filter(Q(members = current_user) | Q(public = "PU")).distinct() # projects de l'user OU les projets publics
+
     if(request.session.get('new_delete') != None):
+        # Quand on arrive de la page manageproject et qu'on vient de supprimer un projet
         deleted_project = request.session.get('new_delete')
         request.session['new_delete'] = None
         show_toast = True
@@ -135,10 +138,11 @@ def projects(request):
 # =============== Page de vue d'un projet =================
 @login_required(login_url = 'connect')
 def focus_project(request, id):
+    # id : Id du projet sur lequel on se concentre
     project = Project.objects.get(id = id)
     tasks = Task.objects.filter(project__id = id).order_by('priority', '-due_date')
 
-    # Si on vient de supprimer une tache, pour qu'on ait un toast qui apparaisse
+    # Si on vient de supprimer une tache (on arrive de la page managetask), pour qu'on ait un toast qui apparaisse
     if(request.session.get('new_delete') != None):
         deleted_task = request.session.get('new_delete')
         request.session['new_delete'] = None
@@ -154,11 +158,13 @@ def focus_project(request, id):
 
 
 # =============== Page de création d'un nouveau projet =================
+# A cause du drag & drop, je ne peux pas utiliser le remplissage des forms normalement
+# vu que le champ membres n'est pas un champ "normal". Je passe par de l'asynchrone avec
+# ajax et du javascript
 @login_required(login_url = 'connect')
 def newproject(request):
-
     members = User.objects.all()
-    members_of_project = []
+    members_of_project = [] # Ne sert a rien ici, juste que cette variable existe dans le template (utile dans manageproject)
 
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -166,6 +172,7 @@ def newproject(request):
         if form.is_valid():
             list_members = request.POST.getlist('members[]')
             if list_members == []:
+                # On envoie tout de suite a ajax/js un message qui dit que y a une erreur bad request
                 return JsonResponse({"error": "No members"}, status=400)
 
             name = form.cleaned_data['name']
@@ -204,12 +211,15 @@ def newproject(request):
 # =============== Page de modification/suppression d'un projet =================
 @login_required(login_url = 'connect')
 def manageproject(request, id):
+    # id : Id du projet qu'on veut modifier
     project = Project.objects.get(id = id)
 
     defaults = {'name' : project.name} # prepopulationner les champs
     members = []
     members_of_project = []
 
+    # On divise les membres du projet et les non-membres pour les mettre dans
+    # la bonne colonne avec du javascript (toujours a cause du drag & drop)
     for m in User.objects.all():
         if m in project.members.all():
             members_of_project.append(m)
@@ -221,7 +231,8 @@ def manageproject(request, id):
         form = ProjectForm(request.POST, initial = defaults)
 
         if form.is_valid():
-            # Si on a appuye sur le bouton delete, on lui repond que tout va bien, javascript va bien nous rediriger
+            # Si on a appuye sur le bouton delete, on supprimer le projet et on lui repond que tout va bien
+            # Javascript va nous rediriger ensuite
             if(request.POST.get('action') and request.POST.get('action') == 'delete'):
                 request.session['new_delete'] = project.name
                 project.delete()
@@ -244,11 +255,13 @@ def manageproject(request, id):
                 project.save()
 
                 # MaJ des membres
+                # Plus facile de tout supprimer et réinitialiser tous les membres plutot que de checker qui est nouveau
                 project.members.clear()
                 for member in list_members:
                     project.members.add(User.objects.get(username = member))
 
                 project.save()
+
                 # On répond à Ajax qui va se charger d'afficher le toast
                 return JsonResponse({"state": "ok", "name" : project.name}, status=200)
             else:
@@ -269,6 +282,7 @@ def manageproject(request, id):
 # =============== Page de vue d'une tache =================
 @login_required(login_url = 'connect')
 def focus_task(request, id):
+    # id : Id de la tache qu'on regarde
     task = Task.objects.get(id = id)
     comments = task.comments.all().order_by('-submit_time')
 
@@ -289,7 +303,7 @@ def focus_task(request, id):
     show_as_picture = att_extension in [".jpg", ".png"]
     show_as_doc = att_extension in [".pdf", ".txt"]
 
-    # Gestion des commentaires
+    # Gestion des commentaires (du journal)
     form_comment = CommentForm(request.POST or None)
 
     if form_comment.is_valid():
@@ -338,14 +352,19 @@ def validate_task_data(request, form, project, action, task = None):
 
     # Champ category : non required, mais si existe, on va le cherche dans le request.POST
     if('new_category' in request.POST and request.POST['new_category'] != '' and request.POST['category'] != ''):
+        # Si l'user a choisi une categorie ET a aussi tapé une catégorie, on lui dit que c'est un etre indécis
         added = False
         error_category = True
         return added, error_category, None
     elif('new_category' in request.POST and request.POST['new_category'] != '' and request.POST['category'] == ''):
+        # S'il n'a que tapé, on crée une nouvelle catégorie
+        # En termes de robustesse, j'aurais pu vérifier que la catégorie n'existait pas déjà, mais sinon, il faudrait faire un
+        # message d'erreur, etc... bon.
         new_category = Category(name = request.POST['new_category'])
         new_category.save()
         task.category = new_category
     else:
+        # S'il n'a que choisi dans les categories existantes
         task.category = form.cleaned_data['category']
 
     task.save()
@@ -354,10 +373,12 @@ def validate_task_data(request, form, project, action, task = None):
     # Subtasks : pas un champ de task, mais dépend quand meme de task
     if(action == "ADD"):
         if('new_subtask' in request.POST):
+            # Si nouvelle sous-taches
             for subtask in request.POST.getlist('new_subtask'):
                 if(subtask != ''):
                     new_subtask = Subtask(task = task, name = subtask)
                     new_subtask.save()
+                # Si la sous tache est vide, on ne crée rien
 
     elif(action == "MODIFY"):
         former_subtasks = Subtask.objects.filter(task = task)
@@ -371,6 +392,8 @@ def validate_task_data(request, form, project, action, task = None):
                         new_subtask = Subtask(task = task, name = subtask)
                         new_subtask.save()
             for subtask in former_subtasks:
+                # Pour tous les anciens subtasks qui ne sont plus dans le POST, (ie l'user les a supprimés),
+                # alors on les supprime
                 if subtask.name not in request.POST.getlist('new_subtask'):
                     subtask.delete()
         else:
@@ -385,11 +408,13 @@ def validate_task_data(request, form, project, action, task = None):
 # =============== Page de création de tâche =================
 @login_required(login_url = 'connect')
 def newtask(request, id_project):
-    added = False
-    error_category = False
+    # id_project : c'est clair je pense...
+    added = False # pour le toast de confirmation
+    error_category = False # pour le toast d'erreur d'utilisateur indécis
 
     project = Project.objects.get(id = id_project)
-    defaults = {'status' : Status.objects.all()[0], 'project' : project}
+    defaults = {'status' : Status.objects.all()[0], 'project' : project} # on coche au moins une case dans status
+    # et on met project pour le __init__ du form, pour qu'on choisisse les bons membres a mettre dans le tag <select>
 
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
@@ -409,9 +434,11 @@ def newtask(request, id_project):
 # =============== Page de modification/suppression d'une tache =================
 @login_required(login_url = 'connect')
 def managetask(request, id):
-    added = False
-    error_category = False
+    # id : Id de la tache qu'on veut modifier
+    added = False # pour le toast de confirmation
+    error_category = False # pour le toast d'erreur d'utilisateur indécis
 
+    # On prepopulationne les champs
     task = Task.objects.get(id = id)
     project = task.project
 
@@ -432,17 +459,18 @@ def managetask(request, id):
                 'attachment' : task.attachment,
                 'project' : project}
 
+
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial=defaults)
         if form.is_valid():
             if('delete' in request.POST):
-                request.session['new_delete'] = task.name
+                request.session['new_delete'] = task.name # pour afficher un toast quand on retournera sur focus_project
                 task.delete()
                 return redirect('focus_project', id = task.project.id)
             elif('save' in request.POST):
                 added, error_category, task = validate_task_data(request, form, task.project, "MODIFY", task)
                 if(not error_category):
-                    request.session['new_modify'] = task.name
+                    request.session['new_modify'] = task.name # pour afficher un toast quand on retournera sur focus_task
                     return redirect('focus_task', id = task.id)
 
     else:
@@ -455,6 +483,9 @@ def managetask(request, id):
 
 @login_required(login_url = 'connect')
 def dashboard(request):
+    # Juste une vue de taches de l'user par projets
+    # C'était pour tenter une aggrégation des taches par projet (comme avec ElasticSearch),
+    # mais pas réussi à le faire en une ligne...
     current_user = User.objects.get(id = request.user.id)
     involved_projects = Project.objects.filter(members = current_user)
     tasks_by_project = []
@@ -462,7 +493,7 @@ def dashboard(request):
         tasks_by_proj_data = dict(project = project, tasks = Task.objects.filter(user = current_user, project = project))
         tasks_by_project.append(tasks_by_proj_data)
 
-    print(tasks_by_project, flush = True)
+
     return render(request, 'taskmanager/dashboard.html', locals())
 
 
@@ -474,6 +505,16 @@ def dashboard(request):
 
 @login_required(login_url = 'connect')
 def calendar(request):
+    # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
+    # tasks_by_project = list({
+    #   project : nom_du_projet
+    #   tasks : list({
+    #       project_id : id_du_projet_parent
+    #       name : nom_de_la_tache
+    #       start : timestamp_unix_du_start_date_en_MILLISECONDES
+    #       end : timestamp_unix_du_due_date_en_MILLISECONDES
+    #   })
+    #})
     current_user = User.objects.get(id = request.user.id)
     involved_projects = Project.objects.filter(members = current_user)
     tasks_by_project = []

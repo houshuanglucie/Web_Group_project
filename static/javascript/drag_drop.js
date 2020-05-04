@@ -73,8 +73,3 @@ function initiate_drag(){
 
    }
 }
-
-
-
-
-// ===== Fait une requete POST ======

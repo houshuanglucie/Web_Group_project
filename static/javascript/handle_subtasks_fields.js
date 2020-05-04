@@ -2,6 +2,22 @@
 function create_fields_subtasks(subtask_list) {
 
    for(var i = 0 ; i < subtask_list.length ; i++){
+
+      /*
+      Ce qu'on crée à chaque fois, en HTML normal (peut-être qu'un .innerHTML aurait été judicieux) :
+
+      <div class="input-group mb-2" id="test">
+         <input type="text" name="new_subtask" class="form-control " placeholder="Nouvelle sous-tâche">
+         <div class="input-group-append">
+            <div class="input-group-text">
+               <a href="JavaScript:Void(0);" onclick="remove_subtask('subN');" id="toggle_plus">
+                  <i class="fa fa-times"></i>
+               </a>
+            </div>
+         </div>
+      </div>
+      */
+
       var div_group = document.createElement("div");
       div_group.className = "input-group mb-2";
       div_group.id = "sub" + i;
@@ -37,18 +53,7 @@ function create_fields_subtasks(subtask_list) {
       document.getElementById("subtasks").prepend(div_group);
    }
 
-   /*
-   <div class="input-group mb-2" id="test">
-      <input type="text" name="new_subtask" class="form-control " placeholder="Nouvelle sous-tâche">
-      <div class="input-group-append">
-         <div class="input-group-text">
-            <a href="JavaScript:Void(0);" onclick="remove_subtask('test');" id="toggle_plus">
-               <i class="fa fa-times"></i>
-            </a>
-         </div>
-      </div>
-   </div>
-   */
+
 
 }
 
