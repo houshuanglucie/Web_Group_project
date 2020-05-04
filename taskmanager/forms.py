@@ -1,6 +1,9 @@
 from django import forms
 from .models import Project, Status, Comment, Task
 import datetime
+from django.contrib.auth.models import User
+
+
 text_widget = forms.TextInput(
     attrs = {
         'class' : 'form-control',
@@ -74,3 +77,5 @@ class TaskForm(forms.ModelForm):
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['user'].empty_label = None
         self.fields['status'].empty_label = None
+        project = kwargs['initial']['project']
+        self.fields['user'].queryset = project.members

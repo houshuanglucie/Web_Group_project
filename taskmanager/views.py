@@ -347,7 +347,7 @@ def newtask(request, id_project):
     error_category = False
 
     project = Project.objects.get(id = id_project)
-    defaults = {'status' : Status.objects.all()[0]}
+    defaults = {'status' : Status.objects.all()[0], 'project' : project}
 
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
@@ -387,7 +387,8 @@ def managetask(request, id):
                 'priority' : task.priority,
                 'status' : task.status,
                 'category' : task.category,
-                'attachment' : task.attachment}
+                'attachment' : task.attachment,
+                'project' : project}
 
     if request.method == 'POST':
         form = TaskForm(request.POST or None, request.FILES, initial=defaults)
@@ -429,6 +430,7 @@ def dashboard(request):
 #  CALENDAR
 # ***************************************************************************
 
+@login_required(login_url = 'connect')
 def calendar(request):
     current_user = User.objects.get(id = request.user.id)
     involved_projects = Project.objects.filter(members = current_user)
@@ -447,19 +449,3 @@ def calendar(request):
 
     tasks_by_project = json.dumps(tasks_by_project);
     return render(request, 'taskmanager/calendar.html', locals())
-
-
-
-
-
-
-
-
-
-
-
-
-
-# TODO Calendrier https://alexpnt.github.io/2017/07/15/django-calendar/
-# https://medium.com/@unionproject88/django-and-python-calendar-e647a8eccff6
-# https://www.geeksforgeeks.org/python-calendar-module/
