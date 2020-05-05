@@ -109,7 +109,7 @@ a:hover {
             <td>{{ task.priority }}</td>
 				<td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
-            <td class="d-none d-xl-table-cell">{{ task.due_date }}</td>
+            <td class="d-none d-xl-table-cell">{{ task.due_date|date }}</td>
             <td class="d-none d-lg-table-cell">{{ task.status }}</td>
 				<td class="d-none d-md-table-cell"><a href="{% url "focus_task" id=task.id %}"<i class="fa fa-search"></i></td>
             <td class="d-none d-sm-table-cell"><a href="{% url "managetask" id=task.id %}"<i class="fa fa-edit"></i></td>

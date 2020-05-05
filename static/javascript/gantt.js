@@ -1,7 +1,7 @@
 // https://visjs.github.io/vis-timeline/examples/timeline/
 // https://www.rgraph.net/canvas/docs/gantt.html
 
-// ===== Initialisation et tracage du diagramme de Gantt pour le calendrier ======
+// ===== Initialisation du diagramme de Gantt pour le calendrier ======
 var groups = new vis.DataSet();
 var items = new vis.DataSet();
 
@@ -39,7 +39,7 @@ function initialize_gantt(tasks_by_project){
 }
 
 
-
+// ===== Tracage du diagramme de Gantt pour le calendrier ======
 function plot_gantt(){
 
    // GRAPHICS
@@ -79,6 +79,7 @@ function plot_gantt(){
    }
 
 
+// ===== Mise a jour du div details quand on hover une tache ======
 function has_clicked(properties) {
    var item_clicked = items.get(properties.item);
    var details_div = document.getElementById("details_task");
@@ -94,6 +95,7 @@ function has_clicked(properties) {
 
 
 
+// ===== Definition du nouveau contenu ======
 function make_details(item){
 
    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour : 'numeric', minute : 'numeric'};
