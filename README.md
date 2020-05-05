@@ -21,9 +21,9 @@
    - Un non-membre d'un projet privé peut encore avoir accès à un projet privé ne le concernant pas à partir de son URL : je n'ai pas géré ce cas là...
 - Responsivité : l'application est responsive, sauf sur les écrans verticaux très étroits
 
-***
+
 ## En pratique...
-##### *Pour se rendre sur la bonne page*
+#### *Pour se rendre sur la bonne page*
 *À exécuter sur un terminal / invite de commandes avec* `python` *ou* `python3`
 1. Lancer une migration `python manage.py migrate`  
 2. Charger la base de données `python manage.py loaddata db.json`  
@@ -34,12 +34,12 @@
 
 <br>
 
-##### *Utilisateurs enregistrés dans la base db.json*
-`tchaikovsky` : *`concertoinDMajor`* *(utilisateur qui a le plus de données intéressantes dans la base)*
-`sibelius` : *`concertoinDMinor`*
-`paganini` : *`caprice24`*
-`bach` : *`aironGString`*
-`massenet` : *`thaisMeditation`*
-`vt` : *`vtawng20`* *(superuser, mais sans beaucoup de données me concernant)*
+#### *Utilisateurs enregistrés dans la base db.json*
+`tchaikovsky` : *`concertoinDMajor`* *(utilisateur qui a le plus de données intéressantes dans la base)*  
+`sibelius` : *`concertoinDMinor`*  
+`paganini` : *`caprice24`*  
+`bach` : *`aironGString`*  
+`massenet` : *`thaisMeditation`*  
+`vt` : *`vtawng20`* *(superuser, mais sans beaucoup de données me concernant)*  
 
 ***
