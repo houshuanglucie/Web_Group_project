@@ -54,8 +54,8 @@
 						<h5 class="mb-4">Authentification</h5>
 				      <form method="post" action=".">
 				         {% csrf_token %}
-				         <p>{{ form.username }}</p>
-							<p>{{ form.password }}</p>
+				         <p style="width: 80%">{{ form.username }}</p>
+							<p style="width: 80%">{{ form.password }}</p>
 				         <input type="submit" value="Se connecter"/>
 				      </form>
 					</div>

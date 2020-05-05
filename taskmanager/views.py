@@ -513,6 +513,7 @@ def calendar(request):
     # tasks_by_project = list({
     #   project : nom_du_projet
     #   tasks : list({
+    #       project_name : nom_du_projet_parent
     #       project_id : id_du_projet_parent
     #       name : nom_de_la_tache
     #       start : timestamp_unix_du_start_date_en_MILLISECONDES
@@ -525,8 +526,10 @@ def calendar(request):
     for project in involved_projects:
         tasks = Task.objects.filter(user = current_user, project = project).order_by('start_date')
         tasks_list = [dict(
+            project_name = task.project.name,
             project_id = task.project.id,
             name = task.name,
+            id_task = task.id,
             start = int(format(task.start_date, 'U'))*1000,
             end = int(format(task.due_date, 'U'))*1000
             ) for task in tasks]
