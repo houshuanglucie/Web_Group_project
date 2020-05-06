@@ -18,5 +18,6 @@ urlpatterns = [
 	path('calendar', views.calendar, name='calendar'),
 	path('members/',views.projects_members),
 	path('tasks/',views.list_tasks),
-	path('finished/',views.finished_tasks)
+	path('finished/',views.finished_tasks),
+	path('distinct/<int:ide>', views.distinct_tasks)
 ]

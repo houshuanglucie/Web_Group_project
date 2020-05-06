@@ -564,8 +564,11 @@ def finished_tasks(request):
     tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
     return render(request, 'taskmanager/list_tasks.html', locals())
 
-def distinct_tasks(request, id_project):
-    user_tasks = Task.objects.filter(project__id=id_project).filter(user__id=request.user.id)
-    other_tasks = Task.objects.filter(project__id=id_project).exclude(user__id = request.user.id)
+def distinct_tasks(request, ide):
+    project = Project.objects.get(id=ide)
+    user_tasks = Task.objects.filter(project__id=ide).filter(user__id=request.user.id)
+
+
+    othertasks = Task.objects.filter(project__id=ide).exclude(user__id = request.user.id)
     return render(request, 'taskmanager/distinct_tasks.html', locals())
 
