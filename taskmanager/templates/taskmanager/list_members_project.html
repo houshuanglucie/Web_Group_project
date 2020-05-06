@@ -1,5 +1,6 @@
 <style>
     table, th, td {
+        font-size : 200% ;
         border : 1px solid black ;
         border-collapse : collapse ;
 
@@ -7,15 +8,20 @@
 </style>
 
 <table>
-    {% for l in liste %}
+    {% for p in proj %}
     <tr>
-        <th rowspan="{{l.number}}"> {{l.project.name }} </th> </tr>
-        {% for m in l.users.all() %}
-    <tr>
+        <th rowspan="{{p.members.count}}"> {{p.name }} </th>
+        {% for m in p.members.all %}
+
+
         <td> {{m.username}} </td>
     </tr>
-
-
-
-
+    <tr>
+    {% endfor %}
+        </tr>
+    {% endfor %}
 </table>
+
+
+
+

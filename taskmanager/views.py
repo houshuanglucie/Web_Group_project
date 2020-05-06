@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
-from .models import Project, Status, Comment, Task, Category, Subtask, members_of_project
+from .models import Project, Status, Comment, Task, Category, Subtask
 
 
 
@@ -543,26 +543,17 @@ def calendar(request):
 #--- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#
 def projects_members(request):
     current_user = User.objects.get(id = request.user.id)
-    mem = []
-    liste = []
+    proj=[]
 
     for p in Project.objects.all():
         Present = False
         memb = p.members.all()
-        list = []
         for m in memb:
-            list+= [m]
             if m.id==current_user.id:
                 Present = True
         if Present :
-            p_members = members_of_project()
-            p_members.project = p
-            p_members.id = p.id
-            for m in list:
-                p_members.users.add(m)
-            p_members.number=len(list)+1
-            p_members.save()
-            liste += [p_members]
+            proj+=[p]
+
     return render(request, 'taskmanager/list_members_project.html/' , locals())
 
 def list_tasks(request):

@@ -99,12 +99,3 @@ class Task(models.Model):
     def __str__(self):
         return self.name
 
-
-class members_of_project(models.Model):
-    id = models.IntegerField(primary_key=True)
-    project = models.ForeignKey('Project',on_delete=models.CASCADE)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    number = models.IntegerField()
-
-    def __str__(self):
-        return self.project.name
