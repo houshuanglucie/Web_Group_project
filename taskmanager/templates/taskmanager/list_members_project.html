@@ -1,0 +1,21 @@
+<style>
+    table, th, td {
+        border : 1px solid black ;
+        border-collapse : collapse ;
+
+    }
+</style>
+
+<table>
+    {% for l in liste %}
+    <tr>
+        <th rowspan="{{l.number}}"> {{l.project.name }} </th> </tr>
+        {% for m in l.members %}
+    <tr>
+        <td> {{m.username}} </td>
+    </tr>
+
+
+
+
+</table>

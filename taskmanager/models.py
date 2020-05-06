@@ -98,3 +98,10 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Project_members(models.Model):
+
+    project = models.OneToOneField(Project,on_delete=models.CASCADE)
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name = "Membres")
+    number = models.IntegerField()
