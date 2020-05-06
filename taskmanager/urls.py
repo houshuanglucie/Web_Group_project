@@ -17,5 +17,6 @@ urlpatterns = [
 	path('dashboard', views.dashboard, name='dashboard'),
 	path('calendar', views.calendar, name='calendar'),
 	path('members/',views.projects_members),
-	path('tasks/',views.list_tasks)
+	path('tasks/',views.list_tasks),
+	path('finished/',views.finished_tasks)
 ]

@@ -560,3 +560,6 @@ def list_tasks(request):
     tasks = Task.objects.filter(user=request.user)
     return render(request,'taskmanager/list_tasks.html',locals())
 
+def finished_tasks(request):
+    tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    return render(request, 'taskmanager/list_tasks.html', locals())
