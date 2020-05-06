@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
-from .models import Project, Status, Comment, Task, Category, Subtask, Project_members
+from .models import Project, Status, Comment, Task, Category, Subtask, members_of_project
 
 
 
@@ -548,19 +548,21 @@ def projects_members(request):
 
     for p in Project.objects.all():
         Present = False
-        members = p.members
+        memb = p.members.all()
         list = []
-        for m in members:
+        for m in memb:
             list+= [m]
             if m.id==current_user.id:
                 Present = True
         if Present :
-            p_members = Project_members()
+            p_members = members_of_project()
             p_members.project = p
+            p_members.id = p.id
             for m in list:
-                p_members.members.add(m)
+                p_members.users.add(m)
             p_members.number=len(list)+1
             p_members.save()
             liste += [p_members]
     return render(request, 'taskmanager/list_members_project.html/' , locals())
+
 

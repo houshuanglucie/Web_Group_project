@@ -10,7 +10,7 @@
     {% for l in liste %}
     <tr>
         <th rowspan="{{l.number}}"> {{l.project.name }} </th> </tr>
-        {% for m in l.members %}
+        {% for m in l.users.all() %}
     <tr>
         <td> {{m.username}} </td>
     </tr>
