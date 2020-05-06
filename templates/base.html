@@ -73,6 +73,7 @@
 					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
 						<div class="dropdown-menu">
 							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
+							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activité</a>
 						</div>
 				</li>
 
@@ -101,6 +102,8 @@
 		{% block content %}
 		{% endblock %}
 	</section>
+
+	{% include "taskmanager/graphs/preview_graphs.html" %}
 
 
 </body>

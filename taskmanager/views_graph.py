@@ -18,7 +18,7 @@ from .models import Project, Status, Comment, Task, Category, Subtask
 
 @login_required(login_url = 'connect')
 def graphs(request):
-    return render(request, 'taskmanager/graphs.html', locals())
+    return render(request, 'taskmanager/graphs/graphs.html', locals())
 
 
 # ***************************************************************************
@@ -57,4 +57,13 @@ def gantt(request):
         tasks_by_project.append(tasks_by_project_data)
 
     tasks_by_project = json.dumps(tasks_by_project);
-    return render(request, 'taskmanager/gantt.html', locals())
+    return render(request, 'taskmanager/graphs/gantt.html', locals())
+
+
+# ***************************************************************************
+#  DIAGRAMME D'ACTIVITE
+# ***************************************************************************
+
+@login_required(login_url = 'connect')
+def activitydiag(request):
+    return render(request, 'taskmanager/graphs/activitydiag.html', locals())
