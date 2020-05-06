@@ -16,5 +16,6 @@ urlpatterns = [
 	path('managetask/<int:id>', views.managetask, name='managetask'),
 	path('dashboard', views.dashboard, name='dashboard'),
 	path('calendar', views.calendar, name='calendar'),
-	path('members/',views.projects_members)
+	path('members/',views.projects_members),
+	path('tasks/',views.list_tasks)
 ]
