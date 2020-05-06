@@ -542,17 +542,17 @@ def calendar(request):
 
 #--- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#
 def projects_members(request):
-    current_user = User.objects.get(id = request.user.id)
-    proj=[]
+    current_user = User.objects.get(id = request.user.id) # oN R2CUP7RE L4UTILISATEUR CONNECT2
+    proj=[] # Liste des projets dont l'utilisateur fait partie
 
     for p in Project.objects.all():
         Present = False
         memb = p.members.all()
         for m in memb:
-            if m.id==current_user.id:
+            if m.id==current_user.id: # Alors l'utilisateur fait partie de ce projet
                 Present = True
         if Present :
-            proj+=[p]
+            proj+=[p] # On ajoute le projet puisque l'utilisateur en fait partie
 
     return render(request, 'taskmanager/list_members_project.html/' , locals())
 
@@ -563,3 +563,9 @@ def list_tasks(request):
 def finished_tasks(request):
     tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
     return render(request, 'taskmanager/list_tasks.html', locals())
+
+def distinct_tasks(request, id_project):
+    user_tasks = Task.objects.filter(project__id=id_project).filter(user__id=request.user.id)
+    other_tasks = Task.objects.filter(project__id=id_project).exclude(user__id = request.user.id)
+    return render(request, 'taskmanager/distinct_tasks.html', locals())
+
