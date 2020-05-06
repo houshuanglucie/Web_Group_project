@@ -4,6 +4,7 @@
 // ===== Initialisation du diagramme de Gantt pour le calendrier ======
 var groups = new vis.DataSet();
 var items = new vis.DataSet();
+var click_on = false;
 
 function initialize_gantt(tasks_by_project){
    var n = 0;
@@ -68,10 +69,17 @@ function plot_gantt(){
    // INTERACTIONS
    timeline.on("click", function (properties) {
       has_clicked(properties);
+      click_on = true;
    });
 
    timeline.on("itemover", function (properties) {
       has_clicked(properties);
+   });
+
+   timeline.on("itemout", function (properties) {
+      if(!click_on){
+         $("#details_task").hide();
+      }
    });
 
    document.getElementById("waiting").style = "display:none";
@@ -82,14 +90,14 @@ function plot_gantt(){
 // ===== Mise a jour du div details quand on hover une tache ======
 function has_clicked(properties) {
    var item_clicked = items.get(properties.item);
-   var details_div = document.getElementById("details_task");
-   console.log(item_clicked);
+   var details_div = $("#details_task");
    if(item_clicked.content != undefined){
-      details_div.style = "display:block";
+      details_div.show();
       make_details(item_clicked);
    }
    else{
-      details_div.style = "display:none";
+      details_div.hide();
+      click_on = false;
    }
 }
 

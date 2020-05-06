@@ -13,7 +13,18 @@
       initialize_gantt(tasks_by_project);
       plot_gantt();
 
+      $(window).click(function() {
+         document.getElementById("details_task").style = "display:none";
+      });
+
+      $('#gantt').click(function(event){
+         event.stopPropagation();
+      });
+
    })
+
+
+
 </script>
 {%endblock%}
 
@@ -23,6 +34,17 @@ a:hover {
    text-decoration: none;
    color : black;
 }
+
+#details_task{
+   display:none;
+   position:fixed;
+   top:2vw;
+   right:2vw;
+   z-index:10000;
+   background-color: white;
+   box-shadow: 5px 5px 5px black;
+   border: solid black 0.1vw;
+}
 </style>
 {% endblock %}
 
@@ -31,35 +53,44 @@ a:hover {
 
 {% block content %}
 
+<div class="col-4 mt-5">
+   <div id="details_task" class="p-2">
+      <div class="row">
+         <h5 class="col-10" id="details_name">Aucune tâche sélectionnée</h5>
+         <div class="col-1"><i class="fa fa-times"></i></div>
+      </div>
+      <table class="table">
+         <tbody>
+            <tr>
+               <th class="thead-dark" style="width : 20%;">Projet parent</th>
+               <td><a id="details_project" href="">-</a></td>
+            </tr>
+            <tr>
+               <th class="thead-dark" style="width : 20%;">Date de début</th>
+               <td id="details_start">-</td>
+            </tr>
+            <tr>
+               <th class="thead-dark" style="width : 20%;">Deadline</th>
+               <td id="details_deadline">-</td>
+            </tr>
+         </tbody>
+      </table>
+      <p> <a id="details_link" href="">Plus de détails... </a></p>
+   </div>
+</div>
+
    <div class="m-5 p-3">
       <h3>Calendrier</h3>
-      <em>Passez la souris sur une tâche pour plus de détails, Ctrl+scroll pour zoomer</em>
+      <em>Passez la souris sur une tâche pour plus de détails et cliquez pour la sélectionner, Ctrl+scroll pour zoomer</em>
    <br/>
-      <div id="gantt" class="m-5">
+   <div class="row">
+
+      <div id="gantt" class="col-12 mt-5">
          <span id="waiting">Chargement...</span>
       </div>
+   </div>
 
 
-      <div id="details_task" class="m-3 p-3 border" style="display:none">
-         <h5 id="details_name">Aucune tâche sélectionnée</h5>
-         <table class="table">
-            <tbody>
-               <tr>
-                  <th class="thead-dark" style="width : 20%;">Projet parent</th>
-                  <td><a id="details_project" href="">-</a></td>
-               </tr>
-               <tr>
-                  <th class="thead-dark" style="width : 20%;">Date de début</th>
-                  <td id="details_start">-</td>
-               </tr>
-               <tr>
-                  <th class="thead-dark" style="width : 20%;">Deadline</th>
-                  <td id="details_deadline">-</td>
-               </tr>
-            </tbody>
-         </table>
-         <p> <a id="details_link" href="">Plus de détails... </a></p>
-      </div>
 
 </div>
 

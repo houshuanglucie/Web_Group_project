@@ -15,8 +15,14 @@ import json
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 
+
+@login_required(login_url = 'connect')
+def graphs(request):
+    return render(request, 'taskmanager/graphs.html', locals())
+
+
 # ***************************************************************************
-#  CALENDAR
+#  GANTT
 # ***************************************************************************
 
 @login_required(login_url = 'connect')

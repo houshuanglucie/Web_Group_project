@@ -17,4 +17,5 @@ urlpatterns = [
 	path('managetask/<int:id>', views.managetask, name='managetask'),
 	path('dashboard', views.dashboard, name='dashboard'),
 	path('gantt', views_graph.gantt, name='gantt'),
+	path('graphs', views_graph.graphs, name='graphs'),
 ]
