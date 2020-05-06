@@ -58,9 +58,14 @@
 					<a class="nav-link" href="{% url "dashboard" %}">Tableau de bord</a>
 				</li>
 
-				<li id="calendar-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "calendar" %}">Mon calendrier</a>
+
+				<li id="graphs-nav_item" class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="view">Vues par graphiques</a>
+						<div class="dropdown-menu">
+							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
+						</div>
 				</li>
+
 			</ul>
 
 			<ul id="right_nav-bar" class="navbar-nav ml-auto">

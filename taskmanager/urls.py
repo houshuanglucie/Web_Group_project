@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import views_graph
 
 urlpatterns = [
 	path('', views.redirect_home, name = 'redirect_home'),
@@ -15,5 +16,5 @@ urlpatterns = [
 	path('newtask/<int:id_project>', views.newtask, name='newtask'),
 	path('managetask/<int:id>', views.managetask, name='managetask'),
 	path('dashboard', views.dashboard, name='dashboard'),
-	path('calendar', views.calendar, name='calendar'),
+	path('gantt', views_graph.gantt, name='gantt'),
 ]

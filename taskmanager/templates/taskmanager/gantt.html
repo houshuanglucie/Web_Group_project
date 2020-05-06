@@ -8,7 +8,7 @@
 
 <script>
    $(document).ready(function() {
-      document.getElementById("calendar-nav_item").classList.add("active");
+      document.getElementById("graphs-nav_item").classList.add("active");
       var tasks_by_project = {{ tasks_by_project|safe }};
       initialize_gantt(tasks_by_project);
       plot_gantt();
