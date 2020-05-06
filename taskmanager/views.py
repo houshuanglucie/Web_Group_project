@@ -539,3 +539,18 @@ def calendar(request):
 
     tasks_by_project = json.dumps(tasks_by_project);
     return render(request, 'taskmanager/calendar.html', locals())
+
+#--- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#
+def projects_members(request):
+    current_user = User.objects.get(id = request.user.id)
+    projects = []
+    for p in Project.objects.all():
+        Present = False
+        members = p.members
+        for m in members:
+            if m.id==current_user.id:
+                Present = True
+        if Present :
+            projects += p
+    return render(request, 'taskmanager/list_members_projects.html/' , locals())
+
