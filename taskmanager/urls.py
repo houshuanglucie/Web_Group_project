@@ -16,9 +16,9 @@ urlpatterns = [
 	path('managetask/<int:id>', views.managetask, name='managetask'),
 	path('dashboard', views.dashboard, name='dashboard'),
 	path('calendar', views.calendar, name='calendar'),
-	path('members/',views.projects_members),
-	path('tasks/',views.list_tasks),
-	path('finished/',views.finished_tasks),
-	path('distinct/<int:ide>', views.distinct_tasks),
-	path('activities/<int:ide>', views.activities)
+	path('members/',views.projects_members, name='membersproject'),
+	path('tasks/',views.list_tasks,name='listtasks'),
+	path('finished/',views.finished_tasks,name='finishedtasks'),
+	path('distinct/<int:ide>', views.distinct_tasks, name='distincttasks'),
+	path('activities/<int:ide>', views.activities, name='activities')
 ]
