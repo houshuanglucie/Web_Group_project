@@ -1,0 +1,27 @@
+<style>
+    table, th, td {
+        font-size : 200% ;
+        border : 1px solid black ;
+        border-collapse : collapse ;
+
+    }
+</style>
+
+<table>
+    {% for p in proj %}
+    <tr>
+        <th rowspan="{{p.members.count}}"> {{p.name }} </th>
+        {% for m in p.members.all %}
+
+
+        <td> {{m.username}} </td>
+    </tr>
+    <tr>
+    {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+
+
+
