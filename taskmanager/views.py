@@ -559,19 +559,30 @@ def projects_members(request):
     return render(request, 'taskmanager/list_members_project.html/' , locals())
 
 def list_tasks(request):
-    tasks = Task.objects.filter(user=request.user)
+    empty = False
+    tasks = Task.objects.filter(user__id=request.user.id)
+    if(len(tasks)==0):
+        empty=True
     return render(request,'taskmanager/list_tasks.html',locals())
 
 def finished_tasks(request):
+    empty_f = False
     tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    if (len(tasks) == 0):
+        empty_f = True
     return render(request, 'taskmanager/list_tasks.html', locals())
 
 def distinct_tasks(request, ide):
+    user_empty = False
+    others_empty = False
     project = Project.objects.get(id=ide)
     user_tasks = Task.objects.filter(project__id=ide).filter(user__id=request.user.id)
-
-
+    if(len(user_tasks)==0):
+        user_empty = True
+    print(user_tasks)
     othertasks = Task.objects.filter(project__id=ide).exclude(user__id = request.user.id)
+    if(len(othertasks)==0):
+        others_empty = True
     return render(request, 'taskmanager/distinct_tasks.html', locals())
 
 def activities(request, ide):
