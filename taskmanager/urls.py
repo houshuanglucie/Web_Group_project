@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import views_graph
+from . import views_export
 
 urlpatterns = [
 	path('', views.redirect_home, name = 'redirect_home'),
@@ -19,4 +20,5 @@ urlpatterns = [
 	path('graphs', views_graph.graphs, name='graphs'),
 	path('gantt', views_graph.gantt, name='gantt'),
 	path('activitydiag', views_graph.activitydiag, name='activitydiag'),
+	path('export/csv', views_export.export_csv, name='export_csv'),
 ]
