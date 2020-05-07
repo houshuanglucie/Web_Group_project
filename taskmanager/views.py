@@ -502,43 +502,45 @@ def dashboard(request):
 
 
 
-
 # ***************************************************************************
-#  CALENDAR
+#  Filtrage et tri des task
 # ***************************************************************************
 
-@login_required(login_url = 'connect')
-def calendar(request):
-    # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
-    # tasks_by_project = list({
-    #   project : nom_du_projet
-    #   tasks : list({
-    #       project_name : nom_du_projet_parent
-    #       project_id : id_du_projet_parent
-    #       name : nom_de_la_tache
-    #       start : timestamp_unix_du_start_date_en_MILLISECONDES
-    #       end : timestamp_unix_du_due_date_en_MILLISECONDES
-    #   })
-    #})
-    current_user = User.objects.get(id = request.user.id)
-    involved_projects = Project.objects.filter(members = current_user)
-    tasks_by_project = []
-    for project in involved_projects:
-        tasks = Task.objects.filter(user = current_user, project = project).order_by('start_date')
-        tasks_list = [dict(
-            project_name = task.project.name,
-            project_id = task.project.id,
-            name = task.name,
-            id_task = task.id,
-            start = int(format(task.start_date, 'U'))*1000,
-            end = int(format(task.due_date, 'U'))*1000
-            ) for task in tasks]
+@login_required(login_url='connect')
+def task_filter(request, id):
+    project = Project.objects.get(id=id)
+    task_list = Task.objects.filter(project__id=id)
 
-        tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
-        tasks_by_project.append(tasks_by_project_data)
+    # user_list = User.objects.all().values('id', 'last_name')
+    # print(user_list)
+    # status_list = Status.objects.all().values('id', 'how')
+    # print(status_list)
 
-    tasks_by_project = json.dumps(tasks_by_project);
-    return render(request, 'taskmanager/calendar.html', locals())
+    if request.method == 'POST':
+
+        sorter = request.POST.get('sorter')
+        if sorter == "default":
+            sorter = "priority"
+
+        assignee_selected = request.POST.get('assignee_selected')
+        status_selected = request.POST.get('status_selected')
+
+        filter_dict = dict()
+
+        if assignee_selected != "All":
+            filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
+        if status_selected != "All":
+            filter_dict['status'] = get_object_or_404(Status, id=status_selected)
+
+        tasks = task_list.filter(**filter_dict)
+
+        return render(request, 'taskmanager/focus_project.html', locals())
+    else:
+        return render(request, 'taskmanager/focus_project.html', locals())
+
+
+
+
 
 #--- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#
 def projects_members(request):
@@ -590,3 +592,4 @@ def activities(request, ide):
 
 
     return render(request,'taskmanager/activities.html', locals())
+
