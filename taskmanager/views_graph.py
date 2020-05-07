@@ -84,6 +84,7 @@ def burndown(request):
 
 @login_required(login_url = 'connect')
 def radartask(request):
+
     return render(request, 'taskmanager/graphs/radartask.html', locals())
 
 

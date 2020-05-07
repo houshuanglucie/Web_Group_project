@@ -4,14 +4,18 @@
 
 {% block script%}
 
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src={% static "javascript/task_graph.js" %}></script>
+
+
 <script>
    $(document).ready(function() {
       document.getElementById("graphs-nav_item").classList.add("active");
+      plot_radar();
    })
-
-
-
 </script>
+
+
 {%endblock%}
 
 {% block css %}
@@ -28,12 +32,12 @@ a:hover {
 
 {% block content %}
 
-   <div class="m-5 p-3">
-      <h3>Radar des tâches</h3>
-      <em>Description</em>
-   <br/>
-
+<div class="m-5 p-3">
+   <h3>Radar des tâches</h3>
+   <em>Description</em>
+<br/>
 </div>
 
+<div id='div_plot'><!-- Plotly chart will be drawn inside this DIV --></div>
 
 {% endblock %}
