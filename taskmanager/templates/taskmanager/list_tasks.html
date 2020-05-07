@@ -11,7 +11,6 @@ a:hover {
 </style>
 {% endblock %}
 
-
 {% block script%}
 <script>
    $(document).ready(
@@ -24,17 +23,23 @@ a:hover {
    )
 </script>
 {%endblock%}
-<table>
+
+{% block content %}
+
+<table class="table">
     {% for t in tasks %}
+
     <tr>
        <th rowspan="7">{{t.name}}</th>
-        <td> {{t.descrption }}</td>
+        <td> Description : {{t.description}}</td>
     </tr>
     <tr><td class="thead-dark"><a href="{% url 'focus_project' id=t.project.id %}"> Project : {{t.project.name}}</a></td></tr>
     <tr> <td class="thead-dark"> Start date : {{t.start_date}}</td></tr>
     <tr> <td class="thead-dark"> Due date :{{t.due_date}}</td></tr>
     <tr> <td class="thead-dark"> Priority : {{t.priority}}</td></tr>
     <tr> <td class="thead-dark"> Status : {{t.status}}</td></tr>
-    <tr> <td class="thead-dark"> Category : {{t.categrie}}</td></tr>
+    <tr> <td class="thead-dark"> Category : {{t.category}}</td></tr>
+
     {% endfor %}
 </table>
+{% endblock %}

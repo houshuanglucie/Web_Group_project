@@ -557,7 +557,7 @@ def projects_members(request):
     return render(request, 'taskmanager/list_members_project.html/' , locals())
 
 def list_tasks(request):
-    tasks = Task.objects.filter(user=request.user)
+    tasks = Task.objects.filter(user__id=request.user.id)
     return render(request,'taskmanager/list_tasks.html',locals())
 
 def finished_tasks(request):
