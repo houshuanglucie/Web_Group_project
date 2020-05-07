@@ -501,7 +501,11 @@ def dashboard(request):
     return render(request, 'taskmanager/dashboard.html', locals())
 
 
-# # ========== (Methode normal) Filtrage et tri des task en fonction de nom et status =================
+  
+# ***************************************************************************
+#  (Methode normal) Filtrage et tri des task
+# ***************************************************************************
+
 # @login_required(login_url='connect')
 # def task_filter(request, id):
 #     project = Project.objects.get(id=id)
@@ -537,7 +541,10 @@ def dashboard(request):
 
 
 
-# ============== (Methode avance) Filtrage et tri des task =================
+# ***************************************************************************
+#  (Methode avance) Filtrage et tri des task
+# ***************************************************************************
+
 @login_required(login_url='connect')
 def task_filter(request, id):
     project = Project.objects.get(id=id)
@@ -569,3 +576,85 @@ def task_filter(request, id):
         return render(request, 'taskmanager/focus_project.html', locals())
     else:
         return render(request, 'taskmanager/focus_project.html', locals())
+
+
+
+
+# ***************************************************************************
+#  CALENDAR
+# ***************************************************************************
+
+@login_required(login_url = 'connect')
+def calendar(request):
+    # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
+    # tasks_by_project = list({
+    #   project : nom_du_projet
+    #   tasks : list({
+    #       project_name : nom_du_projet_parent
+    #       project_id : id_du_projet_parent
+    #       name : nom_de_la_tache
+    #       start : timestamp_unix_du_start_date_en_MILLISECONDES
+    #       end : timestamp_unix_du_due_date_en_MILLISECONDES
+    #   })
+    #})
+    current_user = User.objects.get(id = request.user.id)
+    involved_projects = Project.objects.filter(members = current_user)
+    tasks_by_project = []
+    for project in involved_projects:
+        tasks = Task.objects.filter(user = current_user, project = project).order_by('start_date')
+        tasks_list = [dict(
+            project_name = task.project.name,
+            project_id = task.project.id,
+            name = task.name,
+            id_task = task.id,
+            start = int(format(task.start_date, 'U'))*1000,
+            end = int(format(task.due_date, 'U'))*1000
+            ) for task in tasks]
+
+        tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
+        tasks_by_project.append(tasks_by_project_data)
+
+    tasks_by_project = json.dumps(tasks_by_project);
+    return render(request, 'taskmanager/calendar.html', locals())
+
+#--- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#
+def projects_members(request):
+    current_user = User.objects.get(id = request.user.id) # oN R2CUP7RE L4UTILISATEUR CONNECT2
+    proj=[] # Liste des projets dont l'utilisateur fait partie
+
+    for p in Project.objects.all():
+        Present = False
+        memb = p.members.all()
+        for m in memb:
+            if m.id==current_user.id: # Alors l'utilisateur fait partie de ce projet
+                Present = True
+        if Present :
+            proj+=[p] # On ajoute le projet puisque l'utilisateur en fait partie
+
+    return render(request, 'taskmanager/list_members_project.html/' , locals())
+
+def list_tasks(request):
+    tasks = Task.objects.filter(user=request.user)
+    return render(request,'taskmanager/list_tasks.html',locals())
+
+def finished_tasks(request):
+    tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    return render(request, 'taskmanager/list_tasks.html', locals())
+
+def distinct_tasks(request, ide):
+    project = Project.objects.get(id=ide)
+    user_tasks = Task.objects.filter(project__id=ide).filter(user__id=request.user.id)
+
+
+    othertasks = Task.objects.filter(project__id=ide).exclude(user__id = request.user.id)
+    return render(request, 'taskmanager/distinct_tasks.html', locals())
+
+def activities(request, ide):
+    project=Project.objects.get(id=ide)
+
+    tasks = Task.objects.filter(project__id=ide).order_by('comments__submit_time')
+
+
+    return render(request,'taskmanager/activities.html', locals())
+
+
