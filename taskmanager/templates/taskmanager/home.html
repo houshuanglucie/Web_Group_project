@@ -151,6 +151,24 @@
                </a>
             </div>
 
+            <!-- =============== Page de lien vers les fonctionnalités F1 ========= -->
+            <!-- ================ Div exemple liste ================ -->
+            <div class="carousel-item">
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+
+                     <ul class="d-none d-sm-block align-self-center">
+                        <li><a style="font-size:300%" ; href={% url 'membersproject' %}> Liste de vos projets et leurs membres </a></li><br> <br>
+                        <li><a style="font-size:300%" ; href={% url 'listtasks' %}>Listes de vos tâches et leurs attributs </a></li> <br><br>
+                        <li><a style="font-size:300%" ; href={% url 'finishedtasks' %}>Liste de toutes vos tâches finies </a></li><br><br>
+                     </ul>
+                  </div>
+
+                  <div class="carousel-caption d-none d-lg-block">
+                     <h5>Complete datas</h5>
+
+                  </div>
+            </div>
+
          <!-- ================ FLECHES DE NAVIGATION ================ -->
          </div>
          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
