@@ -25,7 +25,13 @@ a:hover {
 {%endblock%}
 
 {% block content %}
+{% if empty_f %}
+<h2> Vous n'avez aucune tâche terminée </h2>
+{% endif %}
 
+{% if empty %}
+<h2> Vous n'êtes assigné a aucune tâche </h2>
+{% endif %}
 <table class="table">
     {% for t in tasks %}
 

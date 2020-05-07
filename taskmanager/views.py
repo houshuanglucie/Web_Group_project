@@ -557,11 +557,17 @@ def projects_members(request):
     return render(request, 'taskmanager/list_members_project.html/' , locals())
 
 def list_tasks(request):
+    empty = False
     tasks = Task.objects.filter(user__id=request.user.id)
+    if(len(tasks)==0):
+        empty=True
     return render(request,'taskmanager/list_tasks.html',locals())
 
 def finished_tasks(request):
+    empty_f = False
     tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    if (len(tasks) == 0):
+        empty_f = True
     return render(request, 'taskmanager/list_tasks.html', locals())
 
 def distinct_tasks(request, ide):
