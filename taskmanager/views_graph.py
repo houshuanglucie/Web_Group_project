@@ -67,3 +67,30 @@ def gantt(request):
 @login_required(login_url = 'connect')
 def activitydiag(request):
     return render(request, 'taskmanager/graphs/activitydiag.html', locals())
+
+
+# ***************************************************************************
+#  BURNDOWN CHART
+# ***************************************************************************
+
+@login_required(login_url = 'connect')
+def burndown(request):
+    return render(request, 'taskmanager/graphs/burndown.html', locals())
+
+
+# ***************************************************************************
+#  RADAR TASK
+# ***************************************************************************
+
+@login_required(login_url = 'connect')
+def radartask(request):
+    return render(request, 'taskmanager/graphs/radartask.html', locals())
+
+
+# ***************************************************************************
+#  RADAR ACTIVITY
+# ***************************************************************************
+
+@login_required(login_url = 'connect')
+def radaractivity(request):
+    return render(request, 'taskmanager/graphs/radaractivity.html', locals())
