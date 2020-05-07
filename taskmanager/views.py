@@ -565,11 +565,16 @@ def finished_tasks(request):
     return render(request, 'taskmanager/list_tasks.html', locals())
 
 def distinct_tasks(request, ide):
+    user_empty = False
+    others_empty = False
     project = Project.objects.get(id=ide)
     user_tasks = Task.objects.filter(project__id=ide).filter(user__id=request.user.id)
-
-
+    if(len(user_tasks)==0):
+        user_empty = True
+    print(user_tasks)
     othertasks = Task.objects.filter(project__id=ide).exclude(user__id = request.user.id)
+    if(len(othertasks)==0):
+        others_empty = True
     return render(request, 'taskmanager/distinct_tasks.html', locals())
 
 def activities(request, ide):

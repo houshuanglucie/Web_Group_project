@@ -1,14 +1,40 @@
+{% extends "base.html"%}
+{% load humanize %}
+{% load static %}
+
+{% block css %}
+<style>
+a:hover {
+	text-decoration : none;
+	color : black;
+}
+</style>
+{% endblock %}
+
+
+{% block script%}
+<script>
+   $(document).ready(
+      function() {
+         document.getElementById("projects-nav_item").classList.add("active");
+			{% if show_toast %}
+				$('.toast').toast('show');
+			{% endif %}
+      }
+   )
+</script>
+{%endblock%}
 <table>
     {% for t in tasks %}
     <tr>
        <th rowspan="7">{{t.name}}</th>
         <td> {{t.descrption }}</td>
     </tr>
-    <tr><td><a href="{% url 'focus_project' id=t.project.id %}"> Project : {{t.project.name}}</a></td></tr>
-    <tr> <td> Start date : {{t.start_date}}</td></tr>
-    <tr> <td> Due date :{{t.due_date}}</td></tr>
-    <tr> <td> Priority : {{t.priority}}</td></tr>
-    <tr> <td> Status : {{t.status}}</td></tr>
-    <tr> <td> Category : {{t.categrie}}</td></tr>
+    <tr><td class="thead-dark"><a href="{% url 'focus_project' id=t.project.id %}"> Project : {{t.project.name}}</a></td></tr>
+    <tr> <td class="thead-dark"> Start date : {{t.start_date}}</td></tr>
+    <tr> <td class="thead-dark"> Due date :{{t.due_date}}</td></tr>
+    <tr> <td class="thead-dark"> Priority : {{t.priority}}</td></tr>
+    <tr> <td class="thead-dark"> Status : {{t.status}}</td></tr>
+    <tr> <td class="thead-dark"> Category : {{t.categrie}}</td></tr>
     {% endfor %}
 </table>

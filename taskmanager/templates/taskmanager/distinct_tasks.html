@@ -30,11 +30,10 @@ a:hover {
 
 {% block content %}
 
-<h1> Your tasks </h1>
 
 <div class="m-5">
 
-   <a href="{% url 'focus_project' id=project.id %}"><i class="fa fa-angle-double-left"></i> {{ task.project }}</a>
+   <a href="{% url 'focus_project' id=project.id %}"><i class="fa fa-angle-double-left"></i> Return to project : {{ project.name }}</a>
    <br/><br/>
 
    <table class="table">
@@ -44,7 +43,11 @@ a:hover {
             <th class="thead-dark">Projet parent</th>
             <td><a href="{% url 'focus_project' id=project.id %}">{{ task.project }}</a></td>
          </tr>
-         {% for task in usertask %}
+         <h1> Your tasks </h1>
+{% if user_empty %}
+<h2> Vous n'avez aucune tâche assignée dans ce projet </h2>
+{% endif %}
+         {% for task in user_tasks %}
          <tr>
             <th class="thead-dark">Tâche</th>
             <td>{{ task.name }}</td>
@@ -103,12 +106,14 @@ a:hover {
          </tr>
       </tbody>
    </table>
+    <br><br>
  {% endfor %}
 
 
         <h1> Other tasks </h1>
-
-
+        {% if others_empty %}
+    <h2> Vous êtes le seul a avoir des tâches assignées dans ce projet </h2>
+        {% endif %}
       {% comment %} BODY OF TABLE {% endcomment %}
 
 
@@ -173,5 +178,6 @@ a:hover {
          </tr>
       </tbody>
    </table>
+    <br><br>
        {% endfor %}
 {% endblock %}
