@@ -19,4 +19,5 @@ urlpatterns = [
 	path('graphs', views_graph.graphs, name='graphs'),
 	path('gantt', views_graph.gantt, name='gantt'),
 	path('activitydiag', views_graph.activitydiag, name='activitydiag'),
+	path('projects/<int:id>/taskfilter', views.task_filter, name='task_filter'),
 ]

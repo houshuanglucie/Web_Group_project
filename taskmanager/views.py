@@ -499,3 +499,73 @@ def dashboard(request):
 
 
     return render(request, 'taskmanager/dashboard.html', locals())
+
+
+# # ========== (Methode normal) Filtrage et tri des task en fonction de nom et status =================
+# @login_required(login_url='connect')
+# def task_filter(request, id):
+#     project = Project.objects.get(id=id)
+#     task_list = Task.objects.filter(project__id=id)
+#
+#     if request.method == 'POST':
+#
+#         sorter = request.POST.get('sorter')
+#         if sorter == "default":
+#             sorter = "priority"
+#
+#         assignee_selected = request.POST.get('assignee_selected')
+#         status_selected = request.POST.get('status_selected')
+#
+#         if assignee_selected != "All":
+#             assignee_id = assignee_selected
+#             tasks = task_list.filter(user__id=assignee_id).order_by(sorter)
+#             if status_selected != "All":
+#                 status_id = status_selected
+#                 tasks = tasks.filter(status__id=status_id).order_by(sorter)
+#                 return render(request, 'taskmanager/focus_project.html', locals())
+#             return render(request, 'taskmanager/focus_project.html', locals())
+#
+#         elif status_selected != "All":
+#             status_id = status_selected
+#             tasks = task_list.filter(status__id=status_id).order_by(sorter)
+#             return render(request, 'taskmanager/focus_project.html', locals())
+#         else:
+#             tasks = task_list.order_by(sorter)
+#             return render(request, 'taskmanager/focus_project.html', locals())
+#     else:
+#         return render(request, 'taskmanager/focus_project.html', locals())
+
+
+
+# ============== (Methode avance) Filtrage et tri des task =================
+@login_required(login_url='connect')
+def task_filter(request, id):
+    project = Project.objects.get(id=id)
+    task_list = Task.objects.filter(project__id=id)
+
+    # user_list = User.objects.all().values('id', 'last_name')
+    # print(user_list)
+    # status_list = Status.objects.all().values('id', 'how')
+    # print(status_list)
+
+    if request.method == 'POST':
+
+        sorter = request.POST.get('sorter')
+        if sorter == "default":
+            sorter = "priority"
+
+        assignee_selected = request.POST.get('assignee_selected')
+        status_selected = request.POST.get('status_selected')
+
+        filter_dict = dict()
+
+        if assignee_selected != "All":
+            filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
+        if status_selected != "All":
+            filter_dict['status'] = get_object_or_404(Status, id=status_selected)
+
+        tasks = task_list.filter(**filter_dict)
+
+        return render(request, 'taskmanager/focus_project.html', locals())
+    else:
+        return render(request, 'taskmanager/focus_project.html', locals())
