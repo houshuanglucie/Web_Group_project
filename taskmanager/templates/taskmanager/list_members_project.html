@@ -1,27 +1,40 @@
+{% extends "base.html"%}
+{% load humanize %}
+{% load static %}
+{% block css %}
 <style>
     table, th, td {
-        font-size : 200% ;
-        border : 1px solid black ;
-        border-collapse : collapse ;
+        font-size : 120% ;
+        padding : 20px ;
+        border : 1px solid black;
 
     }
 </style>
-
-<table>
-    {% for p in proj %}
-    <tr>
-        <th rowspan="{{p.members.count}}"> {{p.name }} </th>
+{% endblock %}
+{% block script%}
+<script>
+   $(document).ready(
+      function() {
+         document.getElementById("projects-nav_item").classList.add("active");
+			{% if show_toast %}
+				$('.toast').toast('show');
+			{% endif %}
+      }
+   )
+</script>
+{%endblock%}
+{% block content %}
+{% for p in proj %}
+<div style="background-color:lightblue;color:black;padding:20px;margin:20px">
+    <h2> <a href="{%url 'focus_project' id=p.id %}"> {{p.name}} </a></h2>
+    <ul>
         {% for m in p.members.all %}
+        <li style="font-size:150%"> {{m.username}}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endfor %}
 
-
-        <td> {{m.username}} </td>
-    </tr>
-    <tr>
-    {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
-
-
+{% endblock %}
 
 
