@@ -19,5 +19,6 @@ urlpatterns = [
 	path('members/',views.projects_members),
 	path('tasks/',views.list_tasks),
 	path('finished/',views.finished_tasks),
-	path('distinct/<int:ide>', views.distinct_tasks)
+	path('distinct/<int:ide>', views.distinct_tasks),
+	path('activities/<int:ide>', views.activities)
 ]

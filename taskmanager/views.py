@@ -572,3 +572,10 @@ def distinct_tasks(request, ide):
     othertasks = Task.objects.filter(project__id=ide).exclude(user__id = request.user.id)
     return render(request, 'taskmanager/distinct_tasks.html', locals())
 
+def activities(request, ide):
+    project=Project.objects.get(id=ide)
+
+    tasks = Task.objects.filter(project__id=ide).order_by('comments__submit_time')
+
+
+    return render(request,'taskmanager/activities.html', locals())
