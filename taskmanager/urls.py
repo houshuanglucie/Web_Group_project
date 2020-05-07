@@ -16,8 +16,18 @@ urlpatterns = [
 	path('newtask/<int:id_project>', views.newtask, name='newtask'),
 	path('managetask/<int:id>', views.managetask, name='managetask'),
 	path('dashboard', views.dashboard, name='dashboard'),
+
+	path('projects/<int:id>/taskfilter', views.task_filter, name='task_filter'),
+
+	path('members/',views.projects_members),
+	path('tasks/',views.list_tasks),
+	path('finished/',views.finished_tasks),
+	path('distinct/<int:ide>', views.distinct_tasks),
+	path('activities/<int:ide>', views.activities),
+
 	path('graphs', views_graph.graphs, name='graphs'),
 	path('gantt', views_graph.gantt, name='gantt'),
 	path('activitydiag', views_graph.activitydiag, name='activitydiag'),
+
 	path('projects/<int:id>/taskfilter', views.task_filter, name='task_filter'),
 ]
