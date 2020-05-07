@@ -6,3 +6,4 @@ dumpdata.sh
 media/
 .idea
 venv.
+*sqlite3*
