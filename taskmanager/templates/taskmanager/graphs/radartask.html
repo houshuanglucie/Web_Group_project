@@ -1,0 +1,81 @@
+<!-- Vue du calendrier -->
+{% extends "base.html"%}
+{% load static %}
+
+{% block script%}
+
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src={% static "javascript/radar_task.js" %}></script>
+
+
+<script>
+   $(document).ready(function() {
+      document.getElementById("graphs-nav_item").classList.add("active");
+      initiate_radar();
+      var info_project = {{ info_project|safe }};
+
+      $('#select_project input').on('change', function() {
+         id_selected = parseInt($('input[name=projectselected]:checked', '#select_project').val());
+         $('#div_plot').css('opacity', 1);
+         plot_radar(id_selected, info_project);
+      });
+
+   });
+
+
+</script>
+
+
+{%endblock%}
+
+{% block css %}
+<style>
+a:hover {
+   text-decoration: none;
+   color : black;
+}
+
+.plot_wrapper {
+   border: solid .1vw;
+}
+</style>
+{% endblock %}
+
+
+
+
+{% block content %}
+
+<div class="m-5 p-3">
+   <h3>Radar des tâches</h3>
+   <em>Description</em>
+<br/>
+</div>
+
+<div class="row justify-content-center">
+   <div class="col-3">
+      <h5>Mes projets</h5>
+         <form id="select_project">
+            {% for project in involved_projects %}
+            <div class="custom-control custom-radio">
+               <input class="custom-control-input" type="radio" name="projectselected" id="{{ project.id }}" value="{{ project.id }}">
+               <label class="custom-control-label" for="{{ project.id }}">{{ project }}</label>
+            </div>
+            {% empty %}
+               Aucun projet
+            {% endfor %}
+         </form>
+   </div>
+   <div class="plot_wrapper col-6">
+      <!-- <canvas id="div_plot" width="800" height="600"></canvas> -->
+      <div id="div_plot" style="opacity:0"></div>
+   </div>
+
+
+
+
+
+</div>
+
+{% endblock %}

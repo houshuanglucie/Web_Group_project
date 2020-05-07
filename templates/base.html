@@ -15,16 +15,33 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
+	<script src={% static "javascript/handle_preview_graphs.js" %}></script>
+
 	<script>
 	$(document).ready(function() {
-	$('#graphs-nav_item').hover(function() {
-		$(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
+		$('#graphs-nav_item').hover(function() {
+			$(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
-	}, function() {
-		$(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
-	});
+		}, function() {
+			$(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
+		});
+
+		$('#gantt-nav_item').hover(function() {
+	      $('#name_graph').text("Diagramme de Gantt");
+	      $('.description').fadeIn(300);
+	   },
+	   function() {
+	      $('.description').fadeOut(200);
+	   });
+
+		handle_preview_graphs();
 	});
 	</script>
+
+
+
+
+
 
 	{% block script%} {% endblock %}
 	<title>Gestionnaire de projets</title>
@@ -73,7 +90,10 @@
 					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
 						<div class="dropdown-menu">
 							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
-							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activité</a>
+							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activités</a>
+							<a id="burndown-nav_item" class="dropdown-item" href="{% url 'burndown' %}">Burndown chart</a>
+							<a id="radartask-nav_item" class="dropdown-item" href="{% url 'radartask' %}">Radar des tâches</a>
+							<a id="radaractivity-nav_item" class="dropdown-item" href="{% url 'radaractivity' %}">Radar d'activités</a>
 						</div>
 				</li>
 

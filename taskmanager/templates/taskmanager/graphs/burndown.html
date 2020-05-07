@@ -3,10 +3,14 @@
 {% load static %}
 
 {% block script%}
+
 <script>
    $(document).ready(function() {
       document.getElementById("graphs-nav_item").classList.add("active");
    })
+
+
+
 </script>
 {%endblock%}
 
@@ -16,7 +20,6 @@ a:hover {
    text-decoration: none;
    color : black;
 }
-}
 </style>
 {% endblock %}
 
@@ -25,19 +28,12 @@ a:hover {
 
 {% block content %}
 
-<div class="m-5 p-3">
-   <h3>Vues graphiques</h3>
-   <em>Trouvez ici des vues graphiques de vos données</em>
+   <div class="m-5 p-3">
+      <h3>Burndown chart</h3>
+      <em>Description</em>
    <br/>
+
 </div>
-
-<!-- TODO Ameliorer le graphisme -->
-<p>
-   <a href={% url 'gantt' %}>Diagramme de Gantt</a> <br/>
-   <a href={% url 'activitydiag' %}>Diagramme d'activités</a>
-</p>
-
-
 
 
 {% endblock %}
