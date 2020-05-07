@@ -15,6 +15,17 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
+	<script>
+	$(document).ready(function() {
+	$('#graphs-nav_item').hover(function() {
+		$(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
+
+	}, function() {
+		$(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
+	});
+	});
+	</script>
+
 	{% block script%} {% endblock %}
 	<title>Gestionnaire de projets</title>
 	<link rel="icon" href="{% static 'pictures/calendar-check-solid.svg' %}"/>
@@ -58,9 +69,14 @@
 					<a class="nav-link" href="{% url "dashboard" %}">Tableau de bord</a>
 				</li>
 
-				<li id="calendar-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "calendar" %}">Mon calendrier</a>
+				<li id="graphs-nav_item" class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
+						<div class="dropdown-menu">
+							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
+							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activité</a>
+						</div>
 				</li>
+
 			</ul>
 
 			<ul id="right_nav-bar" class="navbar-nav ml-auto">
@@ -86,6 +102,8 @@
 		{% block content %}
 		{% endblock %}
 	</section>
+
+	{% include "taskmanager/graphs/preview_graphs.html" %}
 
 
 </body>

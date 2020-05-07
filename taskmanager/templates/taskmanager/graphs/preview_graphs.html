@@ -1,0 +1,35 @@
+<script>
+$(document).ready(function() {
+   $('#gantt-nav_item').hover(function() {
+      $('#name_graph').text("Diagramme de Gantt");
+      $('.description').fadeIn(300);
+   },
+   function() {
+      $('.description').fadeOut(200);
+   });
+});
+</script>
+
+<style>
+   .description{
+      display:none;
+      position:fixed;
+      bottom:2vw;
+      right:2vw;
+      width:25%;
+      height:25%;
+      z-index:10000;
+      background-color: white;
+      box-shadow: 5px 5px 5px black;
+      border: solid black 0.1vw;
+      border-radius: 1%;
+   }
+</style>
+
+<div class="container description">
+   <strong id="name_graph">None</strong>
+   <img id="image_graph"/>
+   <p id="description_graph"></p>
+
+
+</div>

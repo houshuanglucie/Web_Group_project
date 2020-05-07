@@ -503,6 +503,7 @@ def dashboard(request):
 
 
 
+
 # ***************************************************************************
 #  CALENDAR
 # ***************************************************************************
@@ -579,3 +580,4 @@ def activities(request, ide):
 
 
     return render(request,'taskmanager/activities.html', locals())
+
