@@ -16,6 +16,9 @@ from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 
 
+def print_json(data):
+    print(json.dumps(data, indent = 1))
+
 @login_required(login_url = 'connect')
 def graphs(request):
     return render(request, 'taskmanager/graphs/graphs.html', locals())
@@ -56,7 +59,7 @@ def gantt(request):
         tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
         tasks_by_project.append(tasks_by_project_data)
 
-    tasks_by_project = json.dumps(tasks_by_project);
+    tasks_by_project = json.dumps(tasks_by_project)
     return render(request, 'taskmanager/graphs/gantt.html', locals())
 
 
@@ -84,7 +87,24 @@ def burndown(request):
 
 @login_required(login_url = 'connect')
 def radartask(request):
+    current_user = User.objects.get(id = request.user.id)
+    involved_projects = Project.objects.filter(members = current_user)
 
+    info_project = []
+
+    for project in involved_projects:
+        members = project.members.all()
+        member_data = []
+        for member in members:
+            count_task = Task.objects.filter(project = project).filter(user = member).count()
+            member_data.append(dict(name = member.username, count = count_task))
+        info_project.append(dict(
+            name = project.name,
+            id = project.id,
+            members = member_data
+        ))
+
+    info_project = json.dumps(info_project)
     return render(request, 'taskmanager/graphs/radartask.html', locals())
 
 
