@@ -1,5 +1,11 @@
 <ul>
-{% for t in tasks %}
+{% for t in ordered_tasks %}
 <li> {{t.name}} </li>
     {% endfor %}
 </ul>
+<ul>
+    {% for c in ordered_comments %}}
+    <li> {{c.submit_time}}</li>
+    {% endfor %}
+</ul>
+
