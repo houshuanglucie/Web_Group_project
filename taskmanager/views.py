@@ -500,7 +500,7 @@ def dashboard(request):
 
 
 
-# ============== Filtrage et de tri des task =================
+# ============== Filtrage et de tri des taches =================
 @login_required(login_url='connect')
 def task_filter(request):
 
