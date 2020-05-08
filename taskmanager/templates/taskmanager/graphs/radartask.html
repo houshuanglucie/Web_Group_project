@@ -15,13 +15,35 @@
       initiate_radar();
       var info_project = {{ info_project|safe }};
 
+      var view = "radar"; // view = {0 -> Radar ; 1-> Histogramme}
+      var id_selected = 0;
+
       $('#select_project input').on('change', function() {
          id_selected = parseInt($('input[name=projectselected]:checked', '#select_project').val());
          $('#div_plot').css('opacity', 1);
-         plot_radar(id_selected, info_project);
+         $('#instruction').hide();
+         $('#select_view').show();
+         plot(id_selected, view);
       });
 
+      $('#select_view input').on('change', function(){
+         view = $('input[name=view]:checked', '#select_view').val();
+         plot(id_selected, view);
+      });
+
+
+      function plot(id_selected, view){
+         if(view == "radar"){
+            plot_radar(id_selected, info_project);
+         }
+         else {
+            plot_histogram(id_selected, info_project);
+         }
+      }
+
    });
+
+
 
 
 </script>
@@ -68,8 +90,21 @@ a:hover {
          </form>
    </div>
    <div class="plot_wrapper col-6">
-      <!-- <canvas id="div_plot" width="800" height="600"></canvas> -->
+      <em id="instruction" style="position:absolute">Choisissez un projet</em>
       <div id="div_plot" style="opacity:0"></div>
+
+      <div class="text-center mb-2">
+         <form id="select_view" style="display:none">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+               <label class="btn btn-dark active btn-rounded">
+                  <input type="radio" name="view" id="radar" value="radar" autocomplete="off" checked> Radar
+               </label>
+               <label class="btn btn-dark btn-rounded">
+                  <input type="radio" name="view" id="hist" value="histogram" autocomplete="off"> Histogramme
+               </label>
+         </div>
+         </form>
+      </div>
    </div>
 
 

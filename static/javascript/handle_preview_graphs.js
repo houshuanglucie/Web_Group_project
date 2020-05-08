@@ -1,3 +1,4 @@
+// TODO Faire gaffe a ce que si c'est deja affiche, on fade out pas
 function handle_preview_graphs(){
    // GANTT
    $('#gantt-nav_item').hover(function() {
