@@ -500,41 +500,82 @@ def dashboard(request):
 
 
 
-# ***************************************************************************
-#  Filtrage et tri des task
-# ***************************************************************************
-
+# ============== Filtrage et de tri des task =================
 @login_required(login_url='connect')
-def task_filter(request, id):
-    project = Project.objects.get(id=id)
-    task_list = Task.objects.filter(project__id=id)
+def task_filter(request):
 
-    # user_list = User.objects.all().values('id', 'last_name')
-    # print(user_list)
-    # status_list = Status.objects.all().values('id', 'how')
-    # print(status_list)
+    # Quand le formulaire de filtre est soumis, le "click" devient "True",
+    # utilisé pour afficher les résultats du filtre dans task_filter.html
+    click = False
+
+    # Obtenir les listes des menus déroulants dans le formulaire de filtre
+    current_user = User.objects.get(id=request.user.id)
+    project_list = Project.objects.filter(Q(members=current_user) | Q(public="PU")).distinct().values('id', 'name')  # projects de l'user OU les projets publics
+    user_list = User.objects.all().values('id', 'first_name', 'last_name')
+    status_list = Status.objects.all().values('id', 'how')
 
     if request.method == 'POST':
 
+        # Quand le clic devient "True", le frontal affiche le résultat du filtrage
+        click = True
+
+        # Récupérer le paramètre utilisé pour le tri
         sorter = request.POST.get('sorter')
         if sorter == "default":
             sorter = "priority"
 
+        order = request.POST.get('order')
+        if order == "descent":
+            sorter = '-' + str(sorter)  # Trier dans l'ordre inverse
+
+        # Récupérer les paramètres de filtrage sélectionnés par le frontal
+        project_selected = request.POST.get('project_selected')
         assignee_selected = request.POST.get('assignee_selected')
+        status_inc_exc = request.POST.get('status_inc_exc')
         status_selected = request.POST.get('status_selected')
+        start_before_after = request.POST.get('start_before_after')
+        start_date_selected = request.POST.get('start_date_selected')
+        due_before_after = request.POST.get('due_before_after')
+        due_date_selected = request.POST.get('due_date_selected')
 
         filter_dict = dict()
 
+        # Filtrer par projet et responsable(assignee)
+        if project_selected != "All":
+            filter_dict['project'] = get_object_or_404(Project, id=project_selected)
         if assignee_selected != "All":
             filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
-        if status_selected != "All":
-            filter_dict['status'] = get_object_or_404(Status, id=status_selected)
 
-        tasks = task_list.filter(**filter_dict)
+        task_list = Task.objects.filter(**filter_dict).order_by(sorter)
 
-        return render(request, 'taskmanager/focus_project.html', locals())
+        # Filtrer par status(inclus ou exclu)
+        if status_inc_exc == "include" and status_selected != "All":
+            task_list = task_list.filter(status__id=status_selected).order_by(sorter)
+        elif status_inc_exc == "exclude" and status_selected != "All":
+            task_list = task_list.filter(~Q(status__id=status_selected)).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        # Filtrer par date de début (avant ou après)
+        if start_before_after == "Before" and start_date_selected != "":
+            task_list = task_list.filter(start_date__lte=start_date_selected).order_by(sorter)
+        elif start_before_after == "After" and start_date_selected != "":
+            task_list = task_list.filter(start_date__gte=start_date_selected).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        # Filtrer par date d'écheance (avant ou après)
+        if due_before_after == "Before" and due_date_selected != "":
+            task_list = task_list.filter(due_date__lte=due_date_selected).order_by(sorter)
+        elif due_before_after == "After" and due_date_selected != "":
+            task_list = task_list.filter(due_date__gte=due_date_selected).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        return render(request, 'taskmanager/task_filter.html', locals())
+
     else:
-        return render(request, 'taskmanager/focus_project.html', locals())
+        return render(request, 'taskmanager/task_filter.html', locals())
 
 
 
