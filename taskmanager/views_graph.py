@@ -115,3 +115,13 @@ def radartask(request):
 @login_required(login_url = 'connect')
 def radaractivity(request):
     return render(request, 'taskmanager/graphs/radaractivity.html', locals())
+
+
+# ***************************************************************************
+#  MANAGE APPLICATION
+# ***************************************************************************
+@login_required(login_url = 'connect')
+def manageapp(request):
+    if not request.user.is_superuser:
+        return HttpResponse("Vous n'êtes pas autorisé.")
+    return render(request, 'taskmanager/graphs/manageapp.html', locals())

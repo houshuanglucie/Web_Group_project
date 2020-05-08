@@ -80,7 +80,7 @@
 
 				<li id="graphs-nav_item" class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
-						<div class="dropdown-menu">
+						<div id="dropdown_menu" class="dropdown-menu">
 							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
 							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activités</a>
 							<a id="burndown-nav_item" class="dropdown-item" href="{% url 'burndown' %}">Burndown chart</a>
@@ -88,6 +88,12 @@
 							<a id="radaractivity-nav_item" class="dropdown-item" href="{% url 'radaractivity' %}">Radar d'activités</a>
 						</div>
 				</li>
+
+				{% if request.user.is_superuser %}
+					<li id="manageapp-nav_item" class="nav-item">
+						<a class="nav-link" href="{% url "manageapp" %}">Gestion de l'application</a>
+					</li>
+				{% endif %}
 
 			</ul>
 
