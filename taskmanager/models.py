@@ -99,3 +99,27 @@ class Task(models.Model):
     def __str__(self):
         return self.name
 
+
+# ===== Traces =====
+
+class Verb(models.Model):
+    # AddCm -> Ajout de commentaire
+    # MdfTk -> Modif tache
+    # MdfPr -> Modif projet
+    # AddTk -> Ajout tache
+    # AddPr -> Ajout projet
+    alias = models.CharField(max_length = 10, verbose_name = "Alias", default = "VB")
+    verb = models.CharField(max_length = 100, verbose_name = "Verbe")
+
+    def __str__(self):
+        return self.alias
+
+class Trace(models.Model):
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Acteur")
+    timestamp = models.DateTimeField(verbose_name = "Timestamp", default = timezone.now)
+    object_project = models.ForeignKey('Project', on_delete = models.CASCADE, verbose_name = "Projet", default = None)
+    object_task = models.ForeignKey('Task', on_delete = models.CASCADE, verbose_name = "Tache", default = None, blank = True, null = True)
+    verb = models.ForeignKey('Verb', on_delete = models.CASCADE, verbose_name = "Verbe", default = None)
+
+    def __str__(self):
+        return self.actor.username + " : " + self.verb.alias

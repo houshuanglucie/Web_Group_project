@@ -29,6 +29,7 @@ urlpatterns = [
 	path('burndown', views_graph.burndown, name='burndown'),
 	path('radartask', views_graph.radartask, name='radartask'),
 	path('radaractivity', views_graph.radaractivity, name='radaractivity'),
+	path('manageapp', views_graph.manageapp, name='manageapp'),
 
 	path('taskfilter/', views.task_filter, name='task_filter'),
 ]

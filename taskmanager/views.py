@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
+from .models import Verb, Trace
 
 
 
@@ -190,6 +191,11 @@ def newproject(request):
                 project.members.add(User.objects.get(username = member))
             project.save()
 
+            # Création d'une trace
+            vb = Verb.objects.get(alias = "AddPr")
+            new_trace = Trace(actor = request.user, object_project = project, verb = vb)
+            new_trace.save()
+
             # On répond à Ajax qui va se charger d'afficher le toast
             return JsonResponse({"state": "ok", "name" : name}, status=200)
         else:
@@ -262,6 +268,11 @@ def manageproject(request, id):
 
                 project.save()
 
+                # Création d'une trace
+                vb = Verb.objects.get(alias = "MdfPr")
+                new_trace = Trace(actor = request.user, object_project = project, verb = vb)
+                new_trace.save()
+
                 # On répond à Ajax qui va se charger d'afficher le toast
                 return JsonResponse({"state": "ok", "name" : project.name}, status=200)
             else:
@@ -311,6 +322,11 @@ def focus_task(request, id):
         new_comment.save()
         task.comments.add(new_comment)
         task.save()
+
+        # Création d'une trace
+        vb = Verb.objects.get(alias = "AddCm")
+        new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
+        new_trace.save()
 
     return render(request, 'taskmanager/focus_task.html', locals())
 
@@ -420,6 +436,11 @@ def newtask(request, id_project):
         form = TaskForm(request.POST or None, request.FILES, initial = defaults)
         if form.is_valid():
             added, error_category, new_task = validate_task_data(request, form, project, "ADD")
+
+            # Création d'une trace
+            vb = Verb.objects.get(alias = "AddTk")
+            new_trace = Trace(actor = request.user, object_project = new_task.project, object_task = new_task, verb = vb)
+            new_trace.save()
     else:
         form = TaskForm(initial = defaults)
 
@@ -470,8 +491,16 @@ def managetask(request, id):
             elif('save' in request.POST):
                 added, error_category, task = validate_task_data(request, form, task.project, "MODIFY", task)
                 if(not error_category):
+
+                    # Création d'une trace
+                    vb = Verb.objects.get(alias = "AddTk")
+                    new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
+                    new_trace.save()
+
                     request.session['new_modify'] = task.name # pour afficher un toast quand on retournera sur focus_task
                     return redirect('focus_task', id = task.id)
+
+
 
     else:
         form = TaskForm(initial = defaults)
@@ -631,4 +660,3 @@ def activities(request, ide):
 
 
     return render(request,'taskmanager/activities.html', locals())
-
