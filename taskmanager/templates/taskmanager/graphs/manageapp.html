@@ -33,6 +33,31 @@ a:hover {
       <em>Description</em>
    <br/>
 
+   <table class="table mt-5">
+      <thead>
+         <tr>
+            <th>Acteur</th>
+            <th>Verb</th>
+            <th>Timestamp</th>
+            <th>Projet</th>
+            <th>Tache</th>
+
+         </tr>
+      </thead>
+      <tbody>
+         {% for trace in all_traces %}
+            <tr>
+               <td>{{ trace.actor }}</td>
+               <td>{{ trace.verb }}</td>
+               <td>{{ trace.timestamp }}</td>
+               <td>{{ trace.object_project }}</td>
+               <td>{{ trace.object_task }}</td>
+
+            </tr>
+         {% endfor %}
+      </tbody>
+   </table>
+
 </div>
 
 

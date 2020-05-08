@@ -29,7 +29,7 @@ function plot_radar(id_selected, info_project){
       type: 'scatterpolar',
       r: num_tasks,
       theta: members,
-      name: selected_project.name,
+      name: "",
       fill: 'toself',
       hovertemplate : "Utilisateur : %{theta}<br>Nombre de tâches : %{r}"
    }];
@@ -38,7 +38,7 @@ function plot_radar(id_selected, info_project){
       polar : {
       radialaxis: {
          visible: true,
-         range: [0, 7]
+         dtick: 1
          }
       },
       showlegend: false,

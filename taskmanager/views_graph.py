@@ -14,7 +14,7 @@ import json
 
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
-
+from .models import Verb, Trace
 
 def print_json(data):
     print(json.dumps(data, indent = 1))
@@ -114,6 +114,25 @@ def radartask(request):
 
 @login_required(login_url = 'connect')
 def radaractivity(request):
+
+
+    if(request.POST.get('range') and request.POST.get('range') == "global"):
+        involved_projects = Project.objects.filter(members = request.user)
+
+        traces_sent = []
+        for project in involved_projects:
+            traces_sent.append(dict(
+                axis = project.name,
+                count = Trace.objects.filter(actor = request.user, object_project = project).count()
+            ))
+
+        return JsonResponse(traces_sent, safe = False, status=200)
+
+    elif(request.POST.get('range') and request.POST.get('range') == "project"):
+        print("Hello")
+
+        return JsonResponse({'status' : "ok"}, status=200)
+
     return render(request, 'taskmanager/graphs/radaractivity.html', locals())
 
 
@@ -124,4 +143,5 @@ def radaractivity(request):
 def manageapp(request):
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
+    all_traces = Trace.objects.all()
     return render(request, 'taskmanager/graphs/manageapp.html', locals())

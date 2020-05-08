@@ -4,9 +4,19 @@
 
 {% block script%}
 
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src={% static "javascript/radar_activity.js" %}></script>
+
 <script>
    $(document).ready(function() {
       document.getElementById("graphs-nav_item").classList.add("active");
+      send_ajax('{% url 'radaractivity' %}', "global");
+
+      var range = "global"
+      $('#select_range input').on('change', function(){
+         range = $('input[name=range]:checked', '#select_range').val();
+         send_ajax('{% url 'radaractivity' %}', range);
+      });
    })
 
 
@@ -20,6 +30,10 @@ a:hover {
    text-decoration: none;
    color : black;
 }
+
+.plot_wrapper {
+   border: solid .1vw;
+}
 </style>
 {% endblock %}
 
@@ -28,11 +42,34 @@ a:hover {
 
 {% block content %}
 
-   <div class="m-5 p-3">
-      <h3>Radar d'activités</h3>
-      <em>Description</em>
-   <br/>
+<div class="m-5 p-3">
+   <h3>Radar d'activités</h3>
+   <em>Description</em>
+<br/>
+</div>
 
+<div class="row justify-content-center">
+
+   <div class="col-5">
+      <div class="text-center mb-2">
+         <form id="select_range">
+            {% csrf_token %}
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+               <label class="btn btn-dark active btn-rounded">
+                  <input type="radio" name="range" id="global" value="global" autocomplete="off" checked> Global
+               </label>
+               <label class="btn btn-dark btn-rounded">
+                  <input type="radio" name="range" id="project" value="project" autocomplete="off"> Par projet
+               </label>
+            </div>
+         </form>
+      </div>
+   </div>
+
+
+   <div class="plot_wrapper col-6">
+      <div id="div_plot"></div>
+   </div>
 </div>
 
 
