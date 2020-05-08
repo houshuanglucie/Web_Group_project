@@ -78,13 +78,10 @@
 					<a class="nav-link" href="{% url "newproject" %}">Nouveau projet</a>
 				</li>
 
-				<li id="dashboard-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "dashboard" %}">Tableau de bord</a>
-				</li>
-
 				<li id="graphs-nav_item" class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
 						<div id="dropdown_menu" class="dropdown-menu">
+							<a id="dashboard-nav_item" class="dropdown-item" href="{% url 'dashboard' %}">Tableau de bord</a>
 							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
 							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activités</a>
 							<a id="burndown-nav_item" class="dropdown-item" href="{% url 'burndown' %}">Burndown chart</a>
@@ -95,7 +92,7 @@
 
 				{% if request.user.is_superuser %}
 					<li id="manageapp-nav_item" class="nav-item">
-						<a class="nav-link" href="{% url "manageapp" %}">Gestion de l'application</a>
+						<a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de l'Application</a>
 					</li>
 				{% endif %}
 
@@ -126,7 +123,6 @@
 	</section>
 
 	{% include "taskmanager/graphs/preview_graphs.html" %}
-
 
 </body>
 

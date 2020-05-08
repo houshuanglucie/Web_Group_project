@@ -1,6 +1,14 @@
 <!-- Page de filtrage et de tri de toutes les taches -->
 {% extends "base.html"%}
 
+{% block script%}
+	<script>
+		$(document).ready(function() {
+				document.getElementById("filter-nav_item").classList.add("active");
+			})
+	</script>
+{%endblock%}
+
 {% block content %}
 
 <!-- Formulaire de filtrage et de tri -->

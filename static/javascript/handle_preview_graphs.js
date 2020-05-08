@@ -7,6 +7,11 @@ function handle_preview_graphs(){
       $('.description').fadeOut(200);
    })
 
+   // CUSTOM DASHBOARD
+   $('#dashboard-nav_item').hover(function() {
+      $('#name_graph').text("Tableau de bord");
+   });
+
    // GANTT
    $('#gantt-nav_item').hover(function() {
       $('#name_graph').text("Diagramme de Gantt");

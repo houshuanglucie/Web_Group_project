@@ -29,6 +29,25 @@ def graphs(request):
 # ***************************************************************************
 
 @login_required(login_url = 'connect')
+def dashboard(request):
+    # Juste une vue de taches de l'user par projets
+    # C'était pour tenter une aggrégation des taches par projet (comme avec ElasticSearch),
+    # mais pas réussi à le faire en une ligne...
+    current_user = User.objects.get(id = request.user.id)
+    involved_projects = Project.objects.filter(members = current_user)
+    tasks_by_project = []
+    for project in involved_projects:
+        tasks_by_proj_data = dict(project = project, tasks = Task.objects.filter(user = current_user, project = project))
+        tasks_by_project.append(tasks_by_proj_data)
+
+
+    return render(request, 'taskmanager/graphs/dashboard.html', locals())
+
+# ***************************************************************************
+#  GANTT
+# ***************************************************************************
+
+@login_required(login_url = 'connect')
 def gantt(request):
     # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
     # tasks_by_project = list({
