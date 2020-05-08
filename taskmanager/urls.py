@@ -30,6 +30,5 @@ urlpatterns = [
 	path('radartask', views_graph.radartask, name='radartask'),
 	path('radaractivity', views_graph.radaractivity, name='radaractivity'),
 
-
-	path('projects/<int:id>/taskfilter', views.task_filter, name='task_filter'),
+	path('taskfilter/', views.task_filter, name='task_filter'),
 ]
