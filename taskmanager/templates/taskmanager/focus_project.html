@@ -85,6 +85,8 @@ a:hover {
 		</div>
 	</div>
 
+    <!-- Lien vers un tri des tâches selon leur assignee -->
+    <a href="{% url 'distincttasks' ide=project.id %}"> Afficher séparément mes tâches et celles des autres utilisateurs </a>
 
     <!-- Barre de filtrage et tri des taches-->
     <form  style="display: table"  action="{% url 'task_filter' project.id %}" method="post" id = "filtrage_tri">
@@ -142,6 +144,9 @@ a:hover {
     </form>
 
 
+     <!-- Lien vers un tri des tâches selon leur assignee -->
+    <a href="{% url 'distincttasks' ide=project.id %}"> Afficher séparément mes tâches et celles des autres utilisateurs </a>
+    <br><br>
 
    <table class="table table-hover">
 
