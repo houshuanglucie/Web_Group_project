@@ -169,5 +169,35 @@ def radaractivity(request):
 def manageapp(request):
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
-    all_traces = Trace.objects.all()
+
+    nodes = []
+    for user in User.objects.all():
+        count = Trace.objects.filter(actor = user).count()
+        nodes.append(dict(
+            id = user.id,
+            title = user.username + "<br>" + str(count) + " trace(s)",
+            value = count,
+            color = "rgb(150,150,150)",
+            border = "rgb(100,100,100)"
+        ))
+    nodes = json.dumps(nodes)
+
+
+    edges = []
+
+    user_list = [user for user in User.objects.all()]
+    for i in range(len(user_list)):
+        user1 = user_list[i]
+        for j in range(i+1, len(user_list)):
+            user2 = user_list[j]
+            count = Project.objects.filter(members = user1).filter(members = user2).count()
+            if(count != 0):
+                edges.append({
+                    'from' : user1.id,
+                    'to' : user2.id,
+                    'value' : count,
+                    'title' : str(count) + " projet(s) en commun",
+                    'color' : "rgb(150,150,150)"
+                })
+
     return render(request, 'taskmanager/graphs/manageapp.html', locals())
