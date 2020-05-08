@@ -115,10 +115,9 @@ def radartask(request):
 @login_required(login_url = 'connect')
 def radaractivity(request):
 
+    involved_projects = Project.objects.filter(members = request.user)
 
     if(request.POST.get('range') and request.POST.get('range') == "global"):
-        involved_projects = Project.objects.filter(members = request.user)
-
         traces_sent = []
         for project in involved_projects:
             traces_sent.append(dict(
@@ -126,12 +125,20 @@ def radaractivity(request):
                 count = Trace.objects.filter(actor = request.user, object_project = project).count()
             ))
 
-        return JsonResponse(traces_sent, safe = False, status=200)
+        return JsonResponse({'traces' : traces_sent, 'title' : "Vue globale"}, safe = False, status=200)
 
     elif(request.POST.get('range') and request.POST.get('range') == "project"):
-        print("Hello")
+        project_id = int(request.POST.get('project_id'))
+        project = Project.objects.get(id = project_id)
+        traces_sent = []
 
-        return JsonResponse({'status' : "ok"}, status=200)
+        for verb in Verb.objects.all():
+            traces_sent.append(dict(
+                axis = verb.verb,
+                count = Trace.objects.filter(actor = request.user, object_project = project, verb = verb).count()
+            ))
+
+        return JsonResponse({'traces' : traces_sent, 'title' : project.name}, safe = False, status=200)
 
     return render(request, 'taskmanager/graphs/radaractivity.html', locals())
 

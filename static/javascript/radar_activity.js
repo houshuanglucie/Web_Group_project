@@ -6,26 +6,26 @@ function initiate_radar(id_selected, info_project){
 }
 
 
-function send_ajax(url_endpoint, range){
+function send_ajax(url_endpoint, range, project_id){
    var title = "";
    $.ajax({
       url : url_endpoint,
       type : "POST",
       data : {
          'csrfmiddlewaretoken' : $("[name = csrfmiddlewaretoken]").val(),
-         'range' : range
+         'range' : range,
+         'project_id' : project_id
       },
 
       success : function(json) { // Si on recoit une erreur 200
-         console.log("SUCCESS");
-         console.log(json);
-         if(range == "global"){title = "Vue globale";}
-         // plot_radar(json, title);
+         // console.log("SUCCESS");
+         // console.log(json);
+         plot_radar(json.traces, json.title);
       },
 
       error : function(json, err) { // Si on recoit une erreur 400
-         console.log("FAILED");
-         console.log(err);
+         // console.log("FAILED");
+         // console.log(err);
       }
    });
 }
