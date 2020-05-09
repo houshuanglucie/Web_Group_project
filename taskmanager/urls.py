@@ -22,8 +22,11 @@ urlpatterns = [
 	path('distinct/<int:ide>', views.distinct_tasks, name='distincttasks'),
 	path('activities/<int:ide>', views.activities, name='activities'),
 
+
+
 	path('dashboard', views_graph.dashboard, name='dashboard'),
 	path('graphs', views_graph.graphs, name='graphs'),
+
 	path('gantt', views_graph.gantt, name='gantt'),
 	path('activitydiag', views_graph.activitydiag, name='activitydiag'),
 	path('burndown', views_graph.burndown, name='burndown'),
@@ -31,5 +34,8 @@ urlpatterns = [
 	path('radaractivity', views_graph.radaractivity, name='radaractivity'),
 	path('manageapp', views_graph.manageapp, name='manageapp'),
 
+
+	
 	path('taskfilter/', views.task_filter, name='task_filter'),
+
 ]

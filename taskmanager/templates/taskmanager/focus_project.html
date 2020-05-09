@@ -85,6 +85,72 @@ a:hover {
 		</div>
 	</div>
 
+    <!-- Lien vers un tri des tâches selon leur assignee -->
+    <a href="{% url 'distincttasks' ide=project.id %}"> Afficher séparément mes tâches et celles des autres utilisateurs </a>
+
+    <!-- Barre de filtrage et tri des taches-->
+    <form  style="display: table"  action="{% url 'task_filter' project.id %}" method="post" id = "filtrage_tri">
+        {% csrf_token %}
+        <div class="form-group" style="display:inline-block">
+            <label>Tri par:</label>
+            <select class="form-control" name="sorter" id = "sorter" >
+                <option value="default">Default</option>
+                <option value="name">Taskname</option>
+                <option value="user">Assignee</option>
+                <option value="priority">Priority</option>
+                <option value="status">Status</option>
+                <option value="start_date">Start date</option>
+                <option value="due_date">Due date</option>
+            </select>
+        </div>
+        <div class="form-group" style="display:inline-block">
+            <label>Assignee filtre:</label>
+            <select class="form-control" name="assignee_selected" id = "assignee_selected">
+                <option value="All">All</option>
+                {% for task in tasks %}
+                    <option value="{{ task.user.id }}">{{ task.user.first_name }} {{ task.user.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="display:inline-block">
+            <label>Status filtre:</label>
+            <select class="form-control" name="status_selected" id = "status_selected">
+                <option value="All">All</option>
+                {% for task in tasks %}
+                    <option value="{{ task.status.id }}">{{ task.status.how }}</option>
+                {% endfor %}
+            </select>
+        </div >
+        <div class="form-group" style="display:inline-block">
+            <label>Start date filtre:</label>
+                <select class="form-control" name="start_before_after" selected="All">
+                    <option value="All">All</option>
+                    <option value="Before">Avant</option>
+                    <option value="After">Après</option>
+                </select>
+            <input type="date" class="form-control" name="start_date_selected">
+        </div>
+        <div class="form-group" style="display:inline-block">
+            <label>Due date filtre:</label>
+                <select class="form-control" name="due_before_after" selected="All">
+                    <option value="All">All</option>
+                    <option value="Before">Avant</option>
+                    <option value="After">Après</option>
+                </select>
+            <input type="date" class="form-control" name="due_date_selected">
+        </div>
+        <input type="hidden" name="project" value={{ project.id }}>
+        <button type="submit" class="btn btn-secondary">Search</button>
+    </form>
+
+
+     <!-- Lien vers un tri des tâches selon leur assignee -->
+    <a href="{% url 'distincttasks' ide=project.id %}"> Afficher séparément mes tâches et celles des autres utilisateurs </a>
+    <br><br>
+
+    <!-- Lien vers le tri des tâches selon leur dernière activité -->
+    <a href="{% url 'activities' ide=project.id %}"> Afficher les tâches triées par ordre chronologique de la dernière activité </a>
+    <br><br>
 
    <table class="table table-hover">
 
