@@ -35,7 +35,7 @@ urlpatterns = [
 	path('manageapp', views_graph.manageapp, name='manageapp'),
 
 
-	
+
 	path('taskfilter/', views.task_filter, name='task_filter'),
 
 ]
