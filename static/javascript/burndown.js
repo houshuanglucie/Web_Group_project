@@ -1,8 +1,12 @@
+// ===== Tracage d'un graphe vide ======
 function init_graph(){
 
    var layout = {
       showlegend: false,
       title : "Choisissez un projet",
+      font: {
+         family : 'LMSans-regular'
+      },
       xaxis : {
          range : [0, 1],
          showticklabels: false
@@ -21,6 +25,8 @@ function init_graph(){
    Plotly.newPlot('div_plot', [], layout, config);
 }
 
+
+// ===== Linspace de numpy ======
 function linspace(startValue, stopValue, card){
    var arr = [];
    var step = (stopValue - startValue) / (card - 1);
@@ -31,13 +37,15 @@ function linspace(startValue, stopValue, card){
 }
 
 
-
+// ===== Tracage du burndown chart ======
 function plot_graph(id_selected, info_project){
 
    var selected_project = info_project[info_project.findIndex(proj => proj.id_project === id_selected)];
    var title = selected_project.name_project;
    var tasks_data = selected_project.tasks_data;
 
+
+   // S'il n'y a aucune tâche
    if(tasks_data.length == 0){
       var layout = {
          showlegend: false,
@@ -68,6 +76,8 @@ function plot_graph(id_selected, info_project){
    var max_date = tasks_data[n_tasks - 1].due_date;
 
 
+   // Pour chaque tache, on crée un plot qui est juste une fonction affine entre 0 et 100%
+   // allant de start_date a due_date pour l'avancement théorique
    tasks_data.forEach((task, index) => {
       var x_list = [];
       var y_list = [];
@@ -94,15 +104,18 @@ function plot_graph(id_selected, info_project){
 
       data.push(trace);
 
-
+      // Recherche des dates extrêmes pour le plot du projet
       if(task.start_date < min_date) {min_date = task.start_date;}
       if(task.due_date > max_date) {max_date = task.due_date;}
    });
 
+
+
+
+   // Plot du burndown du projet
+   // Qui est la somme des autres burndowns/nb_taches
    var x_project = [];
    var y_project = [];
-
-
    var interpol = linspace(min_date, max_date, 100);
 
    interpol.forEach((timestamp, index) =>{
@@ -142,17 +155,49 @@ function plot_graph(id_selected, info_project){
 
 
 
+   // Plot de la ligne verticale pour la date d'aujourd'hui
+   if(min_date <= Date.now() && Date.now() <= max_date ){
+      now = new Date(Date.now());
+      var trace_now = {
+         x: [now, now],
+         y: [0, 100],
+         mode: 'lines',
+         type: 'scatter',
+         line: {
+            width: 2,
+            dash: 'dashdot',
+            color: 'black'
+         },
+         name: "Aujourd'hui",
+         hoverinfo : 'none',
+         showlegend: false
+      };
+
+      data.push(trace_now);
+   }
 
 
+
+   // Configuration
    var layout = {
       showlegend: true,
+      legend:{
+         font: {
+            family: 'LMSans-regular'
+         }
+      },
       title : title + "<br>",
       hovermode : 'closest',
       xaxis : {
          tickformat : "%d/%m<br>%Y"
       },
       yaxis : {
-         title : "% réalisés"
+         title : {
+            text : "% réalisés",
+            font: {
+               family : 'LMSans-regular'
+            }
+         },
       }
    };
 

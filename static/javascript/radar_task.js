@@ -2,7 +2,31 @@ function initiate_radar(id_selected, info_project){
    var data = [{
       type: 'scatterpolar'
    }];
-   Plotly.newPlot("div_plot", data);
+
+   var layout = {
+      polar : {
+         radialaxis: {
+            visible: false,
+         },
+         angularaxis : {
+            showticklabels: false,
+            dtick:360/5
+         },
+      },
+      showlegend: false,
+      title : "Choisissez un projet",
+      font: {
+         family : 'LMSans-regular'
+      },
+   };
+
+   var config = {
+      responsive: true,
+      displayModeBar : false
+   };
+
+
+   Plotly.newPlot("div_plot", data, layout, config);
 }
 
 
@@ -14,6 +38,7 @@ function plot_radar(id_selected, info_project){
 
    var members = [];
    var num_tasks = [];
+   var title = selected_project.name;
 
    selected_project.members.forEach((item, index) => {
       members.push(item.name);
@@ -36,13 +61,16 @@ function plot_radar(id_selected, info_project){
 
    var layout = {
       polar : {
-      radialaxis: {
-         visible: true,
-         dtick: 1
-         }
-      },
+         radialaxis: {
+            visible: true,
+            dtick: 1
+            }
+         },
       showlegend: false,
-      title : selected_project.name
+      title : title,
+      font: {
+         family : 'LMSans-regular'
+      },
    };
 
    var config = {
@@ -60,6 +88,7 @@ function plot_histogram(id_selected, info_project){
 
    var members = [];
    var num_tasks = [];
+   var title = selected_project.name;
 
    selected_project.members.forEach((item, index) => {
       members.push(item.name);
@@ -85,7 +114,10 @@ function plot_histogram(id_selected, info_project){
 
    var layout = {
       showlegend: false,
-      title : selected_project.name,
+      title : title,
+      font: {
+         family : 'LMSans-regular'
+      },
       xaxis: {
          tickangle: -45
       },
