@@ -561,30 +561,27 @@ def distinct_tasks(request, ide):
 
 
 def activities(request, ide):
-    project = Project.objects.get(id=ide)
+
 
     tasks = Task.objects.filter(project__id=ide)
-    List_comments = []
-    no_comment_tasks = []
-    for t in tasks:
-        if len(t.comments.all()) > 0:
-            print(t)
-            print(t.comments.all()[len(t.comments.all()) - 1].submit_time)
-            List_comments.append(t.comments.all()[len(t.comments.all()) - 1].submit_time)
-        else:
-            no_comment_tasks += [t]
-    L = List_comments
-    print(L)
-    M = []
-    k = 0
-    while (M != L):
-        L = M
-        M = sorted(L, key=lambda comment: comment[k])
-        k += 1
 
 
-    ordered_tasks = []
-    for c in M:
-        ordered_tasks += tasks.get(comments__submit_time__contains=c.content)
+
+    ordered_tasks = tasks.order_by('-comments')
+    ordered_comments = []
+    list_tasks = []
+    for t in ordered_tasks:
+        present = False
+        for l in list_tasks:
+            if(l.name==t.name):
+                present = True
+        if not present :
+            if(len(t.comments.all())>0):
+                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]]
+            else:
+                ordered_comments += ["empty"]
+            list_tasks += [t]
+
+
 
     return render(request, 'taskmanager/activities.html', locals())
