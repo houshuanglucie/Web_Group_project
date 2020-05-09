@@ -28,7 +28,6 @@ urlpatterns = [
 	path('graphs', views_graph.graphs, name='graphs'),
 
 	path('gantt', views_graph.gantt, name='gantt'),
-	path('activitydiag', views_graph.activitydiag, name='activitydiag'),
 	path('burndown', views_graph.burndown, name='burndown'),
 	path('radartask', views_graph.radartask, name='radartask'),
 	path('radaractivity', views_graph.radaractivity, name='radaractivity'),

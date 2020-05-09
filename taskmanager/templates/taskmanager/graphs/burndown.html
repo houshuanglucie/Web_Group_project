@@ -4,9 +4,20 @@
 
 {% block script%}
 
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src={% static "javascript/burndown.js" %}></script>
+
 <script>
    $(document).ready(function() {
       document.getElementById("graphs-nav_item").classList.add("active");
+      init_graph();
+
+      var info_projects = {{ info_projects|safe }};
+
+      $('#select_project input').on('change', function() {
+         id_selected = parseInt($('input[name=projectselected]:checked', '#select_project').val());
+         plot_graph(id_selected, info_projects);
+      });
    })
 
 
@@ -20,6 +31,9 @@ a:hover {
    text-decoration: none;
    color : black;
 }
+.plot_wrapper {
+   border: solid .1vw;
+}
 </style>
 {% endblock %}
 
@@ -28,11 +42,32 @@ a:hover {
 
 {% block content %}
 
-   <div class="m-5 p-3">
-      <h3>Burndown chart</h3>
-      <em>Description</em>
+<div class="m-5 p-3">
+   <h3>Burndown chart</h3>
+   <em>Une vue pour savoir à quel point vos tâches/votre projet est avancé</em>
    <br/>
+</div>
 
+
+<div class="row justify-content-center">
+   <div class="col-3">
+      <h5 class="mb-3">Mes projets</h5>
+      <form id="select_project">
+         {% for project in involved_projects %}
+         <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" name="projectselected" id="{{ project.id }}" value="{{ project.id }}">
+            <label class="custom-control-label" for="{{ project.id }}">{{ project }}</label>
+         </div>
+         {% empty %}
+            Aucun projet
+         {% endfor %}
+      </form>
+   </div>
+
+
+   <div class="plot_wrapper col-6">
+      <div id="div_plot"></div>
+   </div>
 </div>
 
 

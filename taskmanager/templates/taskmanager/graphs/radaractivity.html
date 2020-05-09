@@ -20,6 +20,7 @@
             $('#description_project').show();
             $('#description_global').hide();
             send_ajax('{% url 'radaractivity' %}', range, 0);
+            $('#div_plot').css("opacity", "1");
          }
          else{
             $('#div_plot').css("opacity", "0"); // On cache le radar
@@ -87,8 +88,8 @@ a:hover {
                </label>
             </div>
             <div class="mt-3">
-               <em id="description_project" style="display:none">Une vue du nombre total de vos activités sur chaque projet</em>
-               <em id="description_global">Une vue de vos types d'activités sur un projet</em>
+               <em id="description_project">Une vue du nombre total de vos activités sur chaque projet</em>
+               <em id="description_global" style="display:none">Une vue de vos types d'activités sur un projet</em>
             </div>
          </form>
 

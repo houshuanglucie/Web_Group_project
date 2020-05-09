@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.dateformat import format
+from django.utils.text import Truncator
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.views.generic.edit import FormView
@@ -71,8 +72,8 @@ def gantt(request):
             project_id = task.project.id,
             name = task.name,
             id_task = task.id,
-            start = int(format(task.start_date, 'U'))*1000,
-            end = int(format(task.due_date, 'U'))*1000
+            start = int(format(task.start_date, 'U')),
+            end = int(format(task.due_date, 'U'))
             ) for task in tasks]
 
         tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
@@ -82,14 +83,6 @@ def gantt(request):
     return render(request, 'taskmanager/graphs/gantt.html', locals())
 
 
-# ***************************************************************************
-#  DIAGRAMME D'ACTIVITE
-# ***************************************************************************
-
-@login_required(login_url = 'connect')
-def activitydiag(request):
-    return render(request, 'taskmanager/graphs/activitydiag.html', locals())
-
 
 # ***************************************************************************
 #  BURNDOWN CHART
@@ -97,6 +90,28 @@ def activitydiag(request):
 
 @login_required(login_url = 'connect')
 def burndown(request):
+    involved_projects = Project.objects.filter(members = request.user)
+
+    info_projects = []
+
+    for project in involved_projects:
+        tasks = Task.objects.filter(project = project)
+        tasks_data = []
+        for task in tasks:
+            tasks_data.append(dict(
+                name = task.name,
+                shorten_name = Truncator(task.name).chars(20),
+                start_date = int(format(task.start_date, 'U'))*1000,
+                due_date = int(format(task.due_date, 'U'))*1000
+            ))
+        info_projects.append(dict(
+            id_project = project.id,
+            name_project = project.name,
+            tasks_data = tasks_data
+        ))
+
+    info_projects = json.dumps(info_projects)
+
     return render(request, 'taskmanager/graphs/burndown.html', locals())
 
 
@@ -106,8 +121,7 @@ def burndown(request):
 
 @login_required(login_url = 'connect')
 def radartask(request):
-    current_user = User.objects.get(id = request.user.id)
-    involved_projects = Project.objects.filter(members = current_user)
+    involved_projects = Project.objects.filter(members = request.user)
 
     info_project = []
 
@@ -169,5 +183,35 @@ def radaractivity(request):
 def manageapp(request):
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
-    all_traces = Trace.objects.all()
+
+    nodes = []
+    for user in User.objects.all():
+        count = Trace.objects.filter(actor = user).count()
+        nodes.append(dict(
+            id = user.id,
+            title = user.username + "<br>" + str(count) + " trace(s)",
+            value = count,
+            color = "rgb(150,150,150)",
+            border = "rgb(100,100,100)"
+        ))
+    nodes = json.dumps(nodes)
+
+
+    edges = []
+
+    user_list = [user for user in User.objects.all()]
+    for i in range(len(user_list)):
+        user1 = user_list[i]
+        for j in range(i+1, len(user_list)):
+            user2 = user_list[j]
+            count = Project.objects.filter(members = user1).filter(members = user2).count()
+            if(count != 0):
+                edges.append({
+                    'from' : user1.id,
+                    'to' : user2.id,
+                    'value' : count,
+                    'title' : str(count) + " projet(s) en commun",
+                    'color' : "rgb(150,150,150)"
+                })
+
     return render(request, 'taskmanager/graphs/manageapp.html', locals())
