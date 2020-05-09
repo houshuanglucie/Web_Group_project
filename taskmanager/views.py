@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from django.db import models
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
+from .models import Verb, Trace
 
 import datetime
 import json
@@ -180,6 +181,11 @@ def newproject(request):
                 project.members.add(User.objects.get(username=member))
             project.save()
 
+            # Création d'une trace
+            vb = Verb.objects.get(alias = "AddPr")
+            new_trace = Trace(actor = request.user, object_project = project, verb = vb)
+            new_trace.save()
+
             # On répond à Ajax qui va se charger d'afficher le toast
             return JsonResponse({"state": "ok", "name": name}, status=200)
         else:
@@ -251,6 +257,11 @@ def manageproject(request, id):
 
                 project.save()
 
+                # Création d'une trace
+                vb = Verb.objects.get(alias = "MdfPr")
+                new_trace = Trace(actor = request.user, object_project = project, verb = vb)
+                new_trace.save()
+
                 # On répond à Ajax qui va se charger d'afficher le toast
                 return JsonResponse({"state": "ok", "name": project.name}, status=200)
             else:
@@ -295,6 +306,11 @@ def focus_task(request, id):
         new_comment.save()
         task.comments.add(new_comment)
         task.save()
+
+        # Création d'une trace
+        vb = Verb.objects.get(alias = "AddCm")
+        new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
+        new_trace.save()
 
     return render(request, 'taskmanager/focus_task.html', locals())
 
@@ -399,6 +415,11 @@ def newtask(request, id_project):
         form = TaskForm(request.POST or None, request.FILES, initial=defaults)
         if form.is_valid():
             added, error_category, new_task = validate_task_data(request, form, project, "ADD")
+
+            # Création d'une trace
+            vb = Verb.objects.get(alias = "AddTk")
+            new_trace = Trace(actor = request.user, object_project = new_task.project, object_task = new_task, verb = vb)
+            new_trace.save()
     else:
         form = TaskForm(initial=defaults)
 
@@ -423,9 +444,11 @@ def managetask(request, id):
     start_date_format = task.start_date.strftime("%d/%m/%Y %H:%M")
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
 
+
     print(start_date_format)
 
     subtasks = Subtask.objects.filter(task=task).order_by("id")
+
     subtask_list = [subtask.name for subtask in subtasks]
     subtask_list = json.dumps(subtask_list)
 
@@ -448,10 +471,21 @@ def managetask(request, id):
                 return redirect('focus_project', id=task.project.id)
             elif ('save' in request.POST):
                 added, error_category, task = validate_task_data(request, form, task.project, "MODIFY", task)
-                if (not error_category):
-                    request.session[
-                        'new_modify'] = task.name  # pour afficher un toast quand on retournera sur focus_task
-                    return redirect('focus_task', id=task.id)
+
+                
+
+                if(not error_category):
+
+                    # Création d'une trace
+                    vb = Verb.objects.get(alias = "AddTk")
+                    new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
+                    new_trace.save()
+
+                    request.session['new_modify'] = task.name # pour afficher un toast quand on retournera sur focus_task
+                    return redirect('focus_task', id = task.id)
+
+
+
 
     else:
         form = TaskForm(initial=defaults)
@@ -479,38 +513,87 @@ def dashboard(request):
 # ***************************************************************************
 #  Filtrage et tri des task
 # ***************************************************************************
+=======
 
+
+
+
+# ============== Filtrage et de tri des taches =================
 @login_required(login_url='connect')
-def task_filter(request, id):
-    project = Project.objects.get(id=id)
-    task_list = Task.objects.filter(project__id=id)
+def task_filter(request):
 
-    # user_list = User.objects.all().values('id', 'last_name')
-    # print(user_list)
-    # status_list = Status.objects.all().values('id', 'how')
-    # print(status_list)
+    # Quand le formulaire de filtre est soumis, le "click" devient "True",
+    # utilisé pour afficher les résultats du filtre dans task_filter.html
+    click = False
+
+    # Obtenir les listes des menus déroulants dans le formulaire de filtre
+    current_user = User.objects.get(id=request.user.id)
+    project_list = Project.objects.filter(Q(members=current_user) | Q(public="PU")).distinct().values('id', 'name')  # projects de l'user OU les projets publics
+    user_list = User.objects.all().values('id', 'first_name', 'last_name')
+    status_list = Status.objects.all().values('id', 'how')
 
     if request.method == 'POST':
 
+        # Quand le clic devient "True", le frontal affiche le résultat du filtrage
+        click = True
+
+        # Récupérer le paramètre utilisé pour le tri
         sorter = request.POST.get('sorter')
         if sorter == "default":
             sorter = "priority"
 
+        order = request.POST.get('order')
+        if order == "descent":
+            sorter = '-' + str(sorter)  # Trier dans l'ordre inverse
+
+        # Récupérer les paramètres de filtrage sélectionnés par le frontal
+        project_selected = request.POST.get('project_selected')
         assignee_selected = request.POST.get('assignee_selected')
+        status_inc_exc = request.POST.get('status_inc_exc')
         status_selected = request.POST.get('status_selected')
+        start_before_after = request.POST.get('start_before_after')
+        start_date_selected = request.POST.get('start_date_selected')
+        due_before_after = request.POST.get('due_before_after')
+        due_date_selected = request.POST.get('due_date_selected')
 
         filter_dict = dict()
 
+        # Filtrer par projet et responsable(assignee)
+        if project_selected != "All":
+            filter_dict['project'] = get_object_or_404(Project, id=project_selected)
         if assignee_selected != "All":
             filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
-        if status_selected != "All":
-            filter_dict['status'] = get_object_or_404(Status, id=status_selected)
 
-        tasks = task_list.filter(**filter_dict)
+        task_list = Task.objects.filter(**filter_dict).order_by(sorter)
 
-        return render(request, 'taskmanager/focus_project.html', locals())
+        # Filtrer par status(inclus ou exclu)
+        if status_inc_exc == "include" and status_selected != "All":
+            task_list = task_list.filter(status__id=status_selected).order_by(sorter)
+        elif status_inc_exc == "exclude" and status_selected != "All":
+            task_list = task_list.filter(~Q(status__id=status_selected)).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        # Filtrer par date de début (avant ou après)
+        if start_before_after == "Before" and start_date_selected != "":
+            task_list = task_list.filter(start_date__lte=start_date_selected).order_by(sorter)
+        elif start_before_after == "After" and start_date_selected != "":
+            task_list = task_list.filter(start_date__gte=start_date_selected).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        # Filtrer par date d'écheance (avant ou après)
+        if due_before_after == "Before" and due_date_selected != "":
+            task_list = task_list.filter(due_date__lte=due_date_selected).order_by(sorter)
+        elif due_before_after == "After" and due_date_selected != "":
+            task_list = task_list.filter(due_date__gte=due_date_selected).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        return render(request, 'taskmanager/task_filter.html', locals())
+
     else:
-        return render(request, 'taskmanager/focus_project.html', locals())
+        return render(request, 'taskmanager/task_filter.html', locals())
 
 
 # --- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#
@@ -584,4 +667,6 @@ def activities(request, ide):
 
 
 
+
     return render(request, 'taskmanager/activities.html', locals())
+

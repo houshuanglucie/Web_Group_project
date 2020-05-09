@@ -1,0 +1,39 @@
+<!-- Vue du calendrier -->
+{% extends "base.html"%}
+{% load static %}
+
+{% block script%}
+
+<script>
+   $(document).ready(function() {
+      document.getElementById("graphs-nav_item").classList.add("active");
+   })
+
+
+
+</script>
+{%endblock%}
+
+{% block css %}
+<style>
+a:hover {
+   text-decoration: none;
+   color : black;
+}
+</style>
+{% endblock %}
+
+
+
+
+{% block content %}
+
+   <div class="m-5 p-3">
+      <h3>Burndown chart</h3>
+      <em>Description</em>
+   <br/>
+
+</div>
+
+
+{% endblock %}
