@@ -9,14 +9,16 @@ a:hover {
 </style>
 {% endblock %}
 {%  block content %}
-<div>
+<table>
+<tr>
+<td>
 <ul>
 {%  for t in list_tasks %}
     <li> <a href = "{%  url 'focus_task' id=t.id %}"> {{t.name}} </a> </li>
     {%  endfor %}
 </ul>
-</div>
-    <div>
+</td>
+<td>
     <ul>
 
     {%  for c in ordered_comments %}
@@ -24,11 +26,12 @@ a:hover {
         <li> Aucun message </li>
 
         {%  else %}
-        <li> Dernier message : {{ c.content }} at : {{ c.submit_time }}</li>
+        <li> Dernier message : <strong> {{ c.content }} </strong> at : {{ c.submit_time }}</li>
         {% endif %}
         {%  endfor %}
     </ul>
-    </div>
-
+</td>
+</tr>
+</table>
 {% endblock %}
 
