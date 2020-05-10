@@ -15,7 +15,7 @@ class Project(models.Model):
     # Visibilité du projet (Prive ou public)
     public = models.CharField(max_length = 2, choices = [("PU", "public"), ("PR", "privé")], default = "PR", verbose_name = "Partage")
     # Avancement du projet
-    completed = models.IntegerField(default=0)
+    completed = models.IntegerField(default=0, verbose_name = "Avancement")
 
     def __str__(self):
         return self.name
@@ -91,7 +91,7 @@ class Task(models.Model):
     # Journal (ou commentaires...)
     comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
     # Avancement de la tâche
-    completed = models.IntegerField(default=0)
+    completed = models.IntegerField(default=0, verbose_name = "Avancement")
 
 
     # Permet d'avoir le nom et l'extension de la piece jointe
