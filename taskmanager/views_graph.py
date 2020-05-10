@@ -50,10 +50,11 @@ def dashboard(request):
 
     elif request.POST.get('type_view') and request.POST.get('type_view') == "burndown":
         info_projects = create_data_burndown(request)
-        print(info_projects)
         return JsonResponse({'info' : info_projects}, safe = False, status=200)
 
-
+    elif request.POST.get('type_view') and request.POST.get('type_view') == "radartask":
+        info_projects = create_data_radartask(request)
+        return JsonResponse({'info' : info_projects}, safe = False, status=200)
 
 
 
@@ -148,9 +149,7 @@ def burndown(request):
 # ***************************************************************************
 #  RADAR TASK
 # ***************************************************************************
-
-@login_required(login_url = 'connect')
-def radartask(request):
+def create_data_radartask(request):
     involved_projects = Project.objects.filter(members = request.user)
 
     info_project = []
@@ -167,6 +166,13 @@ def radartask(request):
             members = member_data
         ))
 
+    return info_project
+
+
+@login_required(login_url = 'connect')
+def radartask(request):
+    involved_projects = Project.objects.filter(members = request.user)
+    info_project = create_data_radartask(request)
     info_project = json.dumps(info_project)
     return render(request, 'taskmanager/graphs/radartask.html', locals())
 

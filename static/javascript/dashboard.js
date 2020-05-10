@@ -3,16 +3,18 @@ var items = new vis.DataSet();
 
 var where_plot = null;
 var id_selected = 0;
+var type_view = null;
 
 
 function init_interactivity(){
 
    for(var i = 1 ; i < 5 ; i++){
       const name_board = 'board' + i.toString();
-      const id_select = '#view_board' + i.toString();
+      const id_select = '#view_board' + i.toString(); // form to select
 
       $(id_select).on('change', function(){
          view_selected = $(id_select).find(":selected").val();
+         type_view = view_selected;
 
          if(view_selected == "tasks"){
             document.getElementById(name_board).appendChild(document.getElementById('tasks_views'));
@@ -21,11 +23,17 @@ function init_interactivity(){
          }
 
          else if(view_selected == "gantt"){
-            send_ajax("gantt", name_board);
+            send_ajax(name_board);
             $(id_select).hide();
          }
 
          else if(view_selected == "burndown"){
+            document.getElementById(name_board).appendChild(document.getElementById('select_project'));
+            $('#select_project').show();
+            where_plot = name_board;
+         }
+
+         else if(view_selected == "radartask"){
             document.getElementById(name_board).appendChild(document.getElementById('select_project'));
             $('#select_project').show();
             where_plot = name_board;
@@ -42,14 +50,14 @@ function init_interactivity(){
 
    $('#select_project').on('change', function() {
       id_selected = parseInt($('#select_project').find(":selected").val());
-      send_ajax("burndown", where_plot);
-      $('#view_' + where_plot).hide();
-      $('#select_project').hide();
+      send_ajax(where_plot);
+      // $('#view_' + where_plot).hide();
+      // $('#select_project').hide();
    });
 }
 
 
-function send_ajax(type_view, board){
+function send_ajax(board){
    var title = "";
    $.ajax({
       url : url_endpoint,
@@ -87,6 +95,11 @@ function handle_response(type_view, json, board){
    else if(type_view == "burndown"){
       var info_project = json.info;
       plot_burndown(id_selected, info_project, where_plot);
+   }
+
+   else if(type_view == "radartask"){
+      var info_project = json.info;
+      plot_taskhistogram(id_selected, info_project, where_plot);
    }
 
 }
