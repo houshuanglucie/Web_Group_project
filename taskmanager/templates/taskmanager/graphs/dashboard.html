@@ -1,11 +1,25 @@
 <!-- Vue du tableau de bord -->
 {% extends "base.html"%}
+{% load static %}
 
 {% block script%}
+<script type="text/javascript" src="https://visjs.github.io/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js"></script>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src={% static "javascript/dashboard.js" %}></script>
+
+<script src={% static "javascript/gantt.js" %}></script>
+<script src={% static "javascript/burndown.js" %}></script>
+
+
 <script>
+	var url_endpoint ='{% url 'dashboard' %}';
+
 	$(document).ready(function() {
 			document.getElementById("graphs-nav_item").classList.add("active");
+			init_interactivity()
 		})
+
+
 </script>
 {% endblock%}
 
@@ -22,21 +36,28 @@
 		text-decoration: none;
 		color : black;
 	}
+
+	#main_container{
+		height: 85vh;
+		/* background-color: rgba(0,0,0,0.05); */
+	}
+
+	.board{
+		overflow: scroll;
+		box-shadow: 2px 2px 2px dimgrey;
+		border: solid dimgrey .1vw;
+		border-radius: .5vw .5vw;
+	}
+
 </style>
 {% endblock %}
 
 
 {% block content %}
 
-
-
-
-<div class=article>
-	<h3 class="mx-5">Mon tableau de bord</h3>
-	<em>Ici s'affichent toutes les tâches que vous avez à réaliser</em>
-	<br/><br/>
-
-	<div class="row justify-content-center">
+<div id="tasks_views" style="display:none">
+	<h4 class="text-center mt-2">Mes tâches</h4><br/>
+	<div class="row justify-content-center" style="width:100%">
 		{% for project_tasks in tasks_by_project %}
 			<div class="col-11 col-md-5 col-lg-3 m-3 p-2 box_project">
 				<div class="mb-3 mt-1">
@@ -54,8 +75,69 @@
 			<p>Aucun projet</p>
 		{% endfor %}
 	</div>
-
-
 </div>
+
+
+
+<form id="select_project" class="m-3" style="display: none">
+	<select class="form-control" id="select_project_btn">
+		<option value='NULL'>-- Choisissez un projet --</option>
+		{% for project in involved_projects %}
+			<option value='{{ project.id }}'>{{ project }}</option>
+		{% endfor %}
+	</select>
+</form>
+
+
+
+<div class=article>
+	<h3 class="mx-5">Mon tableau de bord</h3>
+	<em>Un tableau de bord personnalisable des graphes que vous souhaitez voir d'un coup d'oeil</em>
+	<br/><br/>
+</div>
+
+
+<div id="main_container" class="row justify-content-center">
+
+	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh" id="board1">
+		<form id="view_board1" class="m-3">
+			{% csrf_token %}
+			<select class="form-control" id="view_box1_choice">
+				<option value='NULL'>-- Choisissez une vue --</option>
+				<option value='tasks'>Par tâches & projet</option>
+				<option value='gantt'>Gantt</option>
+				<option value='burndown'>Burndown chart</option>
+			</select>
+		</form>
+	</div>
+
+
+	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh" id="board2">
+		<form id="view_board2" class="m-3">
+			{% csrf_token %}
+			<select class="form-control" id="view_box2_choice">
+				<option value='NULL'>-- Choisissez une vue --</option>
+				<option value='tasks'>Par tâches & projet</option>
+				<option value='gantt'>Gantt</option>
+				<option value='burndown'>Burndown chart</option>
+			</select>
+		</form>
+	</div>
+	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh">Hello</div>
+	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh">Hello</div>
+</div>
+
+
+
+
+
+
+
+
+<!--
+
+-->
+
+
 
 {% endblock %}

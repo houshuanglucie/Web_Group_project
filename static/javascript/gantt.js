@@ -43,7 +43,7 @@ function initialize_gantt(tasks_by_project){
 
 
 // ===== Tracage du diagramme de Gantt pour le calendrier ======
-function plot_gantt(){
+function plot_gantt(div_plot = "gantt", interaction = true){
 
    // GRAPHICS
    var now = Date.now();
@@ -63,29 +63,29 @@ function plot_gantt(){
    };
 
 
-   var container = document.getElementById("gantt");
-   timeline = new vis.Timeline(container, null, options);
-   timeline.setGroups(groups);
-   timeline.setItems(items);
+   var container = document.getElementById(div_plot);
+      timeline = new vis.Timeline(container, null, options);
+      timeline.setGroups(groups);
+      timeline.setItems(items);
 
+      if(interaction){
+      // INTERACTIONS
+      timeline.on("click", function (properties) {
+         has_clicked(properties);
+         click_on = true;
+      });
 
-   // INTERACTIONS
-   timeline.on("click", function (properties) {
-      has_clicked(properties);
-      click_on = true;
-   });
+      timeline.on("itemover", function (properties) {
+         has_clicked(properties);
+      });
 
-   timeline.on("itemover", function (properties) {
-      has_clicked(properties);
-   });
-
-   timeline.on("itemout", function (properties) {
-      if(!click_on){
-         $("#details_task").hide();
-      }
-   });
-
+      timeline.on("itemout", function (properties) {
+         if(!click_on){
+            $("#details_task").hide();
+         }
+      });
    }
+}
 
 
 // ===== Mise a jour du div details quand on hover une tache ======

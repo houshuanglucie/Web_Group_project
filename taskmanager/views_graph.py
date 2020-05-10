@@ -43,14 +43,32 @@ def dashboard(request):
         tasks_by_project.append(tasks_by_proj_data)
 
 
+    print(request.POST)
+    if request.POST.get('type_view') and request.POST.get('type_view') == "gantt":
+        tasks_by_project = create_data_gantt(request)
+        return JsonResponse({'tasks' : tasks_by_project}, safe = False, status=200)
+
+    elif request.POST.get('type_view') and request.POST.get('type_view') == "burndown":
+        info_projects = create_data_burndown(request)
+        print(info_projects)
+        return JsonResponse({'info' : info_projects}, safe = False, status=200)
+
+
+
+
+
+
+
+
+
+
     return render(request, 'taskmanager/graphs/dashboard.html', locals())
 
 # ***************************************************************************
 #  GANTT
 # ***************************************************************************
 
-@login_required(login_url = 'connect')
-def gantt(request):
+def create_data_gantt(request):
     # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
     # tasks_by_project = list({
     #   project : nom_du_projet
@@ -80,6 +98,14 @@ def gantt(request):
         tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
         tasks_by_project.append(tasks_by_project_data)
 
+
+    return tasks_by_project
+
+
+
+@login_required(login_url = 'connect')
+def gantt(request):
+    tasks_by_project = create_data_gantt(request)
     tasks_by_project = json.dumps(tasks_by_project)
     return render(request, 'taskmanager/graphs/gantt.html', locals())
 
@@ -88,9 +114,7 @@ def gantt(request):
 # ***************************************************************************
 #  BURNDOWN CHART
 # ***************************************************************************
-
-@login_required(login_url = 'connect')
-def burndown(request):
+def create_data_burndown(request):
     involved_projects = Project.objects.filter(members = request.user)
 
     info_projects = []
@@ -110,7 +134,12 @@ def burndown(request):
             name_project = project.name,
             tasks_data = tasks_data
         ))
+    return info_projects
 
+
+@login_required(login_url = 'connect')
+def burndown(request):
+    info_projects = create_data_burndown(request)
     info_projects = json.dumps(info_projects)
 
     return render(request, 'taskmanager/graphs/burndown.html', locals())
