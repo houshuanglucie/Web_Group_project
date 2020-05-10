@@ -125,7 +125,15 @@ def projects(request):
     else:
         deleted_project = None
         show_toast = False
-
+    for p in projects_list :
+        a=0
+        k=0
+        for t in Task.objects.filter(project__id=p.id):
+            a+=t.completed
+            k+=1
+        if(k>0):
+            p.completed = int(a/k)
+    list_color=["red","orange","green"]
     return render(request, 'taskmanager/projects.html', locals())
 
 

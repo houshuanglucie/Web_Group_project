@@ -49,6 +49,7 @@
 
 	<thead class="thead-dark">
 		<tr>
+            <th> Avancement </th>
 			<th scope="col">Projet</th>
 			<th class="d-none d-lg-table-cell" scope="col">Membres</th>
 			<th class="d-none d-lg-table-cell text-right" scope="col">Partage</th>
@@ -59,6 +60,9 @@
 	<tbody>
 		{% for project in projects_list %}
 			<tr>
+
+                <td> {{ project.completed }}%</td>
+
 				<td><a href="{% url "focus_project" id=project.id %}">{{ project.name }}</a></td>
 				<td class="d-none d-lg-table-cell">
 					{% for member in project.members.all %}

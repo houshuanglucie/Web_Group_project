@@ -14,6 +14,8 @@ class Project(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name = "Membres")
     # Visibilité du projet (Prive ou public)
     public = models.CharField(max_length = 2, choices = [("PU", "public"), ("PR", "privé")], default = "PR", verbose_name = "Partage")
+    # Avancement du projet
+    completed = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
