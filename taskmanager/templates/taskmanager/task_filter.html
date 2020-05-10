@@ -1,0 +1,152 @@
+<!-- Page de filtrage et de tri de toutes les taches -->
+{% extends "base.html"%}
+
+{% block script%}
+	<script>
+		$(document).ready(function() {
+				document.getElementById("filter-nav_item").classList.add("active");
+			})
+	</script>
+{%endblock%}
+
+{% block content %}
+
+<!-- Formulaire de filtrage et de tri -->
+<form style="margin: 60px" action="{% url 'task_filter' %}" method="post" id = "filtrage_tri">
+    {% csrf_token %}
+
+    <!-- Options des paramètres de tri -->
+    <div class="form-row">
+        <div class="form-group col-md-9" style="display:inline-block">
+            <label>Trier par:</label>
+            <select class="form-control" name="sorter" id ="sorter">
+                <option value="priority">Priorité</option>
+                <option value="name">Nom de tâche</option>
+                <option value="user">Responsable</option>
+                <option value="status">Status</option>
+                <option value="start_date">Date de début</option>
+                <option value="due_date">Date d'écheance</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3" style="display:inline-block">
+            <label>Ordre:</label>
+            <select class="form-control" name="order" id = "order" >
+                <option value="ascent">Ascendant</option>
+                <option value="descent">Descendant</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Options des paramètres de filtrage -->
+    <div class="form-row">
+        <div class="form-group col-md-4" style="display:inline-block">
+            <label>Projet filtre:</label>
+            <select class="form-control" name="project_selected" id = "project_selected">
+                <option value="All">Sélectionner...</option>
+                {% for project in project_list %}
+                    <option value="{{ project.id }}">{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group col-md-4" style="display:inline-block">
+            <label>Responsable filtre:</label>
+            <select class="form-control" name="assignee_selected" id = "assignee_selected">
+                <option value="All">Sélectionner...</option>
+                {% for user in user_list %}
+                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4" style="display:inline-block">
+            <label>Status filtre:</label>
+            <select class="form-control" name="status_inc_exc" selected="include">
+                <option value="include">Inclure</option>
+                <option value="exclude">Exclure</option>
+            </select>
+            <select class="form-control" name="status_selected" id = "status_selected">
+                <option value="All">Sélectionner...</option>
+                {% for status in status_list %}
+                    <option value="{{ status.id }}">{{ status.how }}</option>
+                {% endfor %}
+            </select>
+        </div >
+        <div class="form-group col-md-4" style="display:inline-block">
+            <label>Date de début filtre:</label>
+            <select class="form-control" name="start_before_after" selected="All">
+                <option value="All">Sélectionner...</option>
+                <option value="Before">Avant</option>
+                <option value="After">Après</option>
+            </select>
+            <input type="date" class="form-control" name="start_date_selected">
+        </div>
+        <div class="form-group col-md-4" style="display:inline-block">
+            <label>Date d'écheance filtre:</label>
+            <select class="form-control" name="due_before_after" selected="All">
+                <option value="All">Sélectionner...</option>
+                <option value="Before">Avant</option>
+                <option value="After">Après</option>
+            </select>
+            <input type="date" class="form-control" name="due_date_selected">
+        </div>
+    </div>
+    <div class="row">
+        <input type="hidden" name="project" value={{ project.id }}>
+        <button type="submit" class="btn btn-secondary">Enregistrer</button>
+        <a href="{% url 'task_filter' %}" class="btn btn-secondary" role="button">Réinitialiser</a>
+    </div>
+</form>
+
+
+<!-- Après avoir cliqué sur «Enregistrer» depuis le frontal, "click" devient True pour afficher les résultats du filtrage. -->
+{% if click %}
+<div class="m-sm-5">
+
+    <!-- HEADER Taches -->
+   <div class="row">
+      <div class="col-12">
+         <h4 class="mb-3">Toutes les tâches</h4>
+      </div>
+   </div>
+
+    <table class="table table-hover">
+
+        <thead class="thead-dark">
+            <tr>
+                <th class="d-none d-lg-table-cell" scope="col">Priorité</th>
+                <th class="d-none d-lg-table-cell" scope="col">Tâche</th>
+                <th class="d-none d-lg-table-cell" scope="col">Projet</th>
+                <th class="d-none d-lg-table-cell" scope="col">Responsable</th>
+                <th class="d-none d-lg-table-cell" scope="col">Date début</th>
+                <th class="d-none d-lg-table-cell" scope="col">Date d'écheance</th>
+                <th class="d-none d-lg-table-cell" scope="col">Statut</th>
+            <th scope="col" class="d-none d-sm-table-cell col-1">Détails</th>
+                <th scope="col" class="d-none d-sm-table-cell col-1">Éditer</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for task in task_list %}
+            <tr>
+                <td>{{ task.priority }}</td>
+            <td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
+                <td><a href={% url "focus_project" id=task.project.id %}>{{ task.project.name }}</a></td>
+                <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
+                <td class="d-none d-lg-table-cell">{{ task.start_date|date }}</td>
+                <td class="d-none d-lg-table-cell">{{ task.due_date|date }}</td>
+                <td class="d-none d-lg-table-cell">{{ task.status }}</td>
+            <td class="d-none d-sm-table-cell"><a href="{% url "focus_task" id=task.id %}"<i class="fa fa-search"></i></td>
+                <td class="d-none d-sm-table-cell"><a href="{% url "managetask" id=task.id %}"<i class="fa fa-edit"></i></td>
+            </tr>
+
+            {% empty %}
+               <tr><td colspan=7>Pas de tâches</td></tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,183 @@
+<!-- Vue individuelle d'une tache -->
+{% extends "base.html"%}
+{% load humanize %}
+{% load static %}
+
+{% block css %}
+<style>
+a:hover {
+	text-decoration : none;
+	color : black;
+}
+</style>
+{% endblock %}
+
+
+{% block script%}
+<script>
+   $(document).ready(
+      function() {
+         document.getElementById("projects-nav_item").classList.add("active");
+			{% if show_toast %}
+				$('.toast').toast('show');
+			{% endif %}
+      }
+   )
+</script>
+{%endblock%}
+
+
+
+{% block content %}
+
+
+<div class="m-5">
+
+   <a href="{% url 'focus_project' id=project.id %}"><i class="fa fa-angle-double-left"></i> Return to project : {{ project.name }}</a>
+   <br/><br/>
+
+   <table class="table">
+      {% comment %} BODY OF TABLE {% endcomment %}
+      <tbody>
+         <tr>
+            <th class="thead-dark">Projet parent</th>
+            <td><a href="{% url 'focus_project' id=project.id %}">{{ task.project }}</a></td>
+         </tr>
+         <h1> Your tasks </h1>
+{% if user_empty %}
+<h2> Vous n'avez aucune tâche assignée dans ce projet </h2>
+{% endif %}
+         {% for task in user_tasks %}
+         <tr>
+            <th class="thead-dark">Tâche</th>
+            <td>{{ task.name }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Description</th>
+            <td>{{ task.description|default:"-" }}</td>
+         </tr>
+			<tr>
+            <th class="thead-dark">Catégorie</th>
+            <td>{{ task.category|default_if_none:"-" }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Responsable</th>
+            <td>{{ task.user.first_name }} {% filter upper %}{{ task.user.last_name }}{% endfilter %}</td>
+         </tr>
+			<tr>
+				<th class="thead-dark">Pièce jointe</th>
+				<td>{% if task.attachment %}
+					<a target="_blank" href="{{ task.attachment.url }}">{{ att_name }}</a><br/>
+						<!-- On peut utiliser les deux en embed, mais sinon, on conserve pas les proportions en cas d'images -->
+						<span class="d-none d-lg-block">
+						{% if show_as_picture %}
+							<img class="mt-2 border border-secondary" src="{{ task.attachment.url }}" style="width:30vw"/>
+						{% elif show_as_doc %}
+							<embed class="mt-2 border border-secondary" src="{{ task.attachment.url }}" width="500" height="375">
+						{% endif %}
+						</span>
+
+					{% else %} -
+					{% endif %}</td>
+			</tr>
+         <tr>
+            <th class="thead-dark">Date de début</th>
+            <td>{{ task.start_date }} <span class="d-none d-md-inline">({{ task.start_date|naturaltime }})</span></td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Deadline</th>
+            <td>{{ task.due_date }} <span class="d-none d-md-inline">({{ task.due_date|naturaltime }})</span></td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Priorité</th>
+            <td>{{ task.priority }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Statut</th>
+            <td>{{ task.status }}</td>
+         </tr>
+			<tr>
+            <th class="thead-dark">Sous-tâches</th>
+            <td>
+					{% for subtask in subtasks %}
+						{{ subtask }}<br/>
+					{% endfor %}
+				</td>
+         </tr>
+      </tbody>
+   </table>
+    <br><br>
+ {% endfor %}
+
+
+        <h1> Other tasks </h1>
+        {% if others_empty %}
+    <h2> Vous êtes le seul a avoir des tâches assignées dans ce projet </h2>
+        {% endif %}
+      {% comment %} BODY OF TABLE {% endcomment %}
+
+
+         {% for task in othertasks %}
+         <table class="table">
+             <tbody>
+         <tr>
+            <th class="thead-dark">Tâche</th>
+            <td>{{ task.name }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Description</th>
+            <td>{{ task.description|default:"-" }}</td>
+         </tr>
+			<tr>
+            <th class="thead-dark">Catégorie</th>
+            <td>{{ task.category|default_if_none:"-" }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Responsable</th>
+            <td>{{ task.user.first_name }} {% filter upper %}{{ task.user.last_name }}{% endfilter %}</td>
+         </tr>
+			<tr>
+				<th class="thead-dark">Pièce jointe</th>
+				<td>{% if task.attachment %}
+					<a target="_blank" href="{{ task.attachment.url }}">{{ att_name }}</a><br/>
+						<!-- On peut utiliser les deux en embed, mais sinon, on conserve pas les proportions en cas d'images -->
+						<span class="d-none d-lg-block">
+						{% if show_as_picture %}
+							<img class="mt-2 border border-secondary" src="{{ task.attachment.url }}" style="width:30vw"/>
+						{% elif show_as_doc %}
+							<embed class="mt-2 border border-secondary" src="{{ task.attachment.url }}" width="500" height="375">
+						{% endif %}
+						</span>
+
+					{% else %} -
+					{% endif %}</td>
+			</tr>
+         <tr>
+            <th class="thead-dark">Date de début</th>
+            <td>{{ task.start_date }} <span class="d-none d-md-inline">({{ task.start_date|naturaltime }})</span></td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Deadline</th>
+            <td>{{ task.due_date }} <span class="d-none d-md-inline">({{ task.due_date|naturaltime }})</span></td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Priorité</th>
+            <td>{{ task.priority }}</td>
+         </tr>
+         <tr>
+            <th class="thead-dark">Statut</th>
+            <td>{{ task.status }}</td>
+         </tr>
+			<tr>
+            <th class="thead-dark">Sous-tâches</th>
+            <td>
+					{% for subtask in subtasks %}
+						{{ subtask }}<br/>
+					{% endfor %}
+				</td>
+         </tr>
+      </tbody>
+   </table>
+    <br><br>
+       {% endfor %}
+{% endblock %}

@@ -15,16 +15,25 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
+	<script src={% static "javascript/handle_preview_graphs.js" %}></script>
+
 	<script>
 	$(document).ready(function() {
-	$('#graphs-nav_item').hover(function() {
-		$(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
+		$('#graphs-nav_item').hover(function() {
+			$(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
-	}, function() {
-		$(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
-	});
+		}, function() {
+			$(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
+		});
+
+		handle_preview_graphs();
 	});
 	</script>
+
+
+
+
+
 
 	{% block script%} {% endblock %}
 	<title>Gestionnaire de projets</title>
@@ -61,21 +70,30 @@
 					<a class="nav-link" href="{% url "projects" %}">Mes projets</a>
 				</li>
 
+				<li id="filter-nav_item" class="nav-item">
+   					<a class="nav-link" href="{% url "task_filter" %}">Filtrage et tri</a>
+				</li>
+
 				<li id="newproject-nav_item" class="nav-item">
 					<a class="nav-link" href="{% url "newproject" %}">Nouveau projet</a>
 				</li>
 
-				<li id="dashboard-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "dashboard" %}">Tableau de bord</a>
-				</li>
-
 				<li id="graphs-nav_item" class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
-						<div class="dropdown-menu">
+						<div id="dropdown_menu" class="dropdown-menu">
+							<a id="dashboard-nav_item" class="dropdown-item" href="{% url 'dashboard' %}">Tableau de bord</a>
 							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
-							<a id="activitydiag-nav_item" class="dropdown-item" href="{% url 'activitydiag' %}">Diagramme d'activité</a>
+							<a id="burndown-nav_item" class="dropdown-item" href="{% url 'burndown' %}">Burndown chart</a>
+							<a id="radartask-nav_item" class="dropdown-item" href="{% url 'radartask' %}">Radar des tâches</a>
+							<a id="radaractivity-nav_item" class="dropdown-item" href="{% url 'radaractivity' %}">Radar d'activités</a>
 						</div>
 				</li>
+
+				{% if request.user.is_superuser %}
+					<li id="manageapp-nav_item" class="nav-item">
+						<a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de l'Application</a>
+					</li>
+				{% endif %}
 
 			</ul>
 
@@ -104,7 +122,6 @@
 	</section>
 
 	{% include "taskmanager/graphs/preview_graphs.html" %}
-
 
 </body>
 
