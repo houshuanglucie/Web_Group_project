@@ -62,6 +62,8 @@ a:hover {
 			</div>
 		</div>
 
+
+
    <table class="table">
       {% comment %} BODY OF TABLE {% endcomment %}
       <tbody>
@@ -116,6 +118,10 @@ a:hover {
          <tr>
             <th class="thead-dark">Statut</th>
             <td>{{ task.status }}</td>
+         </tr>
+         <tr>
+             <th class="thead-dark"> Avancement </th>
+             <td style="color:{{ color }}"> {{ task.completed }}% <a href="{%  url 'form_avancement' id=task.id %}">   <i>(Modifier l'avancement de la tâche) </i></a><br></td>
          </tr>
 			<tr>
             <th class="thead-dark">Sous-tâches</th>

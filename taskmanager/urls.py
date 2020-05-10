@@ -21,7 +21,7 @@ urlpatterns = [
 	path('finished/',views.finished_tasks,name='finishedtasks'),
 	path('distinct/<int:ide>', views.distinct_tasks, name='distincttasks'),
 	path('activities/<int:ide>', views.activities, name='activities'),
-
+	path('avancement/<int:id>',views.ModifyAvancement, name='form_avancement'),
 
 
 	path('dashboard', views_graph.dashboard, name='dashboard'),

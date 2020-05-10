@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.db import models
-from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
+from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm, CompletedForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 from .models import Verb, Trace
 
@@ -312,6 +312,12 @@ def focus_task(request, id):
         new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
         new_trace.save()
 
+    if task.completed<33:
+        color="red"
+    if task.completed>=33 and task.completed<66:
+        color="orange"
+    if task.completed >=66 :
+        color="green"
     return render(request, 'taskmanager/focus_task.html', locals())
 
 
@@ -670,3 +676,12 @@ def activities(request, ide):
 
     return render(request, 'taskmanager/activities.html', locals())
 
+
+def ModifyAvancement(request,id):
+    task = Task.objects.get(id=id)
+    form = CompletedForm(request.POST or None)
+    if form.is_valid():
+        task.completed = form.cleaned_data['completed']
+        task.save()
+        return redirect('focus_task',id=id)
+    return render(request,'taskmanager/avancement.html',locals())
