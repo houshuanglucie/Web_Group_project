@@ -37,6 +37,8 @@ function initialize_gantt(tasks_by_project){
          n++;
       }
    }
+
+
 }
 
 
@@ -65,6 +67,7 @@ function plot_gantt(){
    timeline = new vis.Timeline(container, null, options);
    timeline.setGroups(groups);
    timeline.setItems(items);
+
 
    // INTERACTIONS
    timeline.on("click", function (properties) {

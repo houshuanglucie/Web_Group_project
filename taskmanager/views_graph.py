@@ -72,8 +72,8 @@ def gantt(request):
             project_id = task.project.id,
             name = task.name,
             id_task = task.id,
-            start = int(format(task.start_date, 'U')),
-            end = int(format(task.due_date, 'U'))
+            start = int(format(task.start_date, 'U'))*1000,
+            end = int(format(task.due_date, 'U'))*1000
             ) for task in tasks]
 
         tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
