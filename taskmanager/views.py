@@ -125,6 +125,8 @@ def projects(request):
     else:
         deleted_project = None
         show_toast = False
+
+    # On va calculer l'avancement global du projet
     for p in projects_list :
         a=0
         k=0
@@ -132,7 +134,7 @@ def projects(request):
             a+=t.completed
             k+=1
         if(k>0):
-            p.completed = int(a/k)
+            p.completed = int(a/k) # C'est la moyenne des avancements des tâches du projet
 
     return render(request, 'taskmanager/projects.html', locals())
 
@@ -664,23 +666,20 @@ def activities(request, ide):
 
 
 
-    ordered_tasks = tasks.order_by('-comments')
+    ordered_tasks = tasks.order_by('-comments') # On trie les commentaires
     ordered_comments = []
     list_tasks = []
-    for t in ordered_tasks:
+    for t in ordered_tasks: # On va maintenant ne garder que le commentaire le plus récent de chaque tâche
         present = False
         for l in list_tasks:
             if(l.name==t.name):
                 present = True
         if not present :
             if(len(t.comments.all())>0):
-                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]]
+                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]] # On récupère aussi les commentaires triés pour les afficher
             else:
                 ordered_comments += ["empty"]
             list_tasks += [t]
-
-
-
 
     return render(request, 'taskmanager/activities.html', locals())
 
@@ -690,6 +689,7 @@ def ModifyAvancement(request,id):
     form = CompletedForm(request.POST or None)
     if form.is_valid():
         task.completed = form.cleaned_data['completed']
+        # L'avancement de la tâche influe sur son statut
         if(task.completed==100):
             task.status=Status(4)
         if(task.completed<100 and task.completed>0):
