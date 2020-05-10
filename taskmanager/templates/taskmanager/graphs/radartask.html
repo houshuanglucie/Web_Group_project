@@ -18,8 +18,8 @@
       var id_selected = 0;
 
       $('#select_project input').on('change', function() {
+         $(".btn-group label").removeClass("disabled");
          id_selected = parseInt($('input[name=projectselected]:checked', '#select_project').val());
-         $('#div_plot').css('opacity', 1);
          $('#instruction').hide();
          $('#select_view').show();
          plot(id_selected, view);
@@ -89,16 +89,15 @@ a:hover {
          </form>
    </div>
    <div class="plot_wrapper col-6">
-      <em id="instruction" style="position:absolute">Choisissez un projet</em>
-      <div id="div_plot" style="opacity:0"></div>
+      <div id="div_plot"></div>
 
       <div class="text-center mb-2">
-         <form id="select_view" style="display:none">
+         <form id="select_view">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-               <label class="btn btn-dark active btn-rounded">
+               <label class="btn btn-dark active btn-rounded disabled">
                   <input type="radio" name="view" id="radar" value="radar" autocomplete="off" checked> Radar
                </label>
-               <label class="btn btn-dark btn-rounded">
+               <label class="btn btn-dark btn-rounded disabled">
                   <input type="radio" name="view" id="hist" value="histogram" autocomplete="off"> Barres
                </label>
          </div>

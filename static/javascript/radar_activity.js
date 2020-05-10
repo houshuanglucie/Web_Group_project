@@ -65,7 +65,10 @@ function plot_radar(info_plot, title){
             }
          },
       showlegend: false,
-      title : title
+      title : title,
+      font: {
+         family : 'LMSans-regular'
+      },
    };
 
    var config = {
