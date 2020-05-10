@@ -20,9 +20,9 @@
 <br>
 
 #### *Pour créer plein de données*
-Fermer le serveur (pour que ce soit un peu plus rapide...)
-Modifier la variable i dans create_data.py, selon ce qu'on veut faire (documentation dans le script)
-Lancer à partir de la racine `python manage.py shell < create_data.py` 
+1. Fermer le serveur (pour que ce soit un peu plus rapide...)  
+2. Modifier la variable i dans create_data.py, selon ce qu'on veut faire (documentation dans le script)  
+3. Lancer à partir de la racine `python manage.py shell < create_data.py`  
 
 <br>
 
