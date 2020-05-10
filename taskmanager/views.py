@@ -133,7 +133,7 @@ def projects(request):
             k+=1
         if(k>0):
             p.completed = int(a/k)
-    list_color=["red","orange","green"]
+
     return render(request, 'taskmanager/projects.html', locals())
 
 

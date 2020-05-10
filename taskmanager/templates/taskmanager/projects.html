@@ -61,8 +61,19 @@
 		{% for project in projects_list %}
 			<tr>
 
-                <td> {{ project.completed }}%</td>
+                <td id="{{ project.id }}"> {{ project.completed }}%</td>
+                <script>
+                    if({{project.completed}}>=66) {
+                        document.getElementById("{{ project.id }}").style.color = "green";
+                    }
+                    if({{project.completed}}>=33 && {{ project.completed }}<66) {
+                        document.getElementById("{{ project.id }}").style.color = "orange";
+                    }
+                 if({{project.completed}}<33) {
+                        document.getElementById("{{ project.id }}").style.color = "red";
+                    }
 
+             </script>
 				<td><a href="{% url "focus_project" id=project.id %}">{{ project.name }}</a></td>
 				<td class="d-none d-lg-table-cell">
 					{% for member in project.members.all %}

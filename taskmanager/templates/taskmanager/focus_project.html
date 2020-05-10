@@ -116,7 +116,20 @@ a:hover {
          <tr>
             <td>{{ task.priority }}</td>
 				<td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
-             <td> <a href="{%  url 'form_avancement' id=task.id %}">{{ task.completed }}% </a></td>
+
+             <td > <a id="{{ task.id }}" href="{%  url 'form_avancement' id=task.id %}">{{ task.completed }}% </a></td>
+            <script>
+                    if({{task.completed}}>=66) {
+                        document.getElementById("{{ task.id }}").style.color = "green";
+                    }
+                    if({{task.completed}}>=33 && {{ task.completed }}<66) {
+                        document.getElementById("{{ task.id }}").style.color = "orange";
+                    }
+                 if({{task.completed}}<33) {
+                        document.getElementById("{{ task.id }}").style.color = "red";
+                    }
+
+             </script>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
             <td class="d-none d-xl-table-cell">{{ task.due_date|date }}</td>
             <td class="d-none d-lg-table-cell">{{ task.status }}</td>
@@ -128,6 +141,7 @@ a:hover {
          	<tr><td colspan=7>Pas de tâches</td></tr>
 
          {% endfor %}
+
       </tbody>
 
    </table>
