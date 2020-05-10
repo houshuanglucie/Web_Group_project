@@ -12,15 +12,11 @@ function plot_network(nodes_server, edges_server){
    };
 
    var options = {
-      interaction: { hover: true },
+      interaction: {
+         hover: true
+      },
       nodes: {
          shape: "dot",
-         scaling: {
-            customScalingFunction: function(min, max, total, value) {return value / total;},
-            min: 5,
-            max: 150
-         }
-
       },
       edges: {
          smooth: {
@@ -29,12 +25,19 @@ function plot_network(nodes_server, edges_server){
             roundness : 1
          }
       },
-      physics:{
-         barnesHut : {
-            gravitationalConstant : -28500,
+      physics: {
+         repulsion: {
+            springConstant: 0,
+            nodeDistance: 115
          },
-         minVelocity : 0.75
+         minVelocity: 0.75,
+         solver: "repulsion"
+      },
 
+      configure: {
+         enabled: false,
+         filter: 'physics, layout',
+         showButton: true
       }
 
 

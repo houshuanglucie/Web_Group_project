@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 
 import datetime
 import json
+import colorsys
 
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
@@ -179,19 +180,35 @@ def radaractivity(request):
 # ***************************************************************************
 #  MANAGE APPLICATION
 # ***************************************************************************
+def hsv2rgb(h,s,v):
+    return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
+
+
 @login_required(login_url = 'connect')
 def manageapp(request):
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
 
-    nodes = []
+
+    max_count = 0
     for user in User.objects.all():
         count = Trace.objects.filter(actor = user).count()
+        if max_count < count:
+            max_count = count
+
+
+    nodes = []
+    for user in User.objects.all():
+        count_traces = Trace.objects.filter(actor = user).count()
+        hue = 107/360 - 107/360*count_traces/max_count;
+        color = hsv2rgb(hue, 1, 0.5)
+        count_project = Project.objects.filter(members = user).count()
+
         nodes.append(dict(
             id = user.id,
-            title = user.username + "<br>" + str(count) + " trace(s)",
-            value = count,
-            color = "rgb(150,150,150)",
+            title = "<b>{}<br>{} trace(s)<br>{} projet(s)</b>".format(user.username, count_traces, count_project),
+            value = count_traces,
+            color = "rgb{}".format(color),
             border = "rgb(100,100,100)"
         ))
     nodes = json.dumps(nodes)
@@ -210,8 +227,9 @@ def manageapp(request):
                     'from' : user1.id,
                     'to' : user2.id,
                     'value' : count,
-                    'title' : str(count) + " projet(s) en commun",
-                    'color' : "rgb(150,150,150)"
+                    'title' : "<b>{} projet(s) en commun</b>".format(count),
+                    'color' : "rgb(150,150,150)",
+                    'length' : 50
                 })
 
     return render(request, 'taskmanager/graphs/manageapp.html', locals())

@@ -6,7 +6,10 @@ UserModel = get_user_model()
 
 def create_users():
     global UserModel
-    for i in range(30):
+    N_CREATED = 30
+
+
+    for i in range(N_CREATED):
         if not UserModel.objects.filter(username = 'user{}'.format(i)).exists():
             user = UserModel.objects.create_user('user{}'.format(i), password='bar')
             user.first_name = 'User{}'.format(i)
@@ -32,11 +35,13 @@ def delete_users():
 def create_projects():
     import random as rd
     from taskmanager.models import Project
+    N_CREATED = 30
+    N_MEMBERS_MAX = 10
 
     global UserModel
     all_users = UserModel.objects.all()
-    for i in range(30):
-        number_members = rd.randint(1, 10)
+    for i in range(N_CREATED):
+        number_members = rd.randint(1, N_MEMBERS_MAX)
         chosen_members_index = rd.sample(range(0, all_users.count()), number_members)
 
         project = Project(name = 'Project{}'.format(i))
@@ -67,7 +72,7 @@ def delete_projects():
     (4) Delete projects
 """
 
-i = 2
+i = 3
 
 if (i == 1):
     create_users()
