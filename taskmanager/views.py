@@ -682,6 +682,13 @@ def ModifyAvancement(request,id):
     form = CompletedForm(request.POST or None)
     if form.is_valid():
         task.completed = form.cleaned_data['completed']
+        if(task.completed==100):
+            task.status=Status(4)
+        if(task.completed<100 and task.completed>0):
+            task.status=Status(3)
+        if(task.completed==0):
+            task.status=Status(1)
+
         task.save()
         return redirect('focus_task',id=id)
     return render(request,'taskmanager/avancement.html',locals())

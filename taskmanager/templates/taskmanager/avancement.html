@@ -1,9 +1,12 @@
-
+{%  extends "base.html" %}
+{%  block content %}
+<h1> Modifiez le pourcentage d'avancement de votre tâche </h1>
 <form enctype="multipart/form-data" method="post" action="">
     {% csrf_token %}
-    0
+    0%
     <input type="range" id="completed" name="completed" value="{{ task.completed }}">
-    100
+    100%
     <br><br>
     <input type="submit" value="Submit"/>
 </form>
+{%  endblock %}
