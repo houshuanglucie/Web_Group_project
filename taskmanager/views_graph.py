@@ -43,7 +43,6 @@ def dashboard(request):
         tasks_by_project.append(tasks_by_proj_data)
 
 
-    print(request.POST)
     if request.POST.get('type_view') and request.POST.get('type_view') == "gantt":
         tasks_by_project = create_data_gantt(request)
         return JsonResponse({'tasks' : tasks_by_project}, safe = False, status=200)
@@ -56,12 +55,9 @@ def dashboard(request):
         info_projects = create_data_radartask(request)
         return JsonResponse({'info' : info_projects}, safe = False, status=200)
 
-
-
-
-
-
-
+    elif request.POST.get('type_view') and request.POST.get('type_view') == "radaractivity":
+        traces_sent = create_data_radaractivity(request)
+        return JsonResponse({'traces' : traces_sent}, safe = False, status=200)
 
     return render(request, 'taskmanager/graphs/dashboard.html', locals())
 
@@ -140,6 +136,7 @@ def create_data_burndown(request):
 
 @login_required(login_url = 'connect')
 def burndown(request):
+    involved_projects = Project.objects.filter(members = request.user)
     info_projects = create_data_burndown(request)
     info_projects = json.dumps(info_projects)
 
@@ -180,6 +177,16 @@ def radartask(request):
 # ***************************************************************************
 #  RADAR ACTIVITY
 # ***************************************************************************
+def create_data_radaractivity(request):
+    involved_projects = Project.objects.filter(members = request.user)
+    traces_sent = []
+    for project in involved_projects:
+        traces_sent.append(dict(
+            axis = project.name,
+            count = Trace.objects.filter(actor = request.user, object_project = project).count()
+        ))
+    return traces_sent
+
 
 @login_required(login_url = 'connect')
 def radaractivity(request):
@@ -187,13 +194,7 @@ def radaractivity(request):
     involved_projects = Project.objects.filter(members = request.user)
 
     if(request.POST.get('range') and request.POST.get('range') == "global"):
-        traces_sent = []
-        for project in involved_projects:
-            traces_sent.append(dict(
-                axis = project.name,
-                count = Trace.objects.filter(actor = request.user, object_project = project).count()
-            ))
-
+        traces_sent = create_data_radaractivity(request)
         return JsonResponse({'traces' : traces_sent, 'title' : "Vue globale"}, safe = False, status=200)
 
     elif(request.POST.get('range') and request.POST.get('range') == "project"):

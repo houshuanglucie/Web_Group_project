@@ -10,6 +10,7 @@
 <script src={% static "javascript/gantt.js" %}></script>
 <script src={% static "javascript/burndown.js" %}></script>
 <script src={% static "javascript/radar_task.js" %}></script>
+<script src={% static "javascript/radar_activity.js" %}></script>
 
 
 <script>
@@ -17,6 +18,12 @@
 
 	$(document).ready(function() {
 			document.getElementById("graphs-nav_item").classList.add("active");
+
+			// Choix de -- Choisissez une vue -- pour chaque select
+			for(var i = 1 ; i < 5 ; i++){
+				$("#view_box" + i.toString() + "_choice").prop("selectedIndex", 0);
+			}
+
 			init_interactivity()
 		})
 
@@ -40,11 +47,11 @@
 
 	#main_container{
 		height: 85vh;
-		/* background-color: rgba(0,0,0,0.05); */
 	}
 
 	.board{
-		overflow: scroll;
+		overflow-y: scroll;
+		overflow-x: hidden;
 		box-shadow: 2px 2px 2px dimgrey;
 		border: solid dimgrey .1vw;
 		border-radius: .5vw .5vw;
@@ -56,6 +63,10 @@
 
 {% block content %}
 
+<!-- Vue par tache, qui ne s'affiche jamais -->
+{% comment %}
+	On clone ce div histoire de pas décrire tout ce div en javascript
+{% endcomment %}
 <div id="tasks_views" style="display:none">
 	<h4 class="text-center mt-2">Mes tâches</h4><br/>
 	<div class="row justify-content-center" style="width:100%">
@@ -79,7 +90,10 @@
 </div>
 
 
-
+<!-- Form de sélection du projet -->
+{% comment %}
+	Grosse négligence de ma part : on ne clone jamais cette section. Donc si on choisit par exemple 2 histogrammes des tâches, sans avoir choisi le projet, le premier select disparait
+{% endcomment %}
 <form id="select_project" class="m-3" style="display: none">
 	<select class="form-control" id="select_project_btn">
 		<option value='NULL'>-- Choisissez un projet --</option>
@@ -109,6 +123,7 @@
 				<option value='gantt'>Gantt</option>
 				<option value='burndown'>Burndown chart</option>
 				<option value='radartask'>Histogramme des tâches</option>
+				<option value='radaractivity'>Mes activités</option>
 			</select>
 		</form>
 	</div>
@@ -122,23 +137,43 @@
 				<option value='tasks'>Par tâches & projet</option>
 				<option value='gantt'>Gantt</option>
 				<option value='burndown'>Burndown chart</option>
+				<option value='radartask'>Histogramme des tâches</option>
+				<option value='radaractivity'>Mes activités</option>
 			</select>
 		</form>
 	</div>
-	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh">Hello</div>
-	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh">Hello</div>
+
+
+	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh" id="board3">
+		<form id="view_board3" class="m-3">
+			{% csrf_token %}
+			<select class="form-control" id="view_box3_choice">
+				<option value='NULL'>-- Choisissez une vue --</option>
+				<option value='tasks'>Par tâches & projet</option>
+				<option value='gantt'>Gantt</option>
+				<option value='burndown'>Burndown chart</option>
+				<option value='radartask'>Histogramme des tâches</option>
+				<option value='radaractivity'>Mes activités</option>
+			</select>
+		</form>
+	</div>
+
+
+	<div class="col-11 col-md-5 m-3 board" style="width:45%; height:37vh" id="board4">
+		<form id="view_board4" class="m-3">
+			{% csrf_token %}
+			<select class="form-control" id="view_box4_choice">
+				<option value='NULL'>-- Choisissez une vue --</option>
+				<option value='tasks'>Par tâches & projet</option>
+				<option value='gantt'>Gantt</option>
+				<option value='burndown'>Burndown chart</option>
+				<option value='radartask'>Histogramme des tâches</option>
+				<option value='radaractivity'>Mes activités</option>
+			</select>
+		</form>
+	</div>
 </div>
 
-
-
-
-
-
-
-
-<!--
-
--->
 
 
 
