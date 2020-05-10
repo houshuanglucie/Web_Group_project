@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.db import models
-from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
+from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm, CompletedForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 from .models import Verb, Trace
 
@@ -125,6 +125,16 @@ def projects(request):
     else:
         deleted_project = None
         show_toast = False
+
+    # On va calculer l'avancement global du projet
+    for p in projects_list :
+        a=0
+        k=0
+        for t in Task.objects.filter(project__id=p.id):
+            a+=t.completed
+            k+=1
+        if(k>0):
+            p.completed = int(a/k) # C'est la moyenne des avancements des tâches du projet
 
     return render(request, 'taskmanager/projects.html', locals())
 
@@ -312,6 +322,12 @@ def focus_task(request, id):
         new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
         new_trace.save()
 
+    if task.completed<33:
+        color="red"
+    if task.completed>=33 and task.completed<66:
+        color="orange"
+    if task.completed >=66 :
+        color="green"
     return render(request, 'taskmanager/focus_task.html', locals())
 
 
@@ -623,7 +639,7 @@ def list_tasks(request):
 
 def finished_tasks(request):
     empty_f = False
-    tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    tasks = Task.objects.filter(user=request.user).filter(status=4)
     if (len(tasks) == 0):
         empty_f = True
     return render(request, 'taskmanager/list_tasks.html', locals())
@@ -650,23 +666,37 @@ def activities(request, ide):
 
 
 
-    ordered_tasks = tasks.order_by('-comments')
+    ordered_tasks = tasks.order_by('-comments') # On trie les commentaires
     ordered_comments = []
     list_tasks = []
-    for t in ordered_tasks:
+    for t in ordered_tasks: # On va maintenant ne garder que le commentaire le plus récent de chaque tâche
         present = False
         for l in list_tasks:
             if(l.name==t.name):
                 present = True
         if not present :
             if(len(t.comments.all())>0):
-                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]]
+                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]] # On récupère aussi les commentaires triés pour les afficher
             else:
                 ordered_comments += ["empty"]
             list_tasks += [t]
 
-
-
-
     return render(request, 'taskmanager/activities.html', locals())
 
+
+def ModifyAvancement(request,id):
+    task = Task.objects.get(id=id)
+    form = CompletedForm(request.POST or None)
+    if form.is_valid():
+        task.completed = form.cleaned_data['completed']
+        # L'avancement de la tâche influe sur son statut
+        if(task.completed==100):
+            task.status=Status(4)
+        if(task.completed<100 and task.completed>0):
+            task.status=Status(3)
+        if(task.completed==0):
+            task.status=Status(1)
+
+        task.save()
+        return redirect('focus_task',id=id)
+    return render(request,'taskmanager/avancement.html',locals())

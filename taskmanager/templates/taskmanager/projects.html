@@ -49,6 +49,7 @@
 
 	<thead class="thead-dark">
 		<tr>
+            <th> Avancement </th>
 			<th scope="col">Projet</th>
 			<th class="d-none d-lg-table-cell" scope="col">Membres</th>
 			<th class="d-none d-lg-table-cell text-right" scope="col">Partage</th>
@@ -59,6 +60,20 @@
 	<tbody>
 		{% for project in projects_list %}
 			<tr>
+
+                <td id="{{ project.id }}"> {{ project.completed }}%</td>
+                <script>
+                    if({{project.completed}}>=66) {
+                        document.getElementById("{{ project.id }}").style.color = "green";
+                    }
+                    if({{project.completed}}>=33 && {{ project.completed }}<66) {
+                        document.getElementById("{{ project.id }}").style.color = "orange";
+                    }
+                 if({{project.completed}}<33) {
+                        document.getElementById("{{ project.id }}").style.color = "red";
+                    }
+
+             </script>
 				<td><a href="{% url "focus_project" id=project.id %}">{{ project.name }}</a></td>
 				<td class="d-none d-lg-table-cell">
 					{% for member in project.members.all %}

@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
+from django.core.validators import MaxValueValidator,MinValueValidator
 import os
 
 
@@ -13,6 +14,8 @@ class Project(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name = "Membres")
     # Visibilité du projet (Prive ou public)
     public = models.CharField(max_length = 2, choices = [("PU", "public"), ("PR", "privé")], default = "PR", verbose_name = "Partage")
+    # Avancement du projet
+    completed = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -87,6 +90,8 @@ class Task(models.Model):
     status = models.ForeignKey('Status', on_delete = models.CASCADE, verbose_name = "Statut")
     # Journal (ou commentaires...)
     comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
+    # Avancement de la tâche
+    completed = models.IntegerField(default=0)
 
 
     # Permet d'avoir le nom et l'extension de la piece jointe

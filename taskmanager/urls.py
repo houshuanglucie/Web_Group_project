@@ -4,6 +4,7 @@ from . import views_graph
 from . import views_export
 
 urlpatterns = [
+
     path('', views.redirect_home, name='redirect_home'),
     path('home/', views.home, name='home'),
     # path('connect/', views.connect, name = 'connect'),
@@ -22,6 +23,7 @@ urlpatterns = [
     path('finished/', views.finished_tasks, name='finishedtasks'),
     path('distinct/<int:ide>', views.distinct_tasks, name='distincttasks'),
     path('activities/<int:ide>', views.activities, name='activities'),
+    path('avancement/<int:id>',views.ModifyAvancement, name='form_avancement'),
 
     path('dashboard', views_graph.dashboard, name='dashboard'),
     path('graphs', views_graph.graphs, name='graphs'),
@@ -37,4 +39,5 @@ urlpatterns = [
 
     path('export/xml', views_export.export_xml, name='export_xml'),
     path('export/json', views_export.export_json, name='export_json'),
+
 ]
