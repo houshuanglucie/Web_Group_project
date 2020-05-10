@@ -20,7 +20,6 @@ urlpatterns = [
 	path('graphs', views_graph.graphs, name='graphs'),
 	path('gantt', views_graph.gantt, name='gantt'),
 	path('activitydiag', views_graph.activitydiag, name='activitydiag'),
-	path('export/csv', views_export.export_csv, name='export_csv'),
 	path('export/xml', views_export.export_xml, name='export_xml'),
 	path('export/json', views_export.export_json, name='export_json'),
 ]
