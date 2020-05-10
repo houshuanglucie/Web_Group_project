@@ -74,6 +74,7 @@
             <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
          </ol>
 
          <div class="carousel-inner" role="listbox" style="background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);">
@@ -149,6 +150,26 @@
                      <p>Des graphiques...</p>
                   </div>
                </a>
+            </div>
+
+            <!-- =============== Page de lien vers les fonctionnalités F1 ========= -->
+            <div class="carousel-item">
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+
+                     <ul class="d-none d-sm-block align-self-center">
+
+                        <a style="font-size:300%" ; href={% url 'membersproject' %}> <img src="/static/pictures/community.png" style="width:75px;height:75px"> Liste de vos projets et leurs membres </a><br> <br>
+
+                        <a style="font-size:300%" ; href={% url 'listtasks' %}> <img src="/static/pictures/detail.png" style="width:75px;height:75px"> Listes de vos tâches et leurs attributs </a><br><br>
+
+                        <a style="font-size:300%" ; href={% url 'finishedtasks' %}> <img src="/static/pictures/finished.png" style="width:85px;height:85px"> Liste de toutes vos tâches finies </a><br><br>
+                     </ul>
+                  </div>
+
+                  <div class="carousel-caption d-none d-lg-block">
+                     <h5>Complete datas</h5>
+
+                  </div>
             </div>
 
          <!-- ================ FLECHES DE NAVIGATION ================ -->

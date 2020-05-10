@@ -1,0 +1,89 @@
+<!-- Vue du calendrier -->
+{% extends "base.html"%}
+{% load static %}
+
+{% block script%}
+
+<script src='https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js'></script>
+<script src={% static "javascript/manage_app.js" %}></script>
+
+<script>
+   $(document).ready(function() {
+      document.getElementById("manageapp-nav_item").classList.add("active");
+      var nodes = {{ nodes|safe }};
+      var edges = {{ edges|safe }};
+
+      plot_network(nodes, edges);
+   })
+
+
+
+</script>
+{%endblock%}
+
+{% block css %}
+<style>
+a:hover {
+   text-decoration: none;
+   color : black;
+}
+#mynetwork {
+  width: 50%;
+  height: 400px;
+  border: .1vw solid lightgray;
+}
+
+</style>
+{% endblock %}
+
+
+
+
+{% block content %}
+
+   <div class="m-5 p-3">
+      <h3>Vue d'ensemble de l'application</h3>
+      <em>Description</em>
+   <br/>
+
+   <div class="px-5 m-3">
+      <h5>Réseaux entre utilisateurs</h5>
+      <em class="pl-3">Projets en communs entre utilisateurs et activités de chaque utilisateur</em>
+      <div id="mynetwork" class="mt-2"></div>
+   </div>
+
+
+
+
+
+</div>
+
+
+<!--
+<table class="table mt-5">
+   <thead>
+      <tr>
+         <th>Acteur</th>
+         <th>Verb</th>
+         <th>Timestamp</th>
+         <th>Projet</th>
+         <th>Tache</th>
+
+      </tr>
+   </thead>
+   <tbody>
+      {% for trace in all_traces %}
+         <tr>
+            <td>{{ trace.actor }}</td>
+            <td>{{ trace.verb }}</td>
+            <td>{{ trace.timestamp }}</td>
+            <td>{{ trace.object_project }}</td>
+            <td>{{ trace.object_task }}</td>
+
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>
+-->
+
+{% endblock %}

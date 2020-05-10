@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Project, Task, Status, Comment, Subtask, Category
+from .models import Verb, Trace
 
 # Register your models here.
 # Users :
@@ -34,6 +35,14 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', )
     list_filter = ('name', )
 
+class VerbAdmin(admin.ModelAdmin):
+    list_display = ('verb', 'alias')
+    list_filter = ('verb', )
+
+class TraceAdmin(admin.ModelAdmin):
+    list_display = ('actor', 'verb' )
+    list_filter = ('actor','verb', )
+
 
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Status, StatusAdmin)
@@ -41,3 +50,5 @@ admin.site.register(Comment, CommentAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Subtask, SubtaskAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Verb, VerbAdmin)
+admin.site.register(Trace, TraceAdmin)

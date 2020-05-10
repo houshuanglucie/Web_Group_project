@@ -82,8 +82,6 @@ function plot_gantt(){
       }
    });
 
-   document.getElementById("waiting").style = "display:none";
-
    }
 
 
