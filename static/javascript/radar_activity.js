@@ -20,7 +20,7 @@ function send_ajax(url_endpoint, range, project_id){
       success : function(json) { // Si on recoit une erreur 200
          // console.log("SUCCESS");
          // console.log(json);
-         plot_radar(json.traces, json.title);
+         plot_radaractivity(json.traces, json.title);
       },
 
       error : function(json, err) { // Si on recoit une erreur 400
@@ -32,7 +32,7 @@ function send_ajax(url_endpoint, range, project_id){
 
 
 
-function plot_radar(info_plot, title){
+function plot_radaractivity(info_plot, title, container = 'div_plot'){
 
    // Initialisation des donnees
    var axis = [];
@@ -76,5 +76,5 @@ function plot_radar(info_plot, title){
       displayModeBar : false
    };
 
-   Plotly.newPlot("div_plot", data, layout, config);
+   Plotly.newPlot(container, data, layout, config);
 }

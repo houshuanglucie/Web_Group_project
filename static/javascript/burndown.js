@@ -38,8 +38,7 @@ function linspace(startValue, stopValue, card){
 
 
 // ===== Tracage du burndown chart ======
-function plot_graph(id_selected, info_project){
-
+function plot_burndown(id_selected, info_project, container = 'div_plot'){
    var selected_project = info_project[info_project.findIndex(proj => proj.id_project === id_selected)];
    var title = selected_project.name_project;
    var tasks_data = selected_project.tasks_data;
@@ -65,7 +64,7 @@ function plot_graph(id_selected, info_project){
          displayModeBar : false
       };
 
-      Plotly.newPlot('div_plot', data, layout, config);
+      Plotly.newPlot(container, data, layout, config);
       return;
    }
 
@@ -207,5 +206,5 @@ function plot_graph(id_selected, info_project){
       displayModeBar : false
    };
 
-   Plotly.newPlot('div_plot', data, layout, config);
+   Plotly.newPlot(container, data, layout, config);
 }
