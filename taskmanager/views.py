@@ -639,7 +639,7 @@ def list_tasks(request):
 
 def finished_tasks(request):
     empty_f = False
-    tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    tasks = Task.objects.filter(user=request.user).filter(status=4)
     if (len(tasks) == 0):
         empty_f = True
     return render(request, 'taskmanager/list_tasks.html', locals())

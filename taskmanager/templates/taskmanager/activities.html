@@ -15,27 +15,37 @@ table,td {padding:20px;}
 {%  block content %}
 <table>
 <tr> <th> Tâche </th>
-<th> Dernier message </th></tr>
+<th> Dernier message </th>
+<th> Auteur et date </th></tr>
 <tr>
 <td>
-<ul>
+
 {%  for t in list_tasks %}
-    <li> <a href = "{%  url 'focus_task' id=t.id %}"> {{t.name}} </a> </li><br><br>
+     <a href = "{%  url 'focus_task' id=t.id %}"> {{t.name}} </a> <br><br>
     {%  endfor %}
-</ul>
+
 </td>
 <td>
-    <ul>
+
 
     {%  for c in ordered_comments %}
         {% if c == "empty" %}
-           <li> Aucun message </li><br><br>
+            Aucun message <br><br>
 
         {%  else %}
-            <li> <strong>{{ c.user.username }}</strong> : <span style="color:mediumpurple">{{ c.content }}  </span> <i> at : {{ c.submit_time }} </i> </li><br><br>
+            <span style="color:mediumpurple"><strong>{{ c.content }} </strong> </span> <br><br>
         {% endif %}
         {%  endfor %}
-    </ul>
+
+</td>
+<td>
+{% for c in ordered_comments %}
+    {% if c == "empty" %}
+    <br><br>
+    {% else %}
+par <strong>{{ c.user.username }}</strong> <i> le {{ c.submit_time }} </i> </li><br><br>
+    {%  endif %}
+{%  endfor %}
 </td>
 </tr>
 </table>
