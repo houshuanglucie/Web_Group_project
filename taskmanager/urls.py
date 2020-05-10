@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import views_graph
+from . import views_export
 
 urlpatterns = [
 	path('', views.redirect_home, name = 'redirect_home'),
@@ -28,6 +29,8 @@ urlpatterns = [
 	path('graphs', views_graph.graphs, name='graphs'),
 
 	path('gantt', views_graph.gantt, name='gantt'),
+
+
 	path('burndown', views_graph.burndown, name='burndown'),
 	path('radartask', views_graph.radartask, name='radartask'),
 	path('radaractivity', views_graph.radaractivity, name='radaractivity'),
@@ -37,4 +40,7 @@ urlpatterns = [
 
 	path('taskfilter/', views.task_filter, name='task_filter'),
 
+  
+  path('export/xml', views_export.export_xml, name='export_xml'),
+	path('export/json', views_export.export_json, name='export_json'),
 ]
