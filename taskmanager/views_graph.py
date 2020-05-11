@@ -112,19 +112,42 @@ def gantt(request):
 #  BURNDOWN CHART
 # ***************************************************************************
 def create_data_burndown(request):
+    # tasks_data = list({
+    #   name : nom_de_la_tache
+    #   shorten_name : nom_de_la_tache_tronquée
+    #   start_date : date_de_debut_theorique
+    #   due_date : date_de_fin_theorique
+    #   list_traces : list({
+    #       timestamp : quand_la_trace_de_modification_d_avancement_a_ete_ajoutee
+    #       progress : avancement_entré
+    #   })
+    #})
     involved_projects = Project.objects.filter(members = request.user)
 
     info_projects = []
 
     for project in involved_projects:
-        tasks = Task.objects.filter(project = project)
+        tasks = Task.objects.filter(project = project).order_by('start_date')
         tasks_data = []
+
         for task in tasks:
+            # Recherche de toutes les traces d'avancement concernant cette tache
+            traces_progress = Trace.objects.filter(object_task = task, verb__alias = "MdfAv").order_by('timestamp')
+            list_trace = []
+
+            for trace in traces_progress:
+                list_trace.append(dict(
+                    timestamp = int(format(trace.timestamp, 'U'))*1000,
+                    progress = trace.extension_integer
+                ))
+
+            # Ajout de toutes les info
             tasks_data.append(dict(
                 name = task.name,
                 shorten_name = Truncator(task.name).chars(20),
                 start_date = int(format(task.start_date, 'U'))*1000,
-                due_date = int(format(task.due_date, 'U'))*1000
+                due_date = int(format(task.due_date, 'U'))*1000,
+                progress_traces = list_trace
             ))
         info_projects.append(dict(
             id_project = project.id,
@@ -234,9 +257,10 @@ def manageapp(request):
 
 
     nodes = []
+    YELLOW_HUE = 107
     for user in User.objects.all():
         count_traces = Trace.objects.filter(actor = user).count()
-        hue = 107/360 - 107/360*count_traces/max_count;
+        hue = 107/360 * (1 - count_traces/max_count)
         color = hsv2rgb(hue, 1, 0.5)
         count_project = Project.objects.filter(members = user).count()
 
@@ -264,7 +288,7 @@ def manageapp(request):
                     'to' : user2.id,
                     'value' : count,
                     'title' : "<b>{} projet(s) en commun</b>".format(count),
-                    'color' : "rgb(150,150,150)",
+                    'color' : "rgb(100,100,100)",
                     'length' : 50
                 })
 
