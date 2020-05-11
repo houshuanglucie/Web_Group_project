@@ -585,17 +585,6 @@ def task_filter(request):
 
         task_list = Task.objects.filter(**filter_dict).order_by(sorter)
 
-        # Filtrer par status(inclus ou exclu)
-        if status_inc_exc == "include" and status_selected_list != "All":
-            for status_selected in status_selected_list:
-                # task_list.append(task_list.filter(status__id=status_selected_list)).distinct().order_by(sorter)
-                task_list = task_list.filter(status__id=status_selected).order_by(sorter)
-        elif status_inc_exc == "exclude" and status_selected_list != "All":
-            for status_selected in status_selected_list:
-                task_list = task_list.exclude(status__id=status_selected).order_by(sorter)
-        else:
-            task_list = task_list.order_by(sorter)
-
         # Filtrer par date de début (avant ou après)
         if start_before_after == "Before" and start_date_selected != "":
             task_list = task_list.filter(start_date__lte=start_date_selected).order_by(sorter)
@@ -609,6 +598,23 @@ def task_filter(request):
             task_list = task_list.filter(due_date__lte=due_date_selected).order_by(sorter)
         elif due_before_after == "After" and due_date_selected != "":
             task_list = task_list.filter(due_date__gte=due_date_selected).order_by(sorter)
+        else:
+            task_list = task_list.order_by(sorter)
+
+        # Filtrer par status(inclus ou exclu)
+        if status_inc_exc == "include" and status_selected_list != "All":
+            status_exc_list = status_list  # Initialiser la liste des statuts à exclure
+            for status_selected in status_selected_list:
+                status_exc_list = status_exc_list.exclude(id=status_selected)
+            for status_exc in status_exc_list:
+                task_list = task_list.exclude(status__id=status_exc['id']).order_by(sorter)
+
+        elif status_inc_exc == "exclude":
+            for status_selected in status_selected_list:
+                if status_selected != "All":
+                    task_list = task_list.exclude(status__id=status_selected).order_by(sorter)
+                else:
+                    task_list = Task.objects.none()
         else:
             task_list = task_list.order_by(sorter)
 

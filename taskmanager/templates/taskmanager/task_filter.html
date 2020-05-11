@@ -70,9 +70,9 @@
     </div>
     <div class="form-row">
         <div class="form-group col-md-4" style="display:inline-block">
-            <label>Status filtre:</label>
+            <label>Status filtre (choix unique ou multiple):</label>
             <select class="form-control" name="status_selected" id = "status_selected" multiple="multiple" size="3">
-                    <option value="All">Sélectionner...</option>
+                    <option value="All">Tous</option>
                     {% for status in status_list %}
                         <option type="checkbox" value="{{ status.id }}">{{ status.how }}</option>
                     {% endfor %}
