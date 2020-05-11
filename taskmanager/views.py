@@ -566,7 +566,7 @@ def task_filter(request):
         project_selected = request.POST.get('project_selected')
         assignee_selected = request.POST.get('assignee_selected')
         status_inc_exc = request.POST.get('status_inc_exc')
-        status_selected = request.POST.get('status_selected')
+        status_selected_list = request.POST.getlist('status_selected')
         start_before_after = request.POST.get('start_before_after')
         start_date_selected = request.POST.get('start_date_selected')
         due_before_after = request.POST.get('due_before_after')
@@ -586,10 +586,13 @@ def task_filter(request):
         task_list = Task.objects.filter(**filter_dict).order_by(sorter)
 
         # Filtrer par status(inclus ou exclu)
-        if status_inc_exc == "include" and status_selected != "All":
-            task_list = task_list.filter(status__id=status_selected).order_by(sorter)
-        elif status_inc_exc == "exclude" and status_selected != "All":
-            task_list = task_list.filter(~Q(status__id=status_selected)).order_by(sorter)
+        if status_inc_exc == "include" and status_selected_list != "All":
+            for status_selected in status_selected_list:
+                # task_list.append(task_list.filter(status__id=status_selected_list)).distinct().order_by(sorter)
+                task_list = task_list.filter(status__id=status_selected).order_by(sorter)
+        elif status_inc_exc == "exclude" and status_selected_list != "All":
+            for status_selected in status_selected_list:
+                task_list = task_list.exclude(status__id=status_selected).order_by(sorter)
         else:
             task_list = task_list.order_by(sorter)
 
