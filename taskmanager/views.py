@@ -461,8 +461,6 @@ def managetask(request, id):
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
 
 
-    print(start_date_format)
-
     subtasks = Subtask.objects.filter(task=task).order_by("id")
 
     subtask_list = [subtask.name for subtask in subtasks]
@@ -488,20 +486,15 @@ def managetask(request, id):
             elif ('save' in request.POST):
                 added, error_category, task = validate_task_data(request, form, task.project, "MODIFY", task)
 
-                
-
                 if(not error_category):
 
                     # Création d'une trace
-                    vb = Verb.objects.get(alias = "AddTk")
+                    vb = Verb.objects.get(alias = "MdfTk")
                     new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
                     new_trace.save()
 
                     request.session['new_modify'] = task.name # pour afficher un toast quand on retournera sur focus_task
                     return redirect('focus_task', id = task.id)
-
-
-
 
     else:
         form = TaskForm(initial=defaults)
@@ -698,5 +691,11 @@ def ModifyAvancement(request,id):
             task.status=Status(1)
 
         task.save()
+
+        # Création d'une trace (pour les graphs)
+        vb = Verb.objects.get(alias = "MdfAv")
+        new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb, extension_integer = task.completed)
+        new_trace.save()
+
         return redirect('focus_task',id=id)
     return render(request,'taskmanager/avancement.html',locals())

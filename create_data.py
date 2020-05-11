@@ -72,7 +72,7 @@ def delete_projects():
     (4) Delete projects
 """
 
-i = 3
+i = 2
 
 if (i == 1):
     create_users()
