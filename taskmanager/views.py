@@ -559,7 +559,7 @@ def task_filter(request):
         project_selected = request.POST.get('project_selected')
         assignee_selected = request.POST.get('assignee_selected')
         status_inc_exc = request.POST.get('status_inc_exc')
-        status_selected = request.POST.get('status_selected')
+        status_selected_list = request.POST.getlist('status_selected')
         start_before_after = request.POST.get('start_before_after')
         start_date_selected = request.POST.get('start_date_selected')
         due_before_after = request.POST.get('due_before_after')
@@ -571,17 +571,12 @@ def task_filter(request):
         if project_selected != "All":
             filter_dict['project'] = get_object_or_404(Project, id=project_selected)
         if assignee_selected != "All":
-            filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
+            if assignee_selected == "moi":
+                filter_dict['user'] = get_object_or_404(User, id=current_user.id)
+            else:
+                filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
 
         task_list = Task.objects.filter(**filter_dict).order_by(sorter)
-
-        # Filtrer par status(inclus ou exclu)
-        if status_inc_exc == "include" and status_selected != "All":
-            task_list = task_list.filter(status__id=status_selected).order_by(sorter)
-        elif status_inc_exc == "exclude" and status_selected != "All":
-            task_list = task_list.filter(~Q(status__id=status_selected)).order_by(sorter)
-        else:
-            task_list = task_list.order_by(sorter)
 
         # Filtrer par date de début (avant ou après)
         if start_before_after == "Before" and start_date_selected != "":
@@ -598,6 +593,24 @@ def task_filter(request):
             task_list = task_list.filter(due_date__gte=due_date_selected).order_by(sorter)
         else:
             task_list = task_list.order_by(sorter)
+
+        # Filtrer par status(inclus ou exclu)
+        if status_inc_exc == "include":
+            if status_selected_list:
+                status_exc_list = status_list  # Initialiser la liste des statuts à exclure
+                for status_selected in status_selected_list:
+                    status_exc_list = status_exc_list.exclude(id=status_selected)
+                for status_exc in status_exc_list:
+                    task_list = task_list.exclude(status__id=status_exc['id']).order_by(sorter)
+            else:
+                task_list = task_list.order_by(sorter)
+
+        elif status_inc_exc == "exclude":
+            if status_selected_list:
+                for status_selected in status_selected_list:
+                    task_list = task_list.exclude(status__id=status_selected).order_by(sorter)
+            else:
+                task_list = Task.objects.none()
 
         return render(request, 'taskmanager/task_filter.html', locals())
 

@@ -1,5 +1,6 @@
 <!-- Page de filtrage et de tri de toutes les taches -->
 {% extends "base.html"%}
+{% load static %}
 
 {% block script%}
 	<script>
@@ -22,6 +23,7 @@
             <select class="form-control" name="sorter" id ="sorter">
                 <option value="priority">Priorité</option>
                 <option value="name">Nom de tâche</option>
+                <option value="completed">Avancement</option>
                 <option value="user">Responsable</option>
                 <option value="status">Status</option>
                 <option value="start_date">Date de début</option>
@@ -39,7 +41,7 @@
 
     <!-- Options des paramètres de filtrage -->
     <div class="form-row">
-        <div class="form-group col-md-4" style="display:inline-block">
+        <div class="form-group col-md-6" style="display:inline-block">
             <label>Projet filtre:</label>
             <select class="form-control" name="project_selected" id = "project_selected">
                 <option value="All">Sélectionner...</option>
@@ -48,31 +50,41 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group col-md-4" style="display:inline-block">
+        <div class="form-group col-md-6" style="display:inline-block">
             <label>Responsable filtre:</label>
             <select class="form-control" name="assignee_selected" id = "assignee_selected">
                 <option value="All">Sélectionner...</option>
-                {% for user in user_list %}
-                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                <optgroup label="Moi">
+                    <option value="moi">Moi ({{ current_user.last_name }})</option>
+                </optgroup>
+                <optgroup label="D'autres assignnees">
+                    {% for user in user_list %}
+                <div class="dropdown-divider"></div>
+                    {% if user.id != current_user.id %}
+                        <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                    {% endif %}
                 {% endfor %}
+                </optgroup>
             </select>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-4" style="display:inline-block">
-            <label>Status filtre:</label>
+            <label>Status filtre (choix unique ou multiple. Tout par défaut):</label>
+            <select class="form-control" name="status_selected" id = "status_selected" multiple="multiple" size="3">
+                    {% for status in status_list %}
+                        <option type="checkbox" value="{{ status.id }}">{{ status.how }}</option>
+                    {% endfor %}
+            </select>
+        </div >
+        <div class="form-group col-md-2" style="display:inline-block">
+            <label>Inclus / Exclu:</label>
             <select class="form-control" name="status_inc_exc" selected="include">
                 <option value="include">Inclure</option>
                 <option value="exclude">Exclure</option>
             </select>
-            <select class="form-control" name="status_selected" id = "status_selected">
-                <option value="All">Sélectionner...</option>
-                {% for status in status_list %}
-                    <option value="{{ status.id }}">{{ status.how }}</option>
-                {% endfor %}
-            </select>
-        </div >
-        <div class="form-group col-md-4" style="display:inline-block">
+        </div>
+        <div class="form-group col-md-3" style="display:inline-block">
             <label>Date de début filtre:</label>
             <select class="form-control" name="start_before_after" selected="All">
                 <option value="All">Sélectionner...</option>
@@ -81,7 +93,7 @@
             </select>
             <input type="date" class="form-control" name="start_date_selected">
         </div>
-        <div class="form-group col-md-4" style="display:inline-block">
+        <div class="form-group col-md-3" style="display:inline-block">
             <label>Date d'écheance filtre:</label>
             <select class="form-control" name="due_before_after" selected="All">
                 <option value="All">Sélectionner...</option>
@@ -114,14 +126,15 @@
 
         <thead class="thead-dark">
             <tr>
-                <th class="d-none d-lg-table-cell" scope="col">Priorité</th>
-                <th class="d-none d-lg-table-cell" scope="col">Tâche</th>
+                <th scope="col" class="col-1">Priorité</th>
+                <th scope="col" class="col-3">Tâche</th>
+                <th scope="col">Avancement</th>
                 <th class="d-none d-lg-table-cell" scope="col">Projet</th>
                 <th class="d-none d-lg-table-cell" scope="col">Responsable</th>
-                <th class="d-none d-lg-table-cell" scope="col">Date début</th>
-                <th class="d-none d-lg-table-cell" scope="col">Date d'écheance</th>
+                <th class="d-none d-xl-table-cell" scope="col">Date début</th>
+                <th class="d-none d-xl-table-cell" scope="col">Date d'écheance</th>
                 <th class="d-none d-lg-table-cell" scope="col">Statut</th>
-            <th scope="col" class="d-none d-sm-table-cell col-1">Détails</th>
+                <th scope="col" class="d-none d-md-table-cell col-1">Détails</th>
                 <th scope="col" class="d-none d-sm-table-cell col-1">Éditer</th>
             </tr>
         </thead>
@@ -130,13 +143,25 @@
             {% for task in task_list %}
             <tr>
                 <td>{{ task.priority }}</td>
-            <td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
+                <td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
+                <td > <a id="{{ task.id }}" href="{%  url 'form_avancement' id=task.id %}">{{ task.completed }}% </a></td>
+                <script>
+                    if({{task.completed}}>=66) {
+                        document.getElementById("{{ task.id }}").style.color = "green";
+                    }
+                    if({{task.completed}}>=33 && {{ task.completed }}<66) {
+                        document.getElementById("{{ task.id }}").style.color = "orange";
+                    }
+                 if({{task.completed}}<33) {
+                        document.getElementById("{{ task.id }}").style.color = "red";
+                    }
+                </script>
                 <td><a href={% url "focus_project" id=task.project.id %}>{{ task.project.name }}</a></td>
                 <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
-                <td class="d-none d-lg-table-cell">{{ task.start_date|date }}</td>
-                <td class="d-none d-lg-table-cell">{{ task.due_date|date }}</td>
+                <td class="d-none d-xl-table-cell">{{ task.start_date|date }}</td>
+                <td class="d-none d-xl-table-cell">{{ task.due_date|date }}</td>
                 <td class="d-none d-lg-table-cell">{{ task.status }}</td>
-            <td class="d-none d-sm-table-cell"><a href="{% url "focus_task" id=task.id %}"<i class="fa fa-search"></i></td>
+                <td class="d-none d-sm-table-cell"><a href="{% url "focus_task" id=task.id %}"<i class="fa fa-search"></i></td>
                 <td class="d-none d-sm-table-cell"><a href="{% url "managetask" id=task.id %}"<i class="fa fa-edit"></i></td>
             </tr>
 
