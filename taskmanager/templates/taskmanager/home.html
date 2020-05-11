@@ -126,6 +126,7 @@
             <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
          </ol>
 
          <div class="carousel-inner" role="listbox" style="background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);">
@@ -221,6 +222,21 @@
                      <h5>Complete datas</h5>
 
                   </div>
+            </div>
+
+            <!-- ================ Page de filtrage et de tri des taches ================ -->
+            <div class="carousel-item">
+               <a class="nav-link" href="{% url 'task_filter' %}">
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+            			<img id="logo" title="Violin" src="/static/pictures/folder-open-solid.svg" class="img-fluid align-self-center m-4"/>
+            			<h1 class="d-none d-sm-block title align-self-center">Filtrage et tri</h1>
+                  </div>
+
+                  <div class="carousel-caption d-none d-lg-block">
+                     <h5>Filtrage et tri</h5>
+                     <p>Triez et / ou filtrez toutes les tâches</p>
+                  </div>
+               </a>
             </div>
 
          <!-- ================ FLECHES DE NAVIGATION ================ -->
