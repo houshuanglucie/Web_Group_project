@@ -602,21 +602,22 @@ def task_filter(request):
             task_list = task_list.order_by(sorter)
 
         # Filtrer par status(inclus ou exclu)
-        if status_inc_exc == "include" and status_selected_list != "All":
-            status_exc_list = status_list  # Initialiser la liste des statuts à exclure
-            for status_selected in status_selected_list:
-                status_exc_list = status_exc_list.exclude(id=status_selected)
-            for status_exc in status_exc_list:
-                task_list = task_list.exclude(status__id=status_exc['id']).order_by(sorter)
+        if status_inc_exc == "include":
+            if status_selected_list:
+                status_exc_list = status_list  # Initialiser la liste des statuts à exclure
+                for status_selected in status_selected_list:
+                    status_exc_list = status_exc_list.exclude(id=status_selected)
+                for status_exc in status_exc_list:
+                    task_list = task_list.exclude(status__id=status_exc['id']).order_by(sorter)
+            else:
+                task_list = task_list.order_by(sorter)
 
         elif status_inc_exc == "exclude":
-            for status_selected in status_selected_list:
-                if status_selected != "All":
+            if status_selected_list:
+                for status_selected in status_selected_list:
                     task_list = task_list.exclude(status__id=status_selected).order_by(sorter)
-                else:
-                    task_list = Task.objects.none()
-        else:
-            task_list = task_list.order_by(sorter)
+            else:
+                task_list = Task.objects.none()
 
         return render(request, 'taskmanager/task_filter.html', locals())
 
