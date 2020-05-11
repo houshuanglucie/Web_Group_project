@@ -43,9 +43,12 @@ function print_date(timestamp){
 
 // ===== Tracage du burndown chart ======
 function plot_burndown(id_selected, info_project, container = 'div_plot'){
+
    var selected_project = info_project[info_project.findIndex(proj => proj.id_project === id_selected)];
    var title = selected_project.name_project;
    var tasks_data = selected_project.tasks_data;
+
+
 
 
    // S'il n'y a aucune tâche
@@ -84,8 +87,11 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
    // Pour chaque tache, on crée un plot qui est juste une fonction affine entre 0 et 100%
    // allant de start_date a due_date pour l'avancement théorique
 
-   timestamp_list_practical = [];
-   progress_list_practical = [];
+   var timestamp_list_practical = [];
+   var progress_list_practical = [];
+
+   var d3colors = Plotly.d3.scale.category10();
+   var color = 0;
 
    tasks_data.forEach((task, index) => {
       // ___________ Avancement théorique ______________
@@ -108,6 +114,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
          mode: 'lines',
          type: 'scatter',
          line: {
+            color: d3colors(color),
             dash: 'dot',
             width: 1
          },
@@ -161,7 +168,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
          type: 'scatter',
          line: {
             dash: 'longdashdot',
-            width: 2,
+            width: 1,
             color: trace.line.color
          },
          hovertemplate : "Tâche : " + task.name + "<br>Date : %{x|%d/%m/%Y}<br>Réalisé en pratique : %{y:.0f} %"
@@ -172,6 +179,8 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
 
 
       data.push(trace_pratical);
+
+      color++;
 
       // Recherche des dates extrêmes pour le plot du projet
       if(task.start_date < min_date) {min_date = task.start_date;}
@@ -256,7 +265,8 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
       mode: 'lines',
       type: 'scatter',
       line: {
-         width: 3
+         width: 3,
+         color: d3colors(color)
       },
       hovertemplate : "<b>Projet global</b><br>Date : %{x|%d/%m/%Y}<br>Réalisé théoriquement : %{y:.0f} %"
    };
@@ -271,9 +281,11 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
       mode: 'lines',
       type: 'scatter',
       line: {
-         width: 3
+         dash : 'longdashdot',
+         width: 3,
+         color : trace_project.line.color
       },
-      hovertemplate : "<b>Projet global</b><br>Date : %{x|%d/%m/%Y}<br>Réalisé théoriquement : %{y:.0f} %"
+      hovertemplate : "<b>Projet global</b><br>Date : %{x|%d/%m/%Y}<br>Réalisé en pratique : %{y:.0f} %"
    };
 
    data.push(trace_project_practical);
@@ -304,6 +316,8 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
 
 
    // ********************* CONFIGURATION ********************************
+   var margin_x_axis = 0.03 * (max_date - min_date); // 3% de la difference des dates
+
    var layout = {
       showlegend: true,
       legend:{
@@ -314,6 +328,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
       title : title + "<br>",
       hovermode : 'closest',
       xaxis : {
+         range: [min_date-margin_x_axis, max_date+margin_x_axis],
          tickformat : "%d/%m<br>%Y"
       },
       yaxis : {
@@ -331,6 +346,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
       responsive: true,
       displayModeBar : false
    };
+
 
    Plotly.newPlot(container, data, layout, config);
 }
