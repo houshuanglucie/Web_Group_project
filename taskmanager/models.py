@@ -113,17 +113,27 @@ class Verb(models.Model):
     # MdfPr -> Modif projet
     # AddTk -> Ajout tache
     # AddPr -> Ajout projet
+    # MdfAv -> Modif avancement
+    # Réduction du verb
     alias = models.CharField(max_length = 10, verbose_name = "Alias", default = "VB")
+    # Verbe / action
     verb = models.CharField(max_length = 100, verbose_name = "Verbe")
 
     def __str__(self):
         return self.alias
 
 class Trace(models.Model):
+    # Qui a laissé cette trace
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Acteur")
+    # Quand a été laissée cette trace
     timestamp = models.DateTimeField(verbose_name = "Timestamp", default = timezone.now)
+    # Projet concerné
     object_project = models.ForeignKey('Project', on_delete = models.CASCADE, verbose_name = "Projet", default = None)
+    # Tache concernée si existe
     object_task = models.ForeignKey('Task', on_delete = models.CASCADE, verbose_name = "Tache", default = None, blank = True, null = True)
+    # Donnée complémentaire numérique si besoin
+    extension_integer = models.IntegerField(default = None, verbose_name = "Extension numérique", blank = True, null = True)
+    # Verbe
     verb = models.ForeignKey('Verb', on_delete = models.CASCADE, verbose_name = "Verbe", default = None)
 
     def __str__(self):
