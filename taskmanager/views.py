@@ -543,7 +543,7 @@ def task_filter(request):
 
     if request.method == 'POST':
 
-        # Quand le clic devient "True", le frontal affiche le résultat du filtrage
+        # Quand le click devient "True", le frontal affiche le résultat du filtrage
         click = True
 
         # Récupérer le paramètre utilisé pour le tri
