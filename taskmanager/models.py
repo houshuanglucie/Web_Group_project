@@ -123,6 +123,8 @@ class Verb(models.Model):
         return self.alias
 
 class Trace(models.Model):
+    # Alias de la trace (plus pratique pour les créer / supprimer)
+    alias = models.CharField(max_length = 100, verbose_name = "Alias", default = None, blank = True, null = True)
     # Qui a laissé cette trace
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Acteur")
     # Quand a été laissée cette trace

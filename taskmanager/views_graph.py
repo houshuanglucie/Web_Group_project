@@ -288,7 +288,7 @@ def manageapp(request):
                     'to' : user2.id,
                     'value' : count,
                     'title' : "<b>{} projet(s) en commun</b>".format(count),
-                    'color' : "rgb(150,150,150)",
+                    'color' : "rgb(100,100,100)",
                     'length' : 50
                 })
 

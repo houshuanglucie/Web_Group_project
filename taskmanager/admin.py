@@ -24,7 +24,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('user', )
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('name', 'project', )
+    list_display = ('name', 'project', 'user')
     list_filter = ('project', 'status', )
 
 class SubtaskAdmin(admin.ModelAdmin):
