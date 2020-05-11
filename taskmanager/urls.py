@@ -41,6 +41,6 @@ urlpatterns = [
 	path('taskfilter/', views.task_filter, name='task_filter'),
 
   
-  path('export/xml', views_export.export_xml, name='export_xml'),
-	path('export/json', views_export.export_json, name='export_json'),
+  	path('export/xml/<int:id>', views_export.export_xml, name='export_xml'),
+	path('export/json/<int:id>', views_export.export_json, name='export_json'),
 ]
