@@ -578,7 +578,10 @@ def task_filter(request):
         if project_selected != "All":
             filter_dict['project'] = get_object_or_404(Project, id=project_selected)
         if assignee_selected != "All":
-            filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
+            if assignee_selected == "moi":
+                filter_dict['user'] = get_object_or_404(User, id=current_user.id)
+            else:
+                filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
 
         task_list = Task.objects.filter(**filter_dict).order_by(sorter)
 
