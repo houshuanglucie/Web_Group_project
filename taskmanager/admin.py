@@ -40,7 +40,7 @@ class VerbAdmin(admin.ModelAdmin):
     list_filter = ('verb', )
 
 class TraceAdmin(admin.ModelAdmin):
-    list_display = ('actor', 'verb' )
+    list_display = ('actor', 'verb', 'object_task', 'object_project' )
     list_filter = ('actor','verb', )
 
 

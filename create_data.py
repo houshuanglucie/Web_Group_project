@@ -62,7 +62,7 @@ def create_projects():
     from taskmanager.models import Project
     global UserModel
     N_CREATED = 30
-    N_MEMBERS_MAX = 5
+    N_MEMBERS_MAX = 7
 
     all_users = UserModel.objects.all()
     for i in range(N_CREATED):
@@ -110,8 +110,8 @@ def create_tasks():
         return start + datetime.timedelta(seconds=random_second)
 
 
-    N_CREATED = 30
-    ALL_PROJECTS = Project.objects.filter(name = "Project21")
+    N_CREATED = 60
+    ALL_PROJECTS = Project.objects.all()
     N_PROJECTS = ALL_PROJECTS.count()
     START_DATE = datetime.datetime(2020, 5, 1, 0, 0, 0)
     END_DATE = datetime.datetime(2020, 8, 1, 0, 0, 0)
@@ -149,7 +149,7 @@ def create_tasks():
             )
         new_trace.save()
 
-        print(new_task.name + " created + Trace")
+        print(new_task.name + " created + Trace for {}".format(member_selected))
 
     print("=== Useless tasks created ===")
 
@@ -188,7 +188,6 @@ def create_com():
 
     for i in range(N_CREATED):
         task_selected = ALL_TASKS[rd.randint(0, N_TASKS-1)]
-
         member_of_projects = task_selected.project.members.all()
         member_selected = member_of_projects[rd.randint(0, member_of_projects.count()-1)]
 

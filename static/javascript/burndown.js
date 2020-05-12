@@ -307,7 +307,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
          },
          name: "Aujourd'hui",
          hoverinfo : 'none',
-         showlegend: false
+         showlegend: true
       };
 
       data.push(trace_now);
