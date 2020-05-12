@@ -9,12 +9,13 @@ from .models import Project, Status, Comment, Task, Category, Subtask
 
 
 @login_required(login_url='connect')
-def export_xml(request,id):
+def export_xml(request, id):
     models = django.apps.apps.get_models()
     model = models[id]
+    filename = model.__name__+'.xml'
     data = serializers.serialize("xml", model.objects.all())
     response = HttpResponse(data, content_type='application/xml')
-    response['Content-Disposition'] = 'attachment; filename="export.xml"'
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
     return response
 
 
@@ -22,9 +23,10 @@ def export_xml(request,id):
 def export_json(request, id):
     models = django.apps.apps.get_models()
     model = models[id]
+    filename = model.__name__ + '.json'
     data = serializers.serialize("json", model.objects.all())
     response = HttpResponse(data, content_type='application/json')
-    response['Content-Disposition'] = 'attachment; filename= "export.json"'
+    response['Content-Disposition'] = 'attachment; filename= "{}"'.format(filename)
     return response
 
 
@@ -32,9 +34,9 @@ def export_json(request, id):
 def export_csv(request, id):
     models = django.apps.apps.get_models()
     model = models[id]
-
+    filename = model.__name__ + '.csv'
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename= "export.csv"'
+    response['Content-Disposition'] = 'attachment; filename= "{}"'.format(filename)
 
     names = []
     if id==6:
@@ -55,12 +57,12 @@ def export_csv(request, id):
 def export_excel(request, id):
     models = django.apps.apps.get_models()
     model = models[id]
-
+    filename = model.__name__ + '.xls'
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="model.xls"'
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
 
     wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet(model.__class__.__name__)
+    ws = wb.add_sheet(model.__name__)
 
     row_num = 0
 
