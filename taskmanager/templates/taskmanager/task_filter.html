@@ -81,7 +81,7 @@
                     </optgroup>
                     <optgroup label="D'autres assignnees">
                         {% for user in user_list %}
-                    <div class="dropdown-divider"></div>
+                    <!-- <div class="dropdown-divider"></div> -->
                         {% if user.id != current_user.id %}
                             <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
                         {% endif %}
@@ -138,7 +138,7 @@
     <!-- ============ Boutons pour enregistrer et réinitialiser ============ -->
     <div class="form-group row">
         <div class="col-md-1">
-            <input type="hidden" name="project" value={{ project.id }}>
+            <input type="hidden" name="project" value='{{ project.id }}'>
             <button type="submit" class="btn btn-secondary">Enregistrer</button>
         </div>
         <div class="col-md-1">

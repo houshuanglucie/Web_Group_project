@@ -104,6 +104,12 @@
             </div>
 
             <div class="col-1 text-center">
+               <a href="{% url "task_filter" %}">
+                  <i class="nav_top fa fa-filter"></i>
+               </a>
+            </div>
+
+            <div class="col-1 text-center">
                <a href="{% url "disconnect" %}">
                   <i class="nav_top fa fa-sign-out"></i>
                </a>
@@ -228,7 +234,7 @@
             <div class="carousel-item">
                <a class="nav-link" href="{% url 'task_filter' %}">
                   <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
-            			<img id="logo" title="Violin" src="/static/pictures/folder-open-solid.svg" class="img-fluid align-self-center m-4"/>
+            			<img id="logo" title="Violin" src="/static/pictures/filter-solid.svg" class="img-fluid align-self-center m-4"/>
             			<h1 class="d-none d-sm-block title align-self-center">Filtrage et tri</h1>
                   </div>
 
