@@ -38,4 +38,5 @@ urlpatterns = [
     path('export/xml/<int:id>', views_export.export_xml, name='export_xml'),
     path('export/json/<int:id>', views_export.export_json, name='export_json'),
     path('export/csv/<int:id>', views_export.export_csv, name='export_csv'),
+    path('export/excel/<int:id>', views_export.export_excel, name='export_excel'),
 ]
