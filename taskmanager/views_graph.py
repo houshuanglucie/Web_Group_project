@@ -242,13 +242,15 @@ def radaractivity(request):
 def hsv2rgb(h,s,v):
     return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
 
+def getCount(d):
+    return d['count']
 
 @login_required(login_url = 'connect')
 def manageapp(request):
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
 
-
+    # *************** CREATION DU GRAPHE *********************
     max_count = 0
     for user in User.objects.all():
         count = Trace.objects.filter(actor = user).count()
@@ -291,5 +293,18 @@ def manageapp(request):
                     'color' : "rgb(100,100,100)",
                     'length' : 50
                 })
+
+    # *************** UTILISATEURS LES PLUS ACTIFS *********************
+    users = User.objects.all()
+    list_active_users = []
+    for user in users:
+        list_active_users.append(dict(
+            username = user.username,
+            count = Trace.objects.filter(actor = user).count()
+        ))
+
+    list_active_users.sort(key = getCount, reverse = True)
+
+
 
     return render(request, 'taskmanager/graphs/manageapp.html', locals())

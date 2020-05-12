@@ -50,12 +50,12 @@
 			<div id="authbox" class="py-4 px-5 border rounded border-dark">
 				<div class="row">
 
-					<div class="col-7">
+					<div class="col-12 col-md-7">
 						<h5 class="mb-4">Authentification</h5>
 				      <form method="post" action=".">
 				         {% csrf_token %}
-				         <p style="width: 80%">{{ form.username }}</p>
-							<p style="width: 80%">{{ form.password }}</p>
+				         <p>{{ form.username }}</p>
+							<p>{{ form.password }}</p>
 				         <input type="submit" value="Se connecter"/>
 				      </form>
 					</div>

@@ -17,7 +17,7 @@ UserModel = get_user_model()
       (9) Delete traces
 """
 
-i = "24689"
+i = "5"
 
 
 
@@ -111,13 +111,14 @@ def create_tasks():
 
 
     N_CREATED = 30
-    ALL_PROJECTS = Project.objects.all()
+    ALL_PROJECTS = Project.objects.filter(name = "Project21")
     N_PROJECTS = ALL_PROJECTS.count()
     START_DATE = datetime.datetime(2020, 5, 1, 0, 0, 0)
     END_DATE = datetime.datetime(2020, 8, 1, 0, 0, 0)
 
     for i in range(N_CREATED):
         project_selected = ALL_PROJECTS[rd.randint(0, N_PROJECTS-1)]
+        # project_selected = ALL_PROJECTS
 
         n_members = project_selected.members.all().count()
         member_selected = project_selected.members.all()[rd.randint(0, n_members-1)]
