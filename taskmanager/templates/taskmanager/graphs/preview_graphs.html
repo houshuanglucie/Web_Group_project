@@ -1,5 +1,6 @@
+{% load static %}
 <style>
-   .description{
+   .description {
       display:none;
       position:fixed;
       bottom:2vw;
@@ -11,13 +12,38 @@
       box-shadow: 5px 5px 5px black;
       border: solid black 0.1vw;
       border-radius: 1%;
+      overflow: hidden;
+   }
+
+   #description_graph {
+      font-size: .7em;
+      float: right;
+   }
+
+   #image_graph {
+      max-width: 100%;
+      max-height: 100%;
+
+      display: block;
    }
 </style>
 
-<div class="container description">
-   <strong id="name_graph">None</strong>
-   <img id="image_graph"/>
-   <p id="description_graph"></p>
+
+<div class="d-none d-md-block">
+   <div class="container description">
+      <strong id="name_graph">None</strong><br/>
+      <div class="mt-3 row h-75">
+         <div class="d-none d-lg-block col-7 h-100">
+            <img id="image_graph" src=""/>
+         </div>
+         <div class="col-12 col-lg-5 h-75">
+            <p id="description_graph">
+            </p>
+         </div>
+
+      </div>
 
 
+
+   </div>
 </div>
