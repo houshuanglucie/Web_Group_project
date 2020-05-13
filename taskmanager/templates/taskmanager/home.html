@@ -20,17 +20,39 @@
 {% block css %}
    <style>
 
-      #disconnect{
-         font-size:3em;
-         color: #353535;
+      body{
+         overflow: hidden;
       }
-      #disconnect:hover{
-         font-size: 3.5em;
+
+      .nav_top{
+         font-size:2.5em;
+         color: #474747;
+      }
+      .nav_top:hover{
+         font-size: 3em;
          color: #101010;
       }
 
       .title{
          font-size: 5vw;
+      }
+
+      #navbar_top{
+         position: absolute;
+         top: 0rem;
+         left: 0rem;
+         z-index:1000;
+         width:100%;
+      }
+
+      #navbar_top_back{
+         position: absolute;
+         top: 0rem;
+         left: 0rem;
+         z-index:1000;
+         width:100%;
+         height: 4em;
+         background-color: rgba(175,175,175,0.4);
       }
 
 
@@ -56,11 +78,50 @@
 
 
    <!-- ================ Bouton de déconnexion ================ -->
-   <div style="position: absolute; top: 1rem; right: 1rem; z-index:1000;" class="float-right">
-      <a href="{% url "disconnect" %}">
-         <i id="disconnect" class="fa fa-sign-out"></i>
-      </a>
+   <div id="navbar_top_back" class="container-fluid"></div>
+
+   <div id="navbar_top" class="container-fluid py-2">
+      <div style=" display: flex; justify-content: space-between;">
+
+            <div class="col-1 text-center">
+               <a href="{% url "projects" %}">
+                  <i class="nav_top fa fa-folder-open"></i>
+               </a>
+            </div>
+
+            <div class="col-1 text-center">
+               <a href="{% url "newproject" %}">
+                  <i class="nav_top fa fa-plus"></i>
+               </a>
+            </div>
+
+            <div class="col-1 text-center">
+               <a href="{% url "dashboard" %}">
+                  <i class="nav_top fa fa-columns"></i>
+               </a>
+            </div>
+
+            <div class="col-1 text-center">
+               <a href="{% url "graphs" %}">
+                  <i class="nav_top fa fa-area-chart"></i>
+               </a>
+            </div>
+
+            <div class="col-1 text-center">
+               <a href="{% url "task_filter" %}">
+                  <i class="nav_top fa fa-filter"></i>
+               </a>
+            </div>
+
+            <div class="col-1 text-center">
+               <a href="{% url "disconnect" %}">
+                  <i class="nav_top fa fa-sign-out"></i>
+               </a>
+            </div>
+
+      </div>
    </div>
+
 
 
 
@@ -75,6 +136,7 @@
             <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
          </ol>
 
          <div class="carousel-inner" role="listbox" style="background: linear-gradient(to bottom, #ffffff 0%, #505050 100%);">
@@ -168,8 +230,23 @@
 
                   <div class="carousel-caption d-none d-lg-block">
                      <h5>Complete datas</h5>
-
+                     <p><br></p>
                   </div>
+            </div>
+
+            <!-- ================ Page de filtrage et de tri des taches ================ -->
+            <div class="carousel-item">
+               <a class="nav-link" href="{% url 'task_filter' %}">
+                  <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+            			<img id="logo" title="Violin" src="/static/pictures/filter-solid.svg" class="img-fluid align-self-center m-4"/>
+            			<h1 class="d-none d-sm-block title align-self-center">Filtrage et tri</h1>
+                  </div>
+
+                  <div class="carousel-caption d-none d-lg-block">
+                     <h5>Filtrage et tri</h5>
+                     <p>Triez et / ou filtrez toutes les tâches</p>
+                  </div>
+               </a>
             </div>
 
          <!-- ================ FLECHES DE NAVIGATION ================ -->

@@ -31,7 +31,7 @@ function initiate_radar(id_selected, info_project){
 
 
 
-function plot_radar(id_selected, info_project){
+function plot_taskradar(id_selected, info_project, container = 'div_plot'){
 
    // Initialisation des donnees
    var selected_project = info_project[info_project.findIndex(proj => proj.id === id_selected)];
@@ -78,12 +78,12 @@ function plot_radar(id_selected, info_project){
       displayModeBar : false
    };
 
-   Plotly.newPlot("div_plot", data, layout, config);
+   Plotly.newPlot(container, data, layout, config);
 }
 
 
 
-function plot_histogram(id_selected, info_project){
+function plot_taskhistogram(id_selected, info_project, container = 'div_plot'){
    var selected_project = info_project[info_project.findIndex(proj => proj.id === id_selected)];
 
    var members = [];
@@ -132,5 +132,5 @@ function plot_histogram(id_selected, info_project){
       displayModeBar : false
    };
 
-   Plotly.newPlot('div_plot', data, layout, config);
+   Plotly.newPlot(container, data, layout, config);
 }

@@ -21,6 +21,13 @@
          {% endif %}
 
          initiate_drag();
+
+         $('[data-toggle="tooltip"]').tooltip().tooltip('disable');
+
+         $('[data-toggle="tooltip"]').mouseout(function() {
+            $(this).tooltip('disable');
+         });
+
       }
    )
 
@@ -36,6 +43,34 @@ $(function() {
    });
 });
 
+
+
+
+function add_member(){
+   var member_searched = $('#research_member').val();
+   var users_div = $('#place_users').children().slice(1);
+   var found = false;
+
+   for(var i = 0 ; i < users_div.length ; i++){
+      user_div = users_div[i];
+      if(user_div.textContent == member_searched){
+         console.log(member_searched);
+         $("#place_members").append(user_div);
+         $('[data-toggle="tooltip"]').attr('data-original-title', 'Membre ajouté').tooltip('enable').tooltip('show');
+         found = true;
+         break;
+      }
+   }
+
+
+   if(!found){
+      $('[data-toggle="tooltip"]').attr('data-original-title', 'Aucun nouveau membre trouvé').tooltip('enable').tooltip('show');
+   }
+
+   $('#research_member').val("");
+
+
+}
 </script>
 
 
@@ -152,18 +187,31 @@ $(function() {
          <div class="col-md-2 col-form-label">
             Membres :
          </div>
-         <div class="ml-3 col-md-2 border rounded place_user">
+         <div class="my-2 ml-3 col-md-2 border rounded place_user" id="place_users" style="height : 50vh; overflow : auto">
             <strong>Utilisateurs</strong>
             {% for member in members %}
                <div class="my-2 p-2 border member_box rounded" draggable="True">{{ member }}</div>
             {% endfor %}
          </div>
 
-         <div class="ml-3 col-md-2 border rounded place_member">
+         <div class="my-2 ml-3 col-md-2 border rounded place_member" id="place_members">
             <strong>Membres du projet</strong><br/>
             {% for member in members_of_project %}
                <div class="my-2 p-2 border member_box rounded" draggable="True">{{ member }}</div>
             {% endfor %}
+         </div>
+
+         <div class="my-2 ml-3 col-md-4 align-self-center">
+            <div class="input-group mb-2" id="test">
+               <input type="text" name="research_member" class="form-control" maxlength="160" id="research_member" placeholder="Rechercher un membre">
+               <div class="input-group-append">
+                  <div class="input-group-text">
+                     <a href="javascript:void(0);" onclick="add_member();" id="toggle_plus">
+                        <i data-toggle="tooltip" title="Some tooltip text!" class="fa fa-plus"></i>
+                     </a>
+                  </div>
+               </div>
+            </div>
          </div>
 
       </div>

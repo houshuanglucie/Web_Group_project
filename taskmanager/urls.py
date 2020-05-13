@@ -23,6 +23,8 @@ urlpatterns = [
     path('distinct/<int:ide>', views.distinct_tasks, name='distincttasks'),
     path('activities/<int:ide>', views.activities, name='activities'),
 
+    path('avancement/<int:id>',views.ModifyAvancement, name='form_avancement'),
+
     path('dashboard', views_graph.dashboard, name='dashboard'),
     path('graphs', views_graph.graphs, name='graphs'),
 
@@ -39,4 +41,5 @@ urlpatterns = [
     path('export/json/<int:id>', views_export.export_json, name='export_json'),
     path('export/csv/<int:id>', views_export.export_csv, name='export_csv'),
     path('export/excel/<int:id>', views_export.export_excel, name='export_excel'),
+
 ]

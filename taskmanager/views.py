@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.db import models
-from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
+from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm, CompletedForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 from .models import Verb, Trace
 
@@ -125,6 +125,16 @@ def projects(request):
     else:
         deleted_project = None
         show_toast = False
+
+    # On va calculer l'avancement global du projet
+    for p in projects_list :
+        a=0
+        k=0
+        for t in Task.objects.filter(project__id=p.id):
+            a+=t.completed
+            k+=1
+        if(k>0):
+            p.completed = int(a/k) # C'est la moyenne des avancements des tâches du projet
 
     return render(request, 'taskmanager/projects.html', locals())
 
@@ -312,6 +322,12 @@ def focus_task(request, id):
         new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
         new_trace.save()
 
+    if task.completed<33:
+        color="red"
+    if task.completed>=33 and task.completed<66:
+        color="orange"
+    if task.completed >=66 :
+        color="green"
     return render(request, 'taskmanager/focus_task.html', locals())
 
 
@@ -445,8 +461,6 @@ def managetask(request, id):
     due_date_format = task.due_date.strftime("%d/%m/%Y %H:%M")
 
 
-    print(start_date_format)
-
     subtasks = Subtask.objects.filter(task=task).order_by("id")
 
     subtask_list = [subtask.name for subtask in subtasks]
@@ -472,20 +486,15 @@ def managetask(request, id):
             elif ('save' in request.POST):
                 added, error_category, task = validate_task_data(request, form, task.project, "MODIFY", task)
 
-                
-
                 if(not error_category):
 
                     # Création d'une trace
-                    vb = Verb.objects.get(alias = "AddTk")
+                    vb = Verb.objects.get(alias = "MdfTk")
                     new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb)
                     new_trace.save()
 
                     request.session['new_modify'] = task.name # pour afficher un toast quand on retournera sur focus_task
                     return redirect('focus_task', id = task.id)
-
-
-
 
     else:
         form = TaskForm(initial=defaults)
@@ -534,7 +543,7 @@ def task_filter(request):
 
     if request.method == 'POST':
 
-        # Quand le clic devient "True", le frontal affiche le résultat du filtrage
+        # Quand le click devient "True", le frontal affiche le résultat du filtrage
         click = True
 
         # Récupérer le paramètre utilisé pour le tri
@@ -550,7 +559,7 @@ def task_filter(request):
         project_selected = request.POST.get('project_selected')
         assignee_selected = request.POST.get('assignee_selected')
         status_inc_exc = request.POST.get('status_inc_exc')
-        status_selected = request.POST.get('status_selected')
+        status_selected_list = request.POST.getlist('status_selected')
         start_before_after = request.POST.get('start_before_after')
         start_date_selected = request.POST.get('start_date_selected')
         due_before_after = request.POST.get('due_before_after')
@@ -562,17 +571,12 @@ def task_filter(request):
         if project_selected != "All":
             filter_dict['project'] = get_object_or_404(Project, id=project_selected)
         if assignee_selected != "All":
-            filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
+            if assignee_selected == "moi":
+                filter_dict['user'] = get_object_or_404(User, id=current_user.id)
+            else:
+                filter_dict['user'] = get_object_or_404(User, id=assignee_selected)
 
         task_list = Task.objects.filter(**filter_dict).order_by(sorter)
-
-        # Filtrer par status(inclus ou exclu)
-        if status_inc_exc == "include" and status_selected != "All":
-            task_list = task_list.filter(status__id=status_selected).order_by(sorter)
-        elif status_inc_exc == "exclude" and status_selected != "All":
-            task_list = task_list.filter(~Q(status__id=status_selected)).order_by(sorter)
-        else:
-            task_list = task_list.order_by(sorter)
 
         # Filtrer par date de début (avant ou après)
         if start_before_after == "Before" and start_date_selected != "":
@@ -589,6 +593,24 @@ def task_filter(request):
             task_list = task_list.filter(due_date__gte=due_date_selected).order_by(sorter)
         else:
             task_list = task_list.order_by(sorter)
+
+        # Filtrer par status(inclus ou exclu)
+        if status_inc_exc == "include":
+            if status_selected_list:
+                status_exc_list = status_list  # Initialiser la liste des statuts à exclure
+                for status_selected in status_selected_list:
+                    status_exc_list = status_exc_list.exclude(id=status_selected)
+                for status_exc in status_exc_list:
+                    task_list = task_list.exclude(status__id=status_exc['id']).order_by(sorter)
+            else:
+                task_list = task_list.order_by(sorter)
+
+        elif status_inc_exc == "exclude":
+            if status_selected_list:
+                for status_selected in status_selected_list:
+                    task_list = task_list.exclude(status__id=status_selected).order_by(sorter)
+            else:
+                task_list = Task.objects.none()
 
         return render(request, 'taskmanager/task_filter.html', locals())
 
@@ -623,7 +645,7 @@ def list_tasks(request):
 
 def finished_tasks(request):
     empty_f = False
-    tasks = Task.objects.filter(user=request.user).filter(status__how="Terminée")
+    tasks = Task.objects.filter(user=request.user).filter(status=4)
     if (len(tasks) == 0):
         empty_f = True
     return render(request, 'taskmanager/list_tasks.html', locals())
@@ -650,23 +672,43 @@ def activities(request, ide):
 
 
 
-    ordered_tasks = tasks.order_by('-comments')
+    ordered_tasks = tasks.order_by('-comments') # On trie les commentaires
     ordered_comments = []
     list_tasks = []
-    for t in ordered_tasks:
+    for t in ordered_tasks: # On va maintenant ne garder que le commentaire le plus récent de chaque tâche
         present = False
         for l in list_tasks:
             if(l.name==t.name):
                 present = True
         if not present :
             if(len(t.comments.all())>0):
-                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]]
+                    ordered_comments += [t.comments.all()[len(t.comments.all())-1]] # On récupère aussi les commentaires triés pour les afficher
             else:
                 ordered_comments += ["empty"]
             list_tasks += [t]
 
-
-
-
     return render(request, 'taskmanager/activities.html', locals())
 
+
+def ModifyAvancement(request,id):
+    task = Task.objects.get(id=id)
+    form = CompletedForm(request.POST or None)
+    if form.is_valid():
+        task.completed = form.cleaned_data['completed']
+        # L'avancement de la tâche influe sur son statut
+        if(task.completed==100):
+            task.status=Status(4)
+        if(task.completed<100 and task.completed>0):
+            task.status=Status(3)
+        if(task.completed==0):
+            task.status=Status(1)
+
+        task.save()
+
+        # Création d'une trace (pour les graphs)
+        vb = Verb.objects.get(alias = "MdfAv")
+        new_trace = Trace(actor = request.user, object_project = task.project, object_task = task, verb = vb, extension_integer = task.completed)
+        new_trace.save()
+
+        return redirect('focus_task',id=id)
+    return render(request,'taskmanager/avancement.html',locals())

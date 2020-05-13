@@ -16,7 +16,7 @@
 
       $('#select_project input').on('change', function() {
          id_selected = parseInt($('input[name=projectselected]:checked', '#select_project').val());
-         plot_graph(id_selected, info_projects);
+         plot_burndown(id_selected, info_projects);
       });
    })
 

@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 
 import datetime
 import json
+import colorsys
 
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm
 from .models import Project, Status, Comment, Task, Category, Subtask
@@ -42,14 +43,29 @@ def dashboard(request):
         tasks_by_project.append(tasks_by_proj_data)
 
 
+    if request.POST.get('type_view') and request.POST.get('type_view') == "gantt":
+        tasks_by_project = create_data_gantt(request)
+        return JsonResponse({'tasks' : tasks_by_project}, safe = False, status=200)
+
+    elif request.POST.get('type_view') and request.POST.get('type_view') == "burndown":
+        info_projects = create_data_burndown(request)
+        return JsonResponse({'info' : info_projects}, safe = False, status=200)
+
+    elif request.POST.get('type_view') and request.POST.get('type_view') == "radartask":
+        info_projects = create_data_radartask(request)
+        return JsonResponse({'info' : info_projects}, safe = False, status=200)
+
+    elif request.POST.get('type_view') and request.POST.get('type_view') == "radaractivity":
+        traces_sent = create_data_radaractivity(request)
+        return JsonResponse({'traces' : traces_sent}, safe = False, status=200)
+
     return render(request, 'taskmanager/graphs/dashboard.html', locals())
 
 # ***************************************************************************
 #  GANTT
 # ***************************************************************************
 
-@login_required(login_url = 'connect')
-def gantt(request):
+def create_data_gantt(request):
     # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
     # tasks_by_project = list({
     #   project : nom_du_projet
@@ -72,13 +88,21 @@ def gantt(request):
             project_id = task.project.id,
             name = task.name,
             id_task = task.id,
-            start = int(format(task.start_date, 'U')),
-            end = int(format(task.due_date, 'U'))
+            start = int(format(task.start_date, 'U'))*1000,
+            end = int(format(task.due_date, 'U'))*1000
             ) for task in tasks]
 
         tasks_by_project_data = dict(project = project.name , tasks = tasks_list)
         tasks_by_project.append(tasks_by_project_data)
 
+
+    return tasks_by_project
+
+
+
+@login_required(login_url = 'connect')
+def gantt(request):
+    tasks_by_project = create_data_gantt(request)
     tasks_by_project = json.dumps(tasks_by_project)
     return render(request, 'taskmanager/graphs/gantt.html', locals())
 
@@ -87,29 +111,56 @@ def gantt(request):
 # ***************************************************************************
 #  BURNDOWN CHART
 # ***************************************************************************
-
-@login_required(login_url = 'connect')
-def burndown(request):
+def create_data_burndown(request):
+    # tasks_data = list({
+    #   name : nom_de_la_tache
+    #   shorten_name : nom_de_la_tache_tronquée
+    #   start_date : date_de_debut_theorique
+    #   due_date : date_de_fin_theorique
+    #   list_traces : list({
+    #       timestamp : quand_la_trace_de_modification_d_avancement_a_ete_ajoutee
+    #       progress : avancement_entré
+    #   })
+    #})
     involved_projects = Project.objects.filter(members = request.user)
 
     info_projects = []
 
     for project in involved_projects:
-        tasks = Task.objects.filter(project = project)
+        tasks = Task.objects.filter(project = project).order_by('start_date')
         tasks_data = []
+
         for task in tasks:
+            # Recherche de toutes les traces d'avancement concernant cette tache
+            traces_progress = Trace.objects.filter(object_task = task, verb__alias = "MdfAv").order_by('timestamp')
+            list_trace = []
+
+            for trace in traces_progress:
+                list_trace.append(dict(
+                    timestamp = int(format(trace.timestamp, 'U'))*1000,
+                    progress = trace.extension_integer
+                ))
+
+            # Ajout de toutes les info
             tasks_data.append(dict(
                 name = task.name,
                 shorten_name = Truncator(task.name).chars(20),
                 start_date = int(format(task.start_date, 'U'))*1000,
-                due_date = int(format(task.due_date, 'U'))*1000
+                due_date = int(format(task.due_date, 'U'))*1000,
+                progress_traces = list_trace
             ))
         info_projects.append(dict(
             id_project = project.id,
             name_project = project.name,
             tasks_data = tasks_data
         ))
+    return info_projects
 
+
+@login_required(login_url = 'connect')
+def burndown(request):
+    involved_projects = Project.objects.filter(members = request.user)
+    info_projects = create_data_burndown(request)
     info_projects = json.dumps(info_projects)
 
     return render(request, 'taskmanager/graphs/burndown.html', locals())
@@ -118,9 +169,7 @@ def burndown(request):
 # ***************************************************************************
 #  RADAR TASK
 # ***************************************************************************
-
-@login_required(login_url = 'connect')
-def radartask(request):
+def create_data_radartask(request):
     involved_projects = Project.objects.filter(members = request.user)
 
     info_project = []
@@ -137,6 +186,13 @@ def radartask(request):
             members = member_data
         ))
 
+    return info_project
+
+
+@login_required(login_url = 'connect')
+def radartask(request):
+    involved_projects = Project.objects.filter(members = request.user)
+    info_project = create_data_radartask(request)
     info_project = json.dumps(info_project)
     return render(request, 'taskmanager/graphs/radartask.html', locals())
 
@@ -144,6 +200,16 @@ def radartask(request):
 # ***************************************************************************
 #  RADAR ACTIVITY
 # ***************************************************************************
+def create_data_radaractivity(request):
+    involved_projects = Project.objects.filter(members = request.user)
+    traces_sent = []
+    for project in involved_projects:
+        traces_sent.append(dict(
+            axis = project.name,
+            count = Trace.objects.filter(actor = request.user, object_project = project).count()
+        ))
+    return traces_sent
+
 
 @login_required(login_url = 'connect')
 def radaractivity(request):
@@ -151,13 +217,7 @@ def radaractivity(request):
     involved_projects = Project.objects.filter(members = request.user)
 
     if(request.POST.get('range') and request.POST.get('range') == "global"):
-        traces_sent = []
-        for project in involved_projects:
-            traces_sent.append(dict(
-                axis = project.name,
-                count = Trace.objects.filter(actor = request.user, object_project = project).count()
-            ))
-
+        traces_sent = create_data_radaractivity(request)
         return JsonResponse({'traces' : traces_sent, 'title' : "Vue globale"}, safe = False, status=200)
 
     elif(request.POST.get('range') and request.POST.get('range') == "project"):
@@ -179,19 +239,38 @@ def radaractivity(request):
 # ***************************************************************************
 #  MANAGE APPLICATION
 # ***************************************************************************
+def hsv2rgb(h,s,v):
+    return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
+
+def getCount(d):
+    return d['count']
+
 @login_required(login_url = 'connect')
 def manageapp(request):
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
 
-    nodes = []
+    # *************** CREATION DU GRAPHE *********************
+    max_count = 0
     for user in User.objects.all():
         count = Trace.objects.filter(actor = user).count()
+        if max_count < count:
+            max_count = count
+
+
+    nodes = []
+    YELLOW_HUE = 107
+    for user in User.objects.all():
+        count_traces = Trace.objects.filter(actor = user).count()
+        hue = 107/360 * (1 - count_traces/max_count)
+        color = hsv2rgb(hue, 1, 0.5)
+        count_project = Project.objects.filter(members = user).count()
+
         nodes.append(dict(
             id = user.id,
-            title = user.username + "<br>" + str(count) + " trace(s)",
-            value = count,
-            color = "rgb(150,150,150)",
+            title = "<b>{}<br>{} trace(s)<br>{} projet(s)</b>".format(user.username, count_traces, count_project),
+            value = count_traces,
+            color = "rgb{}".format(color),
             border = "rgb(100,100,100)"
         ))
     nodes = json.dumps(nodes)
@@ -210,8 +289,22 @@ def manageapp(request):
                     'from' : user1.id,
                     'to' : user2.id,
                     'value' : count,
-                    'title' : str(count) + " projet(s) en commun",
-                    'color' : "rgb(150,150,150)"
+                    'title' : "<b>{} projet(s) en commun</b>".format(count),
+                    'color' : "rgb(100,100,100)",
+                    'length' : 50
                 })
+
+    # *************** UTILISATEURS LES PLUS ACTIFS *********************
+    users = User.objects.all()
+    list_active_users = []
+    for user in users:
+        list_active_users.append(dict(
+            username = user.username,
+            count = Trace.objects.filter(actor = user).count()
+        ))
+
+    list_active_users.sort(key = getCount, reverse = True)
+
+
 
     return render(request, 'taskmanager/graphs/manageapp.html', locals())

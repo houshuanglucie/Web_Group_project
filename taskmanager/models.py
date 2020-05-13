@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
+from django.core.validators import MaxValueValidator,MinValueValidator
 import os
 
 
@@ -13,6 +14,8 @@ class Project(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name = "Membres")
     # Visibilité du projet (Prive ou public)
     public = models.CharField(max_length = 2, choices = [("PU", "public"), ("PR", "privé")], default = "PR", verbose_name = "Partage")
+    # Avancement du projet
+    completed = models.IntegerField(default=0, verbose_name = "Avancement")
 
     def __str__(self):
         return self.name
@@ -87,6 +90,8 @@ class Task(models.Model):
     status = models.ForeignKey('Status', on_delete = models.CASCADE, verbose_name = "Statut")
     # Journal (ou commentaires...)
     comments = models.ManyToManyField(Comment, related_name = "Commentaires", blank = True)
+    # Avancement de la tâche
+    completed = models.IntegerField(default=0, verbose_name = "Avancement")
 
 
     # Permet d'avoir le nom et l'extension de la piece jointe
@@ -108,17 +113,29 @@ class Verb(models.Model):
     # MdfPr -> Modif projet
     # AddTk -> Ajout tache
     # AddPr -> Ajout projet
+    # MdfAv -> Modif avancement
+    # Réduction du verb
     alias = models.CharField(max_length = 10, verbose_name = "Alias", default = "VB")
+    # Verbe / action
     verb = models.CharField(max_length = 100, verbose_name = "Verbe")
 
     def __str__(self):
         return self.alias
 
 class Trace(models.Model):
+    # Alias de la trace (plus pratique pour les créer / supprimer)
+    alias = models.CharField(max_length = 100, verbose_name = "Alias", default = None, blank = True, null = True)
+    # Qui a laissé cette trace
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, verbose_name = "Acteur")
+    # Quand a été laissée cette trace
     timestamp = models.DateTimeField(verbose_name = "Timestamp", default = timezone.now)
+    # Projet concerné
     object_project = models.ForeignKey('Project', on_delete = models.CASCADE, verbose_name = "Projet", default = None)
+    # Tache concernée si existe
     object_task = models.ForeignKey('Task', on_delete = models.CASCADE, verbose_name = "Tache", default = None, blank = True, null = True)
+    # Donnée complémentaire numérique si besoin
+    extension_integer = models.IntegerField(default = None, verbose_name = "Extension numérique", blank = True, null = True)
+    # Verbe
     verb = models.ForeignKey('Verb', on_delete = models.CASCADE, verbose_name = "Verbe", default = None)
 
     def __str__(self):

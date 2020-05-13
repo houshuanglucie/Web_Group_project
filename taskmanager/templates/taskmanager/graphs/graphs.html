@@ -16,6 +16,26 @@ a:hover {
    text-decoration: none;
    color : black;
 }
+
+img {
+   margin-top: 1em;
+   width : 100%;
+
+}
+
+.blur_link {
+   filter: blur(.3vh);
+}
+
+.blur_link:hover {
+   filter : blur(0px);
+}
+
+.text-center {
+   margin: 1em;
+   box-shadow: 2px 2px 2px dimgrey;
+   border: solid dimgrey .1vw;
+   border-radius: .3vw .5vw;
 }
 </style>
 {% endblock %}
@@ -31,14 +51,39 @@ a:hover {
    <br/>
 </div>
 
-<!-- TODO Ameliorer le graphisme -->
-<p>
-   <a href={% url 'gantt' %}>Diagramme de Gantt</a> <br/>
-   <a href={% url 'activitydiag' %}>Diagramme d'activités</a><br/>
-   <a href={% url 'burndown' %}>Burndown chart</a><br/>
-   <a href={% url 'radartask' %}>Radar des tâches</a><br/>
-   <a href={% url 'radaractivity' %}>Radar d'activités</a><br/>
-</p>
+<div class="row justify-content-center">
+
+   <div class="col-5 col-lg-2 text-center blur_link">
+      <a href={% url 'dashboard' %}>Tableau de bord <br/>
+         <img src={% static "pictures/graphs_preview/dashboard.png" %}/>
+      </a>
+   </div>
+
+   <div class="col-5 col-lg-2 text-center blur_link">
+      <a href={% url 'gantt' %}>Diagramme de Gantt <br/>
+         <img src={% static "pictures/graphs_preview/gantt.png" %}/>
+      </a>
+   </div>
+
+   <div class="col-5 col-lg-2 text-center blur_link">
+      <a href={% url 'burndown' %}>Burndown chart<br/>
+         <img src={% static "pictures/graphs_preview/burndown.png" %}/>
+      </a>
+   </div>
+
+   <div class="col-5 col-lg-2 text-center blur_link">
+      <a href={% url 'radartask' %}>Radar des tâches<br/>
+         <img src={% static "pictures/graphs_preview/tasks.png" %}/>
+      </a>
+   </div>
+
+   <div class="col-5 col-lg-2 text-center blur_link">
+      <a href={% url 'radaractivity' %}>Radar d'activités<br/>
+         <img src={% static "pictures/graphs_preview/activity.png" %}/>
+      </a>
+   </div>
+</div>
+
 
 
 

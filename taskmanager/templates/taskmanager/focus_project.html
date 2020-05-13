@@ -31,7 +31,7 @@ a:hover {
 <!-- ================ TOAST Tache supprimee (on revient de la page formtask, en mode MODIFY ) ================ -->
 {% if show_toast %}
 	<div class="container">
-	   <div class="toast" data-delay="3000" style="position: absolute; bottom: 1rem; right: 1rem; min-width:250px;" aria-live="assertive" aria-atomic="true">
+	   <div class="toast" data-delay="3000" style="position: fixed; bottom: 1rem; right: 1rem; min-width:250px; z-index:5000" aria-live="assertive" aria-atomic="true">
 	      <div class="toast-header" style="background-color: #c9c9c9">
 	         <i class="fa fa-times"></i>
 	         <strong class="mr-auto ml-2">Suppression de la tâche</strong>
@@ -100,6 +100,7 @@ a:hover {
          <tr>
             <th scope="col" class="col-1">Priorité</th>
             <th scope="col" class="col-3">Tâche</th>
+             <th scope="col"> Avancement </th>
             <th class="d-none d-lg-table-cell" scope="col">Responsable</th>
             <th class="d-none d-xl-table-cell" scope="col">Deadline</th>
             <th class="d-none d-lg-table-cell" scope="col">Statut</th>
@@ -115,6 +116,20 @@ a:hover {
          <tr>
             <td>{{ task.priority }}</td>
 				<td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
+
+             <td > <a id="{{ task.id }}" href="{%  url 'form_avancement' id=task.id %}">{{ task.completed }}% </a></td>
+            <script>
+                    if({{task.completed}}>=66) {
+                        document.getElementById("{{ task.id }}").style.color = "green";
+                    }
+                    if({{task.completed}}>=33 && {{ task.completed }}<66) {
+                        document.getElementById("{{ task.id }}").style.color = "orange";
+                    }
+                 if({{task.completed}}<33) {
+                        document.getElementById("{{ task.id }}").style.color = "red";
+                    }
+
+             </script>
             <td class="d-none d-lg-table-cell">{{ task.user.last_name }}</td>
             <td class="d-none d-xl-table-cell">{{ task.due_date|date }}</td>
             <td class="d-none d-lg-table-cell">{{ task.status }}</td>
@@ -126,6 +141,7 @@ a:hover {
          	<tr><td colspan=7>Pas de tâches</td></tr>
 
          {% endfor %}
+
       </tbody>
 
    </table>

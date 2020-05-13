@@ -24,7 +24,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('user', )
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('name', 'project', )
+    list_display = ('name', 'project', 'user')
     list_filter = ('project', 'status', )
 
 class SubtaskAdmin(admin.ModelAdmin):
@@ -40,7 +40,7 @@ class VerbAdmin(admin.ModelAdmin):
     list_filter = ('verb', )
 
 class TraceAdmin(admin.ModelAdmin):
-    list_display = ('actor', 'verb' )
+    list_display = ('actor', 'verb', 'object_task', 'object_project' )
     list_filter = ('actor','verb', )
 
 

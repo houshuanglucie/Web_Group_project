@@ -3,23 +3,10 @@
 *Projet personnel du module AWNG - Avril / Mai 2020*
 
 ## Contenu implémenté
-- __[Objectif]__ Classes projets / tâches associées à leur pages de création, modification et visualisation globale ou individuelle
-- Ajout d'attributs dans les différents classes *(projet public/privé ; pièce jointe, catégories et sous-tâches pour les tâches)*
-- Graphismes :
-   - Responsivité (du moins majoritairement... cf. plus bas)
-   - D'autres fioritures (messages, drag & drop, ...)
-- D'autres fonctionnalités plus ou moins utiles *(tableau de  bord, calendrier)*
 
 <br>
 
 ## Contenus qui pourraient être améliorés
-- Prise en compte des fuseaux horaires : je me suis résolu à mettre `USE_TZ = False` qui me causait des problèmes...
-- Ordre d'affichage des tâches pas vraiment réfléchie :
-   - Actuellement en fonction seulement de la priorité, mais le statut devrait peut-être être pris en compte. Voire il faudrait changer toute la vue.
-- Robustesse du programme :
-   - Un utilisateur peut créer un projet privé pour quelqu'un d'autre. Pourquoi pas, mais pas très logique...
-   - Un non-membre d'un projet privé peut encore avoir accès à un projet privé ne le concernant pas à partir de son URL : je n'ai pas géré ce cas là...
-- Responsivité : l'application est responsive, sauf sur les écrans verticaux très étroits
 
 
 ## En pratique...
@@ -30,7 +17,12 @@
 3. Lancer le serveur `python manage.py runserver`
 4. Se rendre sur `localhost:8000` : ça vous redirigera vers la bonne page.  
 
+<br>
 
+#### *Pour créer plein de données*
+1. Fermer le serveur (pour que ce soit un peu plus rapide...)  
+2. Modifier la variable i dans create_data.py, selon ce qu'on veut faire (documentation dans le script)  
+3. Lancer à partir de la racine `python manage.py shell < create_data.py`  
 
 <br>
 
