@@ -5,123 +5,185 @@
 
 <head>
 
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href={% static 'style.css'%} />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-	{% block css %} {% endblock %}
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href={% static 'style.css' %}/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    {% block css %} {% endblock %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
-	<script src={% static "javascript/handle_preview_graphs.js" %}></script>
+    <script src={% static "javascript/handle_preview_graphs.js" %}></script>
 
-	<script>
-	$(document).ready(function() {
-		$('#graphs-nav_item').hover(function() {
-			$(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
+    <script>
+        $(document).ready(function () {
+            $('#graphs-nav_item').hover(function () {
+                $(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
-		}, function() {
-			$(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
-		});
+            }, function () {
+                $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
+            });
+            $('#export-nav_item').hover(function () {
+                $(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
-		handle_preview_graphs();
-	});
-	</script>
+            }, function () {
+                $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
+            });
+        });
+    </script>
 
 
 
 
 
 
-	{% block script%} {% endblock %}
-	<title>Gestionnaire de projets</title>
-	<link rel="icon" href="{% static 'pictures/calendar-check-solid.svg' %}"/>
+    {% block script %} {% endblock %}
+    <title>Gestionnaire de projets</title>
+    <link rel="icon" href="{% static 'pictures/calendar-check-solid.svg' %}"/>
 </head>
 
 <body>
 
-	<!-- Les plus petits ecrans sont flex-column. A partir de md, on passe en row -->
-	<a href="{% url "home" %}" class="text-dark" style="text-decoration: none;">
-		<div class="d-flex flex-column flex-md-row" style="margin-bottom:0">
-			<img id="logo" title="Violin" src="/static/pictures/calendar-check-solid-pages.svg" class="img-fluid align-self-center m-4"/>
-			<h1 class="align-self-center">Gestionnaire de projets</h1>
-		</div>
-	</a>
+<!-- Les plus petits ecrans sont flex-column. A partir de md, on passe en row -->
+<a href="{% url "home" %}" class="text-dark" style="text-decoration: none;">
+    <div class="d-flex flex-column flex-md-row" style="margin-bottom:0">
+        <img id="logo" title="Violin" src="/static/pictures/calendar-check-solid-pages.svg"
+             class="img-fluid align-self-center m-4"/>
+        <h1 class="align-self-center">Gestionnaire de projets</h1>
+    </div>
+</a>
 
 
-	<nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top" >
-		{% block nav%}
+<nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
+    {% block nav %}
 
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-
-
-		<div class="collapse navbar-collapse" id="collapsibleNavbar">
-			<ul class="navbar-nav">
-
-				<li id="home-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "home" %}">Accueil</a>
-				</li>
-
-				<li id="projects-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "projects" %}">Mes projets</a>
-				</li>
-
-				<li id="filter-nav_item" class="nav-item">
-   					<a class="nav-link" href="{% url "task_filter" %}">Filtrage et tri</a>
-				</li>
-
-				<li id="newproject-nav_item" class="nav-item">
-					<a class="nav-link" href="{% url "newproject" %}">Nouveau projet</a>
-				</li>
-
-				<li id="graphs-nav_item" class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
-						<div id="dropdown_menu" class="dropdown-menu">
-							<a id="dashboard-nav_item" class="dropdown-item" href="{% url 'dashboard' %}">Tableau de bord</a>
-							<a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
-							<a id="burndown-nav_item" class="dropdown-item" href="{% url 'burndown' %}">Burndown chart</a>
-							<a id="radartask-nav_item" class="dropdown-item" href="{% url 'radartask' %}">Radar des tâches</a>
-							<a id="radaractivity-nav_item" class="dropdown-item" href="{% url 'radaractivity' %}">Radar d'activités</a>
-						</div>
-				</li>
-
-				{% if request.user.is_superuser %}
-					<li id="manageapp-nav_item" class="nav-item">
-						<a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de l'Application</a>
-					</li>
-				{% endif %}
-
-			</ul>
-
-			<ul id="right_nav-bar" class="navbar-nav ml-auto">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
 
-				<li id="disconnect-nav_item" class="nav-item">
-				{% if user.is_authenticated %}
-					<a class="nav-link" href="{% url "disconnect" %}">Se déconnecter</a>
-				{% else %}
-					<a class="nav-link" href="{% url "connect" %}">Se connecter</a>
-				{% endif %}
-				</li>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
 
-			</ul>
+                <li id="home-nav_item" class="nav-item">
+                    <a class="nav-link" href="{% url "home" %}">Accueil</a>
+                </li>
 
-		</div>
+                <li id="projects-nav_item" class="nav-item">
+                    <a class="nav-link" href="{% url "projects" %}">Mes projets</a>
+                </li>
 
-		{% endblock %}
-	</nav>
+                <li id="filter-nav_item" class="nav-item">
+                    <a class="nav-link" href="{% url "task_filter" %}">Filtrage et tri</a>
+                </li>
+
+                <li id="newproject-nav_item" class="nav-item">
+                    <a class="nav-link" href="{% url "newproject" %}">Nouveau projet</a>
+                </li>
+
+                <li id="graphs-nav_item" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'graphs' %}">Vues par graphiques</a>
+                    <div id="dropdown_menu" class="dropdown-menu">
+                        <a id="dashboard-nav_item" class="dropdown-item" href="{% url 'dashboard' %}">Tableau de
+                            bord</a>
+                        <a id="gantt-nav_item" class="dropdown-item" href="{% url 'gantt' %}">Gantt</a>
+                        <a id="burndown-nav_item" class="dropdown-item" href="{% url 'burndown' %}">Burndown chart</a>
+                        <a id="radartask-nav_item" class="dropdown-item" href="{% url 'radartask' %}">Radar des
+                            tâches</a>
+                        <a id="radaractivity-nav_item" class="dropdown-item" href="{% url 'radaractivity' %}">Radar
+                            d'activités</a>
+                    </div>
+                </li>
+                {% if request.user.is_superuser %}
+                <li id="export-nav_item" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle">Exporter les données</a>
+                    <div id="dropdown_menu_export" class="dropdown-menu">
+                        <a id="export-menu-xml" class="dropdown-toggle dropdown-item">XML</a>
+                        <div id="xml-submenu" class="dropdown-submenu">
+                            <a class="dropdown-item" href="{% url 'export_xml' id=6 %}">Projets</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=7 %}">Statuts</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=8 %}">Commentaires</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=9 %}">Sous-tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=10 %}">Categorie</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=11 %}">Tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=12 %}">Verbes</a>
+                            <a class="dropdown-item" href="{% url 'export_xml' id=13 %}">Traces</a>
+                        </div>
+                        <a id="export-json-nav_item" class="dropdown-toggle dropdown-item">JSON</a>
+                        <div id="json-submenu" class="dropdown-submenu">
+                            <a class="dropdown-item" href="{% url 'export_json' id=6 %}">Projets</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=7 %}">Statuts</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=8 %}">Commentaires</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=9 %}">Sous-tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=10 %}">Categorie</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=11 %}">Tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=12 %}">Verbes</a>
+                            <a class="dropdown-item" href="{% url 'export_json' id=13 %}">Traces</a>
+                        </div>
+                        <a id="export-csv-nav_item" class="dropdown-toggle dropdown-item">CSV</a>
+                        <div id="xml-submenu" class="dropdown-submenu">
+                            <a class="dropdown-item" href="{% url 'export_csv' id=6 %}">Projets</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=7 %}">Statuts</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=8 %}">Commentaires</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=9 %}">Sous-tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=10 %}">Categorie</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=11 %}">Tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=12 %}">Verbes</a>
+                            <a class="dropdown-item" href="{% url 'export_csv' id=13 %}">Traces</a>
+                        </div>
+                        <a id="export-excel-nav_item" class="dropdown-toggle dropdown-item">Excel</a>
+                        <div id="xml-submenu" class="dropdown-submenu">
+                            <a class="dropdown-item" href="{% url 'export_excel' id=6 %}">Projets</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=7 %}">Statuts</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=8 %}">Commentaires</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=9 %}">Sous-tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=10 %}">Categorie</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=11 %}">Tâches</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=12 %}">Verbes</a>
+                            <a class="dropdown-item" href="{% url 'export_excel' id=13 %}">Traces</a>
+                        </div>
+                    </div>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        </li>
+        {% if request.user.is_superuser %}
+            <li id="manageapp-nav_item" class="nav-item">
+                <a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de
+                    l'Application</a>
+            </li>
+        {% endif %}
+
+        </ul>
+
+        <ul id="right_nav-bar" class="navbar-nav ml-auto">
 
 
-	<section id="content" class="mx-2 mx-md-5 my-5">
-		{% block content %}
-		{% endblock %}
-	</section>
+            <li id="disconnect-nav_item" class="nav-item">
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url "disconnect" %}">Se déconnecter</a>
+                {% else %}
+                    <a class="nav-link" href="{% url "connect" %}">Se connecter</a>
+                {% endif %}
+            </li>
 
-	{% include "taskmanager/graphs/preview_graphs.html" %}
+        </ul>
+
+        </div>
+
+    {% endblock %}
+</nav>
+
+
+<section id="content" class="mx-2 mx-md-5 my-5">
+    {% block content %}
+    {% endblock %}
+</section>
+
+{% include "taskmanager/graphs/preview_graphs.html" %}
 
 </body>
 
