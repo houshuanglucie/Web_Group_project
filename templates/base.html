@@ -20,21 +20,27 @@
 
     <script>
         $(document).ready(function () {
+
+			  	handle_preview_graphs();
+
             $('#graphs-nav_item').hover(function () {
                 $(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
             }, function () {
                 $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
             });
-            $('#export-nav_item').hover(function () {
+
+
+				$('#export-nav_item').hover(function () {
                 $(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
             }, function () {
                 $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
             });
+
+
         });
     </script>
-
 
 
 
@@ -97,6 +103,8 @@
                             d'activités</a>
                     </div>
                 </li>
+
+
                 {% if request.user.is_superuser %}
                 <li id="export-nav_item" class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle">Exporter les données</a>
@@ -148,20 +156,18 @@
                     </div>
                 </li>
                 {% endif %}
-            </ul>
-        </div>
-        </li>
-        {% if request.user.is_superuser %}
-            <li id="manageapp-nav_item" class="nav-item">
-                <a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de
-                    l'Application</a>
-            </li>
-        {% endif %}
 
-        </ul>
+
+					 {% if request.user.is_superuser %}
+	 	             <li id="manageapp-nav_item" class="nav-item">
+	 	                 <a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de
+	 	                     l'Application</a>
+	 	             </li>
+	 	         {% endif %}
+
+	 	         </ul>
 
         <ul id="right_nav-bar" class="navbar-nav ml-auto">
-
 
             <li id="disconnect-nav_item" class="nav-item">
                 {% if user.is_authenticated %}

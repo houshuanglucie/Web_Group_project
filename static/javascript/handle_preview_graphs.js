@@ -9,6 +9,7 @@ function handle_preview_graphs(){
 
    // CUSTOM DASHBOARD
    $('#dashboard-nav_item').hover(function() {
+      console.log("Hello");
       $('#name_graph').text("Tableau de bord");
       $('#description_graph').text("Un tableau de bord customisable avec les représentations que vous choisissez");
       $('#image_graph').attr("src", "../../static/pictures/graphs_preview/dashboard.png");
