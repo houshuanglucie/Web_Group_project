@@ -15,7 +15,7 @@
 - Burndown chart
 - Radars des tâches et des activités (globales et par projet)
 - Tableau de bord personnalisable (jusque dans une certaine mesure)
-- *[Super-utilisateur]* Réseau d'activités entre utilisateurs et vue des utilisateurs les plus actifs
+- *[Super-utilisateur]* Réseau de projets entre utilisateurs et vue des utilisateurs les plus actifs
 <br>
 
 ## Contenus qui pourraient être améliorés
@@ -46,6 +46,6 @@
 
 #### *Utilisateurs enregistrés dans la base db.json*
 `vt` : *`vtawng20`* *(superuser)*  
-`user<N>` : *`bar`* où N est un entier  
+`user<N>` : *`bar`* où N est un entier pas trop grand  
 
 ***
