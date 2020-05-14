@@ -23,7 +23,7 @@
 {% block content %}
 
 <!-- ============== Formulaire de filtrage et de tri ============== -->
-<form id = "filtrage_tri" style="margin: 60px" action="{% url 'task_filter' %}" method="post">
+<form id = "filtrage_tri" style="margin: 60px" action="{% url 'task_filter_result' 1 %}" method="post">
     {% csrf_token %}
 
     <!-- ============ Options des paramètres de tri ============ -->
@@ -77,11 +77,10 @@
                 <select class="form-control" name="assignee_selected" id = "assignee_selected">
                     <option value="All">Sélectionner...</option>
                     <optgroup label="Moi">
-                        <option value="moi">Moi ({{ current_user.last_name }})</option>
+                        <option value="moi">Moi ({{ current_user.first_name }} {{ current_user.last_name }})</option>
                     </optgroup>
                     <optgroup label="D'autres assignnees">
                         {% for user in user_list %}
-                    <!-- <div class="dropdown-divider"></div> -->
                         {% if user.id != current_user.id %}
                             <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
                         {% endif %}
@@ -151,14 +150,16 @@
 
 <!-- Après avoir cliqué sur «Enregistrer» depuis le frontal, "click" devient True pour afficher les résultats du filtrage. -->
 {% if click %}
+<!-- =============== Tableau des résultats du filtrage des tâches ================ -->
 <div class="m-sm-5">
 
     <!-- ============ HEADER Taches ============ -->
     <div class="row">
         <div class="col-12">
-            <h4 class="mb-3">Toutes les tâches</h4>
+            <h4 class="mb-3">Résultats du filtrage des tâches</h4>
         </div>
     </div>
+
 
     <!-- ============ Contenus de la liste des taches ============ -->
     <table class="table table-hover">
@@ -179,7 +180,7 @@
         </thead>
 
         <tbody>
-            {% for task in task_list %}
+            {% for task in task_page %}
             <tr>
                 <td>{{ task.priority }}</td>
                 <td><a href={% url "focus_task" id=task.id %}>{{ task.name }}</a></td>
@@ -210,7 +211,36 @@
             {% endfor %}
         </tbody>
     </table>
+
+
+    <!-- ================= Bouton de pagination en bas ================= -->
+    <div id="pages">
+        <nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+			{% if task_page.has_previous %}
+				<li class="page-item"><a class="page-link" href="{% url 'task_filter_result' task_page.previous_page_number %}">
+					<span aria-hidden="true">&laquo;</span></a></li>
+            {% endif %}
+
+            {% for num in task_page.paginator.page_range %}
+                {% if num == task_page.number %}
+                    <li class="page-item active"><a class="page-link" href="{% url 'task_filter_result' num %}">{{ num }}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{% url 'task_filter_result' num %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if task_page.has_next %}
+                <li class="page-item"><a class="page-link" href="{% url 'task_filter_result' task_page.next_page_number %}">
+                    <span aria-hidden="true">&raquo;</span></a></li>
+            {% endif %}
+
+       		</ul>
+        </nav>
+    </div>
+
 </div>
+
 {% endif %}
 
 {% endblock %}

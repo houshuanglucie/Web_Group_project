@@ -12,6 +12,7 @@ from django.db import models
 from .forms import LoginForm, ProjectForm, CommentForm, ProjectForm, TaskForm, CompletedForm
 from .models import Project, Status, Comment, Task, Category, Subtask
 from .models import Verb, Trace
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import datetime
 import json
@@ -524,27 +525,46 @@ def dashboard(request):
 # ***************************************************************************
 
 
+# ============== Page de "recherche" du filtrage et du tri des taches =================
 
-
-
-# ============== Filtrage et de tri des taches =================
 @login_required(login_url='connect')
 def task_filter(request):
 
-    # Quand le formulaire de filtre est soumis, le "click" devient "True",
-    # utilisé pour afficher les résultats du filtre dans task_filter.html
+    # Si on ne clique pas "enregistrer", le "click" reste "False",
+    # utilisé pour cacher les résultats du filtre dans task_filter.html
     click = False
 
-    # Obtenir les listes des menus déroulants dans le formulaire de filtre
+    # Les listes des menus déroulants dans le formulaire de filtre
     current_user = User.objects.get(id=request.user.id)
     project_list = Project.objects.filter(Q(members=current_user) | Q(public="PU")).distinct().values('id', 'name')  # projects de l'user OU les projets publics
     user_list = User.objects.all().values('id', 'first_name', 'last_name')
     status_list = Status.objects.all().values('id', 'how')
 
-    if request.method == 'POST':
+    return render(request, 'taskmanager/task_filter.html', locals())
 
-        # Quand le click devient "True", le frontal affiche le résultat du filtrage
-        click = True
+
+# ============== Page des "resultats" du filtrage et du tri =================
+
+global task_list
+
+@login_required(login_url='connect')
+def task_filter_result(request, index):
+
+    # Quand le formulaire de filtre est soumis, le "click" devient "True",
+    # utilisé pour afficher les résultats du filtre dans task_filter.html
+    click = True
+
+    # utilisé quand on clique sur le bouton de pagination
+    global task_list
+
+    # Les listes des menus déroulants dans le formulaire de filtre
+    current_user = User.objects.get(id=request.user.id)
+    project_list = Project.objects.filter(Q(members=current_user) | Q(public="PU")).distinct().values('id', 'name')  # projects de l'user OU les projets publics
+    user_list = User.objects.all().values('id', 'first_name', 'last_name')
+    status_list = Status.objects.all().values('id', 'how')
+
+    # Quand on clique sur "enregistrer", method="post"
+    if request.method == 'POST':
 
         # Récupérer le paramètre utilisé pour le tri
         sorter = request.POST.get('sorter')
@@ -612,10 +632,38 @@ def task_filter(request):
             else:
                 task_list = Task.objects.none()
 
+        # Pagination (chaque page affiche dix taches)
+        paginator = Paginator(task_list, 10)
+        task_page = paginator.page(int(index))
+
+        try:
+            task_page = paginator.page(int(index))
+        except PageNotAnInteger:
+            # Si le numéro de page n'est pas un entier, envoyez la première page.
+            task_page = paginator.page(1)
+        except EmptyPage:
+            # Si le numéro de page est hors limites (par exemple 9999), envoyez la dernière page de résultats.
+            task_page = paginator.page(paginator.num_pages)
+
         return render(request, 'taskmanager/task_filter.html', locals())
 
-    else:
+    # Quand on clique sur le bouton de pagination, method="GET"
+    elif request.method == "GET":
+
+        paginator = Paginator(task_list, 10)
+        task_page = paginator.page(int(index))
+
+        try:
+            task_page = paginator.page(int(index))
+        except PageNotAnInteger:
+            # Si le numéro de page n'est pas un entier, envoyez la première page.
+            task_page = paginator.page(1)
+        except EmptyPage:
+            # Si le numéro de page est hors limites (par exemple 9999), envoyez la dernière page de résultats.
+            task_page = paginator.page(paginator.num_pages)
+
         return render(request, 'taskmanager/task_filter.html', locals())
+
 
 
 # --- Page d'affichage des projets d'un utilisateur ainsi que des autres membres ---#

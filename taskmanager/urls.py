@@ -35,7 +35,8 @@ urlpatterns = [
     path('radaractivity', views_graph.radaractivity, name='radaractivity'),
     path('manageapp', views_graph.manageapp, name='manageapp'),
 
-    path('taskfilter/', views.task_filter, name='task_filter'),
+    path('taskfilter', views.task_filter, name='task_filter'),
+    path('taskfilterresult/page=<int:index>', views.task_filter_result, name='task_filter_result'),
 
     path('export/xml', views_export.export_xml, name='export_xml'),
     path('export/json', views_export.export_json, name='export_json'),
