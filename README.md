@@ -1,13 +1,31 @@
 # Gestionnaire de projets
 
-*Projet personnel du module AWNG - Avril / Mai 2020*
+*Projet collectif du module AWNG - Avril / Mai 2020*
 
 ## Contenu implémenté
 
+### F1 - Visualisation de toutes les données saisies
+
+### F2 - Filtrage et tri
+
+### F3 - Export
+
+### F4 - Graphes
+- Diagramme de Gantt
+- Burndown chart
+- Radars des tâches et des activités (globales et par projet)
+- Tableau de bord personnalisable (jusque dans une certaine mesure)
+- *[Super-utilisateur]* Réseau d'activités entre utilisateurs et vue des utilisateurs les plus actifs
 <br>
 
 ## Contenus qui pourraient être améliorés
 
+### F4 - Graphes 
+- Rendre le tableau de bord plus intéractif (choix de la taille des cadres, du nombre de cadres...)
+- Tri par timestamp pour les radars de taches ou d'activités
+- Présentation du diagramme de Gantt un peu austère...
+
+<br>
 
 ## En pratique...
 #### *Pour se rendre sur la bonne page*
@@ -27,11 +45,7 @@
 <br>
 
 #### *Utilisateurs enregistrés dans la base db.json*
-`tchaikovsky` : *`concertoinDMajor`* *(utilisateur qui a le plus de données intéressantes dans la base)*  
-`sibelius` : *`concertoinDMinor`*  
-`paganini` : *`caprice24`*  
-`bach` : *`aironGString`*  
-`massenet` : *`thaisMeditation`*  
-`vt` : *`vtawng20`* *(superuser, mais sans beaucoup de données me concernant)*  
+`vt` : *`vtawng20`* *(superuser)*  
+`user<N>` : *`bar`* où N est un entier  
 
 ***
