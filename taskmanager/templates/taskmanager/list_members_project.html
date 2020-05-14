@@ -9,31 +9,34 @@
         border : 1px solid black;
 
     }
-</style>
-{% endblock %}
-{% block script%}
-<script>
-   $(document).ready(
-      function() {
-         document.getElementById("projects-nav_item").classList.add("active");
-			{% if show_toast %}
-				$('.toast').toast('show');
-			{% endif %}
-      }
-   )
-</script>
-{%endblock%}
+    .grid-container {
+  display: grid;
+        grid-column-gap:20px;
+        grid-row-gap:15px;
+  grid-template-columns: auto auto auto;
+
+  padding: 30px;
+}
+    .grid-item {
+        padding : 20px ;
+    }
+    </style>
+      {% endblock %}
+
 {% block content %}
-{% for p in proj %}
-<div style="background-color:lightgray;color:black;padding:20px;margin:20px">
-    <h2> <a href="{%url 'focus_project' id=p.id %}"> {{p.name}} </a></h2>
-    <ul>
+
+    <div class="grid-container">
+    {% for p in proj %}
+        <div class="grid-item" style="background-color:#4d4d4d">
+        <h2> <a style="color:white" href="{%url 'focus_project' id=p.id %}"> {{p.name}} </a></h2><br>
+        <ul>
         {% for m in p.members.all %}
-        <li style="font-size:150%"> {{m.username}}</li>
+        <li style="font-size:120%"> <span style="background-color:lightgrey;padding:6px">  {{m.username}}  </span></li><br>
         {% endfor %}
-    </ul>
-</div>
-{% endfor %}
+    </ul></div>
+    {% endfor %}
+                       </div>
+
 
 {% endblock %}
 
