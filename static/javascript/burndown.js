@@ -49,9 +49,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
    var tasks_data = selected_project.tasks_data;
 
 
-
-
-   // S'il n'y a aucune tâche
+   // S'il n'y a aucune tâche, on affiche un graphe vide
    if(tasks_data.length == 0){
       var layout = {
          showlegend: false,
@@ -72,7 +70,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
       };
 
       Plotly.newPlot(container, data, layout, config);
-      return;
+      return; // Puis la peine de continuer
    }
 
 
@@ -240,8 +238,6 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
             }
          }
 
-
-
       });
 
       x_project.push(new Date(timestamp));
@@ -252,10 +248,9 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
          y_project_practical.push(sum_prct_practical/n_tasks);
       }
 
-
-
    });
 
+   // ___________ Ajout des courbes a la liste qui va etre plot ______________
 
    var trace_project = {
       x: x_project,

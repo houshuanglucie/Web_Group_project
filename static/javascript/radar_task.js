@@ -1,3 +1,4 @@
+// ===== Trace un radar vide ======
 function initiate_radar(id_selected, info_project){
    var data = [{
       type: 'scatterpolar'
@@ -30,7 +31,7 @@ function initiate_radar(id_selected, info_project){
 }
 
 
-
+// ===== Radar de répartition des taches ======
 function plot_taskradar(id_selected, info_project, container = 'div_plot'){
 
    // Initialisation des donnees
@@ -82,7 +83,7 @@ function plot_taskradar(id_selected, info_project, container = 'div_plot'){
 }
 
 
-
+// ===== Histogramme de répartition des taches ======
 function plot_taskhistogram(id_selected, info_project, container = 'div_plot'){
    var selected_project = info_project[info_project.findIndex(proj => proj.id === id_selected)];
 

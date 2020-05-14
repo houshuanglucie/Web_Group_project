@@ -21,20 +21,23 @@ from .models import Verb, Trace
 def print_json(data):
     print(json.dumps(data, indent = 1))
 
+
+# ***************************************************************************
+#  PAGE D'ACCUEIL DES GRAPHES
+# ***************************************************************************
 @login_required(login_url = 'connect')
 def graphs(request):
     return render(request, 'taskmanager/graphs/graphs.html', locals())
 
 
 # ***************************************************************************
-#  GANTT
+#  DASHBOARD
 # ***************************************************************************
 
 @login_required(login_url = 'connect')
 def dashboard(request):
-    # Juste une vue de taches de l'user par projets
-    # C'était pour tenter une aggrégation des taches par projet (comme avec ElasticSearch),
-    # mais pas réussi à le faire en une ligne...
+
+    # Pour la vue ddes taches par projet
     current_user = User.objects.get(id = request.user.id)
     involved_projects = Project.objects.filter(members = current_user)
     tasks_by_project = []
@@ -42,7 +45,7 @@ def dashboard(request):
         tasks_by_proj_data = dict(project = project, tasks = Task.objects.filter(user = current_user, project = project))
         tasks_by_project.append(tasks_by_proj_data)
 
-
+    # Receptions AJAX pour les vues demandant d'autres graphs
     if request.POST.get('type_view') and request.POST.get('type_view') == "gantt":
         tasks_by_project = create_data_gantt(request)
         return JsonResponse({'tasks' : tasks_by_project}, safe = False, status=200)
@@ -65,6 +68,7 @@ def dashboard(request):
 #  GANTT
 # ***************************************************************************
 
+# =============== Création des données pour Gantt =================
 def create_data_gantt(request):
     # Juste pour envoyer une aggrégations de taches par projet a javascript ie :
     # tasks_by_project = list({
@@ -99,7 +103,7 @@ def create_data_gantt(request):
     return tasks_by_project
 
 
-
+# =============== Page de Gantt =================
 @login_required(login_url = 'connect')
 def gantt(request):
     tasks_by_project = create_data_gantt(request)
@@ -111,19 +115,24 @@ def gantt(request):
 # ***************************************************************************
 #  BURNDOWN CHART
 # ***************************************************************************
+# =============== Création des données pour le burndown =================
 def create_data_burndown(request):
-    # tasks_data = list({
-    #   name : nom_de_la_tache
-    #   shorten_name : nom_de_la_tache_tronquée
-    #   start_date : date_de_debut_theorique
-    #   due_date : date_de_fin_theorique
-    #   list_traces : list({
-    #       timestamp : quand_la_trace_de_modification_d_avancement_a_ete_ajoutee
-    #       progress : avancement_entré
+    # info_project = list({
+    #   id_project : id_du_projet,
+    #   name_project : nom_du_projet,
+    #   tasks_data = list({
+    #       name : nom_de_la_tache
+    #       shorten_name : nom_de_la_tache_tronquée
+    #       start_date : date_de_debut_theorique
+    #       due_date : date_de_fin_theorique
+    #       list_traces : list({
+    #           timestamp : quand_la_trace_de_modification_d_avancement_a_ete_ajoutee
+    #           progress : avancement_entré
+    #       })
     #   })
-    #})
-    involved_projects = Project.objects.filter(members = request.user)
+    # })
 
+    involved_projects = Project.objects.filter(members = request.user)
     info_projects = []
 
     for project in involved_projects:
@@ -156,7 +165,7 @@ def create_data_burndown(request):
         ))
     return info_projects
 
-
+# =============== Page du burndown =================
 @login_required(login_url = 'connect')
 def burndown(request):
     involved_projects = Project.objects.filter(members = request.user)
@@ -169,7 +178,16 @@ def burndown(request):
 # ***************************************************************************
 #  RADAR TASK
 # ***************************************************************************
+# =============== Création des données pour le radartask =================
 def create_data_radartask(request):
+    # info_project = list({
+    #   name : nom_du_projet,
+    #   id : id_du_projet,
+    #   members = list({
+    #       name : nom_du_membre
+    #       count : nombre_de_tache_du_membre_dans_ce_projet
+    #   })
+    # })
     involved_projects = Project.objects.filter(members = request.user)
 
     info_project = []
@@ -188,7 +206,7 @@ def create_data_radartask(request):
 
     return info_project
 
-
+# =============== Page du radartask =================
 @login_required(login_url = 'connect')
 def radartask(request):
     involved_projects = Project.objects.filter(members = request.user)
@@ -200,7 +218,13 @@ def radartask(request):
 # ***************************************************************************
 #  RADAR ACTIVITY
 # ***************************************************************************
+# =============== Création des données du radaractivity =================
+# Juste pour le radar : nombre de traces laissees sur chaque projet
 def create_data_radaractivity(request):
+    # traces_sent = list({
+    #   axis : nom_des_projets,
+    #   count : nombre_de_traces_laissees_par_l_utilisateur_sur_ce_projet
+    # })
     involved_projects = Project.objects.filter(members = request.user)
     traces_sent = []
     for project in involved_projects:
@@ -210,9 +234,16 @@ def create_data_radaractivity(request):
         ))
     return traces_sent
 
-
+# =============== Page du radaractivity =================
+# Pour le radar individuel et le radar par projet (types de traces laissees projet)
+# Pour le radar individuel : voir dessus
 @login_required(login_url = 'connect')
 def radaractivity(request):
+    # Pour le radar par projet :
+    # traces_sent = list({
+    #   axis : verbe (type de trace),
+    #   count : nombre_de_traces_laissees_par_l_utilisateur_sur_ce_projet_de_ce_type_la
+    # })
 
     involved_projects = Project.objects.filter(members = request.user)
 
@@ -239,18 +270,26 @@ def radaractivity(request):
 # ***************************************************************************
 #  MANAGE APPLICATION
 # ***************************************************************************
+# Convertit Hue/Saturation/Value into R/G/B
 def hsv2rgb(h,s,v):
     return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
 
+# Retourne l'item count d'un dict
 def getCount(d):
     return d['count']
 
+# =============== Graphe d'activités sur l'application =================
 @login_required(login_url = 'connect')
 def manageapp(request):
+
+    # Si ce n'est pas un super utilisateur, on lui renvoie une page HTML sans âme
     if not request.user.is_superuser:
         return HttpResponse("Vous n'êtes pas autorisé.")
 
-    # *************** CREATION DU GRAPHE *********************
+    # *************** GRAPHE D'ACTIVITES *********************
+    # *** NOEUDS ***
+    # Qui sont les differents utilisateurs, et dont la taille du noeud est
+    # pondérée par le nombre de traces laissées par l'user
     max_count = 0
     for user in User.objects.all():
         count = Trace.objects.filter(actor = user).count()
@@ -275,7 +314,8 @@ def manageapp(request):
         ))
     nodes = json.dumps(nodes)
 
-
+    # *** ARETES ***
+    # Largeurs pondérées par les differents projets entre utilisateurs
     edges = []
 
     user_list = [user for user in User.objects.all()]
@@ -295,6 +335,7 @@ def manageapp(request):
                 })
 
     # *************** UTILISATEURS LES PLUS ACTIFS *********************
+    # Une simple classement des utilisateurs en fonction de leur nb de traces laissees
     users = User.objects.all()
     list_active_users = []
     for user in users:

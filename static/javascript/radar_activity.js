@@ -1,3 +1,4 @@
+// ===== Trace un radar vide ======
 function initiate_radar(id_selected, info_project){
    var data = [{
       type: 'scatterpolar'
@@ -5,8 +6,11 @@ function initiate_radar(id_selected, info_project){
    Plotly.newPlot("div_plot", data);
 }
 
-
+// ===== Envoi requete en asynchrone ======
 function send_ajax(url_endpoint, range, project_id){
+   // url_endpoint : la ou on finit
+   // range : global ou project
+   // project_id : si range == project, alors l'id du projet
    var title = "";
    $.ajax({
       url : url_endpoint,
