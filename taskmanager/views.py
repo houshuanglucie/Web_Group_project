@@ -716,3 +716,4 @@ def ModifyAvancement(request,id):
 
         return redirect('focus_task',id=id)
     return render(request,'taskmanager/avancement.html',locals())
+
