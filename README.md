@@ -5,25 +5,27 @@
 ## Contenu implémenté
 
 ### F1 - Visualisation de toutes les données saisies
+- Implémentation de l'avancement des tâches et donc de celui du projet  
+- Liste de projets et de membres  
+- Liste des tâches avec attributs  
+- Liste des tâches finies  
+- Affichage des tâches de l'utilisateur et des autres membres d'un projet
+- Page activités, tri par ordre chronologique
 
 ### F2 - Filtrage et tri
+- Filtre par assigné, statut, date, et toute combinaison  
+- Tri par assigné, statut, date  
 
 ### F3 - Export
+- Export sous XML, JSON, CSV et Excel  
+- Possiblité de sélection de la classe à exporter  
+- Restriction de l'option aux superutilisateurs  
 
 ### F4 - Graphes
-- Diagramme de Gantt
-- Burndown chart
+- Diagramme de Gantt et brundown chart
 - Radars des tâches et des activités (globales et par projet)
-- Tableau de bord personnalisable (jusque dans une certaine mesure)
+- Tableau de bord "personnalisable"
 - *[Super-utilisateur]* Réseau de projets entre utilisateurs et vue des utilisateurs les plus actifs
-<br>
-
-## Contenus qui pourraient être améliorés
-
-### F4 - Graphes 
-- Rendre le tableau de bord plus intéractif (choix de la taille des cadres, du nombre de cadres...)
-- Tri par timestamp pour les radars de taches ou d'activités
-- Présentation du diagramme de Gantt un peu austère...
 
 <br>
 
@@ -47,5 +49,3 @@
 #### *Utilisateurs enregistrés dans la base db.json*
 `vt` : *`vtawng20`* *(superuser)*  
 `user<N>` : *`bar`* où N est un entier pas trop grand  
-
-***
