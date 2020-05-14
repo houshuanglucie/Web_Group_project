@@ -684,6 +684,7 @@ def projects_members(request):
 
 
 def list_tasks(request):
+    ''' Afficher toutes les tâches d'un utilisateur '''
     empty = False
     tasks = Task.objects.filter(user__id=request.user.id)
     if (len(tasks) == 0):
@@ -692,6 +693,7 @@ def list_tasks(request):
 
 
 def finished_tasks(request):
+    ''' Afficher toutes les tâches terminées d'un utilisateur '''
     empty_f = False
     tasks = Task.objects.filter(user=request.user).filter(status=4)
     if (len(tasks) == 0):
@@ -700,13 +702,14 @@ def finished_tasks(request):
 
 
 def distinct_tasks(request, ide):
-    user_empty = False
+    ''' Séparer les tâches de l'utilisateur et les autres '''
+    user_empty = False # Présence ou non de tâches attribuées à l'utilisateur
     others_empty = False
     project = Project.objects.get(id=ide)
     user_tasks = Task.objects.filter(project__id=ide).filter(user__id=request.user.id)
     if (len(user_tasks) == 0):
         user_empty = True
-    print(user_tasks)
+
     othertasks = Task.objects.filter(project__id=ide).exclude(user__id=request.user.id)
     if (len(othertasks) == 0):
         others_empty = True
@@ -714,7 +717,7 @@ def distinct_tasks(request, ide):
 
 
 def activities(request, ide):
-
+    ''' Afficher les tâches triées par ordre du dernier commentaire posté '''
 
     tasks = Task.objects.filter(project__id=ide)
 
@@ -739,8 +742,9 @@ def activities(request, ide):
 
 
 def ModifyAvancement(request,id):
+    ''' Modifier l'avancement d'une tâche '''
     task = Task.objects.get(id=id)
-    form = CompletedForm(request.POST or None)
+    form = CompletedForm(request.POST or None) # Création du form de modification de l'avancement
     if form.is_valid():
         task.completed = form.cleaned_data['completed']
         # L'avancement de la tâche influe sur son statut
@@ -760,3 +764,4 @@ def ModifyAvancement(request,id):
 
         return redirect('focus_task',id=id)
     return render(request,'taskmanager/avancement.html',locals())
+
