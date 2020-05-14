@@ -1,10 +1,9 @@
+// ===== Graphe d'activités des users sur l'appli (superuser) ======
 function plot_network(nodes_server, edges_server){
-
 
    var nodes = new vis.DataSet(nodes_server);
    var edges = new vis.DataSet(edges_server);
 
-   // create a network
    var container = document.getElementById("mynetwork");
    var data = {
      nodes: nodes,

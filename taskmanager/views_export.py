@@ -3,8 +3,14 @@ from django.db.models import ManyToOneRel
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.shortcuts import render, redirect
 
-import csv, xlwt
+import csv
+try:
+    import xlwt
+    xlwt_import = True
+except ModuleNotFoundError:
+    xlwt_import = False
 
 from .models import Project, Status, Comment, Task, Category, Subtask
 
@@ -68,6 +74,12 @@ def export_csv(request, id):
 
 @login_required(login_url='connect')
 def export_excel(request, id):
+    # Pour ne pas provoquer d'erreur
+    global xlwt_import
+    if not xlwt_import:
+        return redirect('home')
+
+
     models = django.apps.apps.get_models()
     model = models[id]
     filename = model.__name__ + '.xls'

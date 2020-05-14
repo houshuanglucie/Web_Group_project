@@ -14,6 +14,14 @@ from .models import Project, Status, Comment, Task, Category, Subtask
 from .models import Verb, Trace
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+try:
+    import xlwt
+    xlwt_import = True
+    print("Hllo")
+except ModuleNotFoundError:
+    xlwt_import = False
+
+
 import datetime
 import json
 
@@ -21,6 +29,8 @@ import json
 # =============== Page d'accueil =================
 @login_required(login_url='connect')
 def home(request):
+    global xlwt_import
+    xlwt_import_ok = xlwt_import
     try:  # Si c'est la premiere fois qu'on lance la page et donc que ce champ n'existe pas
         if request.session['just_log']:  # Pour afficher un toast
             new_log = True
@@ -764,4 +774,3 @@ def ModifyAvancement(request,id):
 
         return redirect('focus_task',id=id)
     return render(request,'taskmanager/avancement.html',locals())
-

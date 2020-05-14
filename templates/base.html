@@ -16,25 +16,43 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
-    <script src={% static "javascript/handle_preview_graphs.js" %}></script>
+   <script src={% static "javascript/handle_preview_graphs.js" %}></script>
 
-    <script>
+   <script>
         $(document).ready(function () {
+
+			  	handle_preview_graphs();
+
             $('#graphs-nav_item').hover(function () {
                 $(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
             }, function () {
                 $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
             });
-            $('#export-nav_item').hover(function () {
-                $(this).find('.dropdown-menu').stop(true, true).delay(0).fadeIn(100);
 
-            }, function () {
-                $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(100);
-            });
         });
-    </script>
+   </script>
 
+	<style>
+
+		.navbar-nav li:hover > ul.dropdown-menu {
+			display: block;
+		}
+		.dropdown-submenu {
+			position:relative;
+		}
+		.dropdown-submenu>.dropdown-menu {
+			top: -0em;
+			left: 100%;
+			margin-top:-6px;
+		}
+
+		.dropdown-menu > li > a:hover:after {
+			text-decoration: underline;
+			transform: rotate(-90deg);
+		}
+
+	</style>
 
 
 
@@ -97,71 +115,86 @@
                             d'activités</a>
                     </div>
                 </li>
-                {% if request.user.is_superuser %}
-                <li id="export-nav_item" class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle">Exporter les données</a>
-                    <div id="dropdown_menu_export" class="dropdown-menu">
-                        <a id="export-menu-xml" class="dropdown-toggle dropdown-item">XML</a>
-                        <div id="xml-submenu" class="dropdown-submenu">
-                            <a class="dropdown-item" href="{% url 'export_xml' id=6 %}">Projets</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=7 %}">Statuts</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=8 %}">Commentaires</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=9 %}">Sous-tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=10 %}">Categorie</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=11 %}">Tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=12 %}">Verbes</a>
-                            <a class="dropdown-item" href="{% url 'export_xml' id=13 %}">Traces</a>
-                        </div>
-                        <a id="export-json-nav_item" class="dropdown-toggle dropdown-item">JSON</a>
-                        <div id="json-submenu" class="dropdown-submenu">
-                            <a class="dropdown-item" href="{% url 'export_json' id=6 %}">Projets</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=7 %}">Statuts</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=8 %}">Commentaires</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=9 %}">Sous-tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=10 %}">Categorie</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=11 %}">Tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=12 %}">Verbes</a>
-                            <a class="dropdown-item" href="{% url 'export_json' id=13 %}">Traces</a>
-                        </div>
+
+
+
+               {% if request.user.is_superuser %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Exporter les données</a>
+						<ul id="dropdown_menu_export" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+							<li id="xml-submenu" class="dropdown-submenu">
+								<a id="export-menu-xml" class="dropdown-item dropdown-toggle">XML</a>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=6 %}">Projets</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=7 %}">Statuts</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=8 %}">Commentaires</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=9 %}">Sous-tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=10 %}">Categorie</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=11 %}">Tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=12 %}">Verbes</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_xml' id=13 %}">Traces</a></li>
+								</ul>
+							</li>
+
+
+                     <li id="json-submenu" class="dropdown-submenu">
+								<a id="export-json-nav_item" class="dropdown-toggle dropdown-item">JSON</a>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="{% url 'export_json' id=6 %}">Projets</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=7 %}">Statuts</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=8 %}">Commentaires</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=9 %}">Sous-tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=10 %}">Categorie</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=11 %}">Tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=12 %}">Verbes</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_json' id=13 %}">Traces</a></li>
+								</ul>
+                     </li>
+
+							<li id="csv-submenu" class="dropdown-submenu">
                         <a id="export-csv-nav_item" class="dropdown-toggle dropdown-item">CSV</a>
-                        <div id="xml-submenu" class="dropdown-submenu">
-                            <a class="dropdown-item" href="{% url 'export_csv' id=6 %}">Projets</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=7 %}">Statuts</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=8 %}">Commentaires</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=9 %}">Sous-tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=10 %}">Categorie</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=11 %}">Tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=12 %}">Verbes</a>
-                            <a class="dropdown-item" href="{% url 'export_csv' id=13 %}">Traces</a>
-                        </div>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=6 %}">Projets</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=7 %}">Statuts</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=8 %}">Commentaires</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=9 %}">Sous-tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=10 %}">Categorie</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=11 %}">Tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=12 %}">Verbes</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_csv' id=13 %}">Traces</a></li>
+								</ul>
+                     </li>
+
+							<li id="excel-submenu" class="dropdown-submenu">
                         <a id="export-excel-nav_item" class="dropdown-toggle dropdown-item">Excel</a>
-                        <div id="xml-submenu" class="dropdown-submenu">
-                            <a class="dropdown-item" href="{% url 'export_excel' id=6 %}">Projets</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=7 %}">Statuts</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=8 %}">Commentaires</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=9 %}">Sous-tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=10 %}">Categorie</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=11 %}">Tâches</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=12 %}">Verbes</a>
-                            <a class="dropdown-item" href="{% url 'export_excel' id=13 %}">Traces</a>
-                        </div>
-                    </div>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=6 %}">Projets</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=7 %}">Statuts</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=8 %}">Commentaires</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=9 %}">Sous-tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=10 %}">Categorie</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=11 %}">Tâches</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=12 %}">Verbes</a></li>
+									<li><a class="dropdown-item" href="{% url 'export_excel' id=13 %}">Traces</a></li>
+								</ul>
+                     </li>
+
+                    </ul> <!-- End dropdown menu export -->
                 </li>
                 {% endif %}
-            </ul>
-        </div>
-        </li>
-        {% if request.user.is_superuser %}
-            <li id="manageapp-nav_item" class="nav-item">
-                <a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de
-                    l'Application</a>
-            </li>
-        {% endif %}
 
-        </ul>
+
+					 {% if request.user.is_superuser %}
+	 	             <li id="manageapp-nav_item" class="nav-item">
+	 	                 <a class="nav-link" href="{% url "manageapp" %}" style="font-variant:small-caps">Gestion de
+	 	                     l'Application</a>
+	 	             </li>
+	 	         {% endif %}
+
+	 	         </ul>
 
         <ul id="right_nav-bar" class="navbar-nav ml-auto">
-
 
             <li id="disconnect-nav_item" class="nav-item">
                 {% if user.is_authenticated %}

@@ -54,7 +54,6 @@ function add_member(){
    for(var i = 0 ; i < users_div.length ; i++){
       user_div = users_div[i];
       if(user_div.textContent == member_searched){
-         console.log(member_searched);
          $("#place_members").append(user_div);
          $('[data-toggle="tooltip"]').attr('data-original-title', 'Membre ajouté').tooltip('enable').tooltip('show');
          found = true;
@@ -69,8 +68,9 @@ function add_member(){
 
    $('#research_member').val("");
 
-
 }
+
+
 </script>
 
 
