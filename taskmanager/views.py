@@ -17,7 +17,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 try:
     import xlwt
     xlwt_import = True
-    print("Hllo")
 except ModuleNotFoundError:
     xlwt_import = False
 

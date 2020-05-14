@@ -243,7 +243,7 @@ function plot_burndown(id_selected, info_project, container = 'div_plot'){
       x_project.push(new Date(timestamp));
       y_project.push(sum_prct/n_tasks);
 
-      if(timestamp < Date.now()){ // Si on est encore dans le passé, on peut ajouter l'avancement.
+      if(timestamp <= Date.now()){ // Si on est encore dans le passé, on peut ajouter l'avancement.
          x_project_practical.push(new Date(timestamp));
          y_project_practical.push(sum_prct_practical/n_tasks);
       }
