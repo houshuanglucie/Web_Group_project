@@ -14,7 +14,7 @@
 
 ### F2 - Filtrage et tri
 - Filtre par projet, assigné, statut, date, et toute combinaison  
-- Tri par tache, assigné, statut, date, avancement (asc/desc)
+- Tri (asc/desc) par tache, assigné, statut, date, avancement
 - Pagination  
 
 ### F3 - Export
