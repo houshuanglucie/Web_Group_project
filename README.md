@@ -13,8 +13,9 @@
 - Page activités, tri par ordre chronologique
 
 ### F2 - Filtrage et tri
-- Filtre par assigné, statut, date, et toute combinaison  
-- Tri par assigné, statut, date  
+- Filtre par projet, assigné, statut, date, et toute combinaison  
+- Tri par tache, assigné, statut, date, avancement (asc/desc)
+- Pagination  
 
 ### F3 - Export
 - Export sous XML, JSON, CSV et Excel  
