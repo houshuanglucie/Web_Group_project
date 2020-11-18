@@ -1,6 +1,6 @@
 # Gestionnaire de projets
 
-*Projet collectif du module AWNG(Application Web Nouvelle Géneration) - Avril / Mai 2020*
+*Projet collectif du module AWNG (Application Web Nouvelle Géneration) - Avril / Mai 2020*
 
 ## Contenu implémenté
 
